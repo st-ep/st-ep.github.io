@@ -1,0 +1,7 @@
+title: Stepan Tretiakov
+description: I build world models and tools that let robots handle soft, unruly things.
+url: https://st-ep.github.io
+exclude:
+  - README.md
+  - .claude
+  - previews

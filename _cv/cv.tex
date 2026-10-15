@@ -1,0 +1,268 @@
+%-------------------------
+% Academic CV - Stepan Tretiakov
+% Public version for st-ep.github.io (no phone, no references)
+%-------------------------
+
+\documentclass[11pt,letterpaper]{article}
+
+% Essential packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=0.70in]{geometry}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{parskip}
+
+% Colors
+\definecolor{headerblue}{RGB}{0,51,102}
+\definecolor{linkblue}{RGB}{0,80,150}
+\definecolor{darkgray}{RGB}{60,60,60}
+
+% Hyperlink setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=linkblue,
+    urlcolor=linkblue,
+    pdfauthor={Stepan Tretiakov},
+    pdftitle={Stepan Tretiakov, CV}
+}
+
+% Section formatting
+\titleformat{\section}
+    {\Large\bfseries\color{headerblue}}
+    {}
+    {0em}
+    {}
+    [\vspace{-0.6em}\rule{\textwidth}{0.4pt}]
+
+\titlespacing{\section}{0pt}{9pt}{5pt}
+
+% Remove paragraph indentation
+\setlength{\parindent}{0pt}
+
+% Compact lists
+\setlist[itemize]{leftmargin=1.2em, itemsep=1pt, parsep=0pt, topsep=3pt}
+
+% Custom commands for entries
+\newcommand{\entryhead}[4]{%
+    \textbf{#1} \hfill \textit{#2} \\
+    \textit{#3} \hfill #4 \par
+}
+
+\newcommand{\entrysimple}[2]{%
+    #1 \hfill #2 \par
+}
+
+\newcommand{\projecthead}[1]{%
+    \vspace{5pt}\textbf{#1}\par\vspace{2pt}
+}
+
+% Hanging indent for publications
+\newcommand{\pubentry}[1]{%
+    \hangindent=1.5em\hangafter=1 #1\par\vspace{2pt}
+}
+
+%===========================================
+\begin{document}
+%===========================================
+
+%-------------------------------------------
+% HEADER - Clean Professional Style
+%-------------------------------------------
+\begin{center}
+    {\huge\bfseries\color{headerblue} Stepan Tretiakov}\\[12pt]
+    {\color{darkgray}
+    Berkeley, California, USA\quad\textbar\quad
+    \href{mailto:stepa@berkeley.edu}{stepa@berkeley.edu}\quad\textbar\quad
+    \href{https://st-ep.github.io}{st-ep.github.io}
+    }\\[3pt]
+    {\color{darkgray}
+    \href{https://github.com/st-ep}{github.com/st-ep}\quad\textbar\quad
+    \href{https://scholar.google.com/citations?user=p7JCBQYAAAAJ}{Google Scholar}\quad\textbar\quad
+    \href{https://www.linkedin.com/in/stepan-tretiakov-93202230a/}{linkedin.com/in/stepan-tretiakov}
+    }
+\end{center}
+
+\vspace{6pt}
+
+%-------------------------------------------
+% EDUCATION
+%-------------------------------------------
+\section{Education}
+
+\entryhead{Ph.D.\ in Mechanical Engineering}{Aug 2026 -- Present}
+{University of California, Berkeley}{Berkeley, CA}
+Advisor: Prof.\ Krishna Kumar. Research: world models for robots that manipulate deformable materials.
+
+\vspace{8pt}
+
+\entryhead{M.S.\ in Civil Engineering}{Aug 2024 -- Aug 2026}
+{The University of Texas at Austin}{Austin, TX}
+Advisor: Prof.\ Krishna Kumar
+
+\vspace{8pt}
+
+\entryhead{Bachelor of Science in Geology, with Honours (Specialization: Hydrogeology and Engineering Geology)}{June 2024}
+{Lomonosov Moscow State University}{Moscow, Russia}
+Thesis: ``Determining deformation and strength properties of sand soil as parameters for the deformation plasticity theory''\\
+Advisor: Dr.\ Nina B.\ Artamonova
+
+%-------------------------------------------
+% RESEARCH EXPERIENCE
+%-------------------------------------------
+\section{Research Experience}
+
+\entryhead{Graduate Researcher}{Aug 2024 -- Present}
+{UC Berkeley; Texas Robotics, UT Austin (2024--2026)}{Berkeley, CA}
+Advisor: Prof.\ Krishna Kumar
+
+\projecthead{FORM: Robot Manipulation through Direct Material Law Identification (lead author)}
+\begin{itemize}
+    \item Identifies an explicit material law from a single robot interaction with one linear least-squares solve on the weak form of momentum balance, with no differentiation through simulation (2--5\,s, versus 10--25\,min for iterative baselines)
+    \item Reuses the identified law, held fixed, to plan new actions and geometries in MPM: elastic rod insertion, golf putting, elastoplastic shaping, and pouring
+    \item On hardware: open-loop shaping of Play-Doh, butter slime, and plasticine (72--78\% footprint IoU) and pouring glycerol to six target volumes (largest mean error 3.8\,mL); submitted to ICRA 2027
+\end{itemize}
+
+\projecthead{Physically Viable World Models (co-first author)}
+\begin{itemize}
+    \item Argues that world models for embodied AI must answer intervention queries by representing the physical structure behind action outcomes, not only predict future observations
+\end{itemize}
+
+\projecthead{Neural Operators for PDEs with Variable Inputs (SetONet)}
+\begin{itemize}
+    \item Designed the SetONet architecture, a permutation-invariant operator network for solving PDEs with variable input sampling
+    \item Sole developer of the codebase (PyTorch); open-sourced under MIT license
+    \item Created three point-cloud benchmarks that standard DeepONet cannot handle
+\end{itemize}
+
+\projecthead{Inverse Neural Operators for Ill-Posed Problems}
+\begin{itemize}
+    \item Co-developed the codebase for learning inverse operators via the basis-to-basis (B2B) framework
+    \item Co-implemented INN and cINN architectures (additive, affine, and probabilistic variants) and iFNO
+    \item Created the Chladni plate benchmark featuring multimodal inverse mappings
+    \item Conducted noise sensitivity analysis of the developed models
+\end{itemize}
+
+\projecthead{Online Dynamics Adaptation for Robotic Control (Robot On Ice)}
+\begin{itemize}
+    \item Developed high-performance Function Encoder Neural ODE achieving ${\sim}10\times$ speedup
+    \item Enables real-time MPPI control for autonomous navigation on varying terrains
+    \item Validated in BeamNG driving simulation
+\end{itemize}
+
+\projecthead{Operator Based Meta Reinforcement Learning}
+\begin{itemize}
+    \item Developed JAX implementation of SetONet for experiments integrating operator learning into meta RL
+\end{itemize}
+
+%-------------------------------------------
+% PUBLICATIONS
+%-------------------------------------------
+\section{Publications}
+
+\textbf{Preprints}
+\vspace{4pt}
+
+\pubentry{\textbf{Tretiakov, S.}, Zhao, R., Hsiao, C.-H., Li, X., Thorpe, A., Iqbal, H., Chinchali, S., Topcu, U., \& Kumar, K. (2026). FORM: Robot Manipulation through Direct Material Law Identification. \textit{\href{https://arxiv.org/abs/2609.38105}{arXiv:2609.38105}}. Submitted to ICRA 2027. Project: \href{https://form-robots.github.io}{form-robots.github.io}.}
+
+\pubentry{Thorpe, A.J.\textsuperscript{*}, \textbf{Tretiakov, S.}\textsuperscript{*}, Hsiao, C.-H., Low, S.A., Li, X., Iqbal, H., Bhatt, N.P., Topcu, U., \& Kumar, K. (2026). Physically Viable World Models: A Case for Query-Conditioned Embodied AI. \textit{\href{https://arxiv.org/abs/2605.30542}{arXiv:2605.30542}}. \textsuperscript{*}Equal contribution.}
+
+\pubentry{Sewell, D., Li, X., \textbf{Tretiakov, S.}, Kumar, K., \& Fridovich-Keil, D. (2026). Neural Operators for Multi-Task Control and Adaptation. \textit{\href{https://arxiv.org/abs/2604.03449}{arXiv:2604.03449}}.}
+
+\pubentry{Thorpe, A.J., \textbf{Tretiakov, S.}, Roy Sarkar, D., Kumar, K., \& Topcu, U. (2025). Learning Generalizable Neural Operators for Inverse Problems. \textit{\href{https://arxiv.org/abs/2512.18120}{arXiv:2512.18120}}.}
+
+\pubentry{\textbf{Tretiakov, S.}, Li, X., \& Kumar, K. (2025). SetONet: A Set-Based Operator Network for Solving PDEs with Variable-Input Sampling. \textit{\href{https://arxiv.org/abs/2505.04738}{arXiv:2505.04738}}. Code: \href{https://github.com/st-ep/SetONet}{github.com/st-ep/SetONet}.}
+
+\vspace{2pt}
+\textbf{Published}
+\vspace{4pt}
+
+\pubentry{\textbf{Tretiakov, S.D.} \& Artamonova, N.B. (2024). Identification of Parameters and Verification of Mathematical Model of Deformation of Water-Saturated Sandy Soil. \textit{Geological International Student Summit 2024: Materials of the Conference}, pp.\ 201--204. Saint Petersburg, Russia.}
+
+\pubentry{Artamonova, N.B., Sheshenin, S.V., Orlov, E.A., \textbf{Tretiakov, S.D.}, \& Minikhanov, K.A. (2023). Identification of parameters and verification of a nonlinear coupled consolidation model. \textit{Proceedings of the XXIII International Conference on Computational Mechanics and Modern Applied Software Systems (VMSPPS'2023)}, pp.\ 158--161. Moscow: MAI Publishing House.}
+
+\pubentry{Artamonova, N.B., Sheshenin, S.V., Mirny, A.Yu., Orlov, E.A., \textbf{Tretiakov, S.D.}, \& Minikhanov, K.A. (2023). Mathematical model of nonlinear soil consolidation and determination of its parameters. \textit{Sergeev Readings}, Vol.\ 24, pp.\ 320--324. Moscow: Geoinfo.}
+
+%-------------------------------------------
+% PRESENTATIONS
+%-------------------------------------------
+\section{Presentations}
+
+\pubentry{Thorpe, A.J., \textbf{Tretiakov, S.}, Roy Sarkar, D., Kumar, K., \& Topcu, U. Learning Generalizable Neural Operators for Inverse Problems. Oral presentation at the \textit{20th U.S. National Congress on Theoretical and Applied Mechanics (USNC-TAM26)}, Pasadena, CA, June 21--25, 2026.}
+
+\pubentry{\textbf{Tretiakov, S.}, Li, X., \& Kumar, K. Toward Foundation-Ready Operator Surrogates in Mechanics: SetONet for Unstructured Functional Inputs. Oral presentation at the \textit{Engineering Mechanics Institute Conference (EMI 2026)}, Boulder, CO, June 2--5, 2026.}
+
+\pubentry{\textbf{Tretiakov, S.}, Li, X., \& Kumar, K. Robust Operator Learning via the Basis-to-Basis Framework. Oral presentation at the \textit{18th U.S. National Congress on Computational Mechanics (USNCCM18)}, Chicago, IL, July 20--24, 2025.}
+
+\pubentry{\textbf{Tretiakov, S.}, Li, X., \& Kumar, K. SetONet: A Set-Based Operator Network for Solving PDEs with Variable-Input Sampling. Poster presentation at \textit{13th Machine-Ground Interaction Consortium (MaGIC)}, UW-Madison, September 10--11, 2025.}
+
+\pubentry{Matveev, V.V., Prikhodko, I.A., \textbf{Tretiakov, S.D.}, \& Kutkhudjina, A.D. On the Development of Methodology for Large-Scale Mapping of Natural Stress State Anisotropy in Dispersed Soil Masses. Oral presentation at \textit{International Youth Scientific Forum ``Lomonosov-2024''}, Moscow, Russia, April 12--26, 2024.}
+
+\pubentry{\textbf{Tretiakov, S.D.} Identification of Parameters and Verification of Mathematical Model of Soil Consolidation. Poster presentation at \textit{International Scientific Conference ``Lomonosov-2024''}, Geology Section, Moscow, Russia, April 12--26, 2024.}
+
+\pubentry{Artamonova, N.B., Sheshenin, S.V., Orlov, E.A., \textbf{Tretiakov, S.D.}, \& Minikhanov, K.A. Identification of parameters and verification of a nonlinear coupled consolidation model. Poster at the \textit{XXIII International Conference on Computational Mechanics and Modern Applied Software Systems}, Divnomorskoe, Russia, September 4--10, 2023.}
+
+\pubentry{Artamonova, N.B., Sheshenin, S.V., Orlov, E.A., \& \textbf{Tretiakov, S.D.} Nonlinear consolidation model and parameter identification. Oral presentation at the \textit{XIII All-Russian Congress on Theoretical and Applied Mechanics}, Saint Petersburg, Russia, August 21--25, 2023.}
+
+\pubentry{Orlov, E.A. \& \textbf{Tretiakov, S.D.} Determination of parameters and verification of an elastoplastic model of deformation of water-saturated sandy soil. Oral presentation at \textit{Lomonosov-2023}, Moscow, Russia, April 10--21, 2023.}
+
+\pubentry{\textbf{Tretiakov, S.D.} \& Nikulina, M.A. Results of measuring snow power and freezing depth in the Moscow region during the winter of 2022/23. Oral presentation at \textit{Lomonosov-2023}, Moscow, Russia, April 10--21, 2023.}
+
+\pubentry{\textbf{Tretiakov, S.D.}, Orlov, E.A., \& Artamonova, N.B. Identification of parameters of a mathematical model of deformation of water-saturated sandy soil. Oral presentation at the \textit{Geological International Student Summit}, Saint Petersburg, Russia, April 6--10, 2023.}
+
+%-------------------------------------------
+% PROFESSIONAL EXPERIENCE
+%-------------------------------------------
+\section{Professional Experience}
+
+\entryhead{Chief Expert, Geology Department}{Jul 2023 -- Sep 2023}
+{Gazprom Geotechnology}{Moscow, Russia}
+\begin{itemize}
+    \item Participated in experimental studies of physical and mechanical properties of salts
+    \item Performed geomechanical modeling in Abaqus
+    \item Conducted geological surveys of the projected area
+    \item Authored geotechnical report for the bischofite development site
+\end{itemize}
+
+\vspace{6pt}
+
+\entryhead{Geological Technician}{Feb 2021 -- Aug 2021}
+{Stroiproektizyskaniia}{Kurgan, Russia}
+\begin{itemize}
+    \item Conducted experimental studies of the physical and mechanical properties of soils
+    \item Carried out field geological research
+    \item Developed a Python program to automate processing of direct simple-shear test results
+\end{itemize}
+
+%-------------------------------------------
+% HONORS & AWARDS
+%-------------------------------------------
+\section{Honors \& Awards}
+
+\entrysimple{Lomonosov MSU Increased Stipend for Academic, Research, and Community Accomplishments}{2023--2024}
+\entrysimple{2nd Prize, Geological International Student Summit Presentation}{2023}
+\entrysimple{Lomonosov Moscow State University Full Funding Scholarship}{2019--2024}
+\entrysimple{1st Prize, Regional Stage of The All-Russian Physics Olympiad}{2019}
+\entrysimple{Candidate Master of Sports in Chess}{2018}
+
+%-------------------------------------------
+% FELLOWSHIPS & GRANTS
+%-------------------------------------------
+\section{Fellowships \& Grants}
+
+\entrysimple{Cockrell School of Engineering \& UT Austin Graduate School Fellowship (renewable 3 years)}{2024--2025}
+\entrysimple{Grant, Moscow Center for Fundamental and Applied Mathematics}{2023}
+
+%-------------------------------------------
+% TECHNICAL SKILLS
+%-------------------------------------------
+\section{Technical Skills}
+\textbf{Software:} Python, C++, PyTorch, JAX, Git/GitHub, CUDA, Bash, Arduino, \LaTeX \\[3pt]
+\textbf{Simulation:} MuJoCo, Gymnasium, Newton Physics Engine, Genesis, BeamNG, AutoCAD, ArcGIS
+
+%===========================================
+\end{document}
+%===========================================

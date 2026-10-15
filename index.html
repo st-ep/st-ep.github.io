@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stepan Tretiakov</title>
+<meta name="description" content="Stepan Tretiakov, Ph.D. student in robotics at UC Berkeley. I build world models and tools that let robots handle soft, unruly things.">
+<meta name="author" content="Stepan Tretiakov">
+<meta name="theme-color" content="#FBF5E8">
+<meta name="color-scheme" content="only light">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Stepan Tretiakov">
+<meta property="og:description" content="I build world models and tools that let robots handle soft, unruly things.">
+<meta property="og:url" content="https://st-ep.github.io/">
+<link rel="canonical" href="https://st-ep.github.io/">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;1,9..144,400&family=IBM+Plex+Mono:wght@400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<a class="skip" href="#about">Skip to content</a>
+
+<header class="hero" id="top">
+  <div class="hero-stage">
+    <div class="hero-paint" id="riviera" role="img" aria-label="A Monet-style Riviera afternoon, gently moving: under an umbrella pine above a shimmering blue bay, a white robot arm on a wooden garden table pours pale white wine into a glass, again and again."></div>
+    <div class="hero-text">
+      <p class="hi">Hello, I’m</p>
+      <h1>Stepan Tretiakov</h1>
+      <p class="role">Ph.D. Robotics, UC Berkeley</p>
+      <p class="bio">I build world models and tools that let robots handle soft, unruly things.</p>
+      <p class="now"><span class="dot" aria-hidden="true"></span>Now: shaping dough with a robot arm</p>
+      <nav class="hero-links" aria-label="Quick links">
+        <a href="#publications">Publications</a>
+        <a href="#cv">CV</a>
+        <a href="https://scholar.google.com/citations?user=p7JCBQYAAAAJ">Scholar</a>
+        <a href="https://github.com/st-ep">GitHub</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<nav class="topbar" aria-label="Sections">
+  <div class="topbar-in">
+    <a class="mark" href="#top">Stepan Tretiakov</a>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#publications">Publications</a></li>
+      <li><a href="#talks">Talks</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#videos">Videos</a></li>
+      <li><a href="#cv">CV</a></li>
+      <li><a href="#blog">Blog</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+
+<section class="sec" id="about">
+  <div class="sec-in rv">
+    <div class="sec-head"><h2>About</h2><canvas class="brush" data-p="wheat" aria-hidden="true"></canvas></div>
+    <div class="about">
+      <figure class="portrait">
+        <div class="frame"><div class="mat"><canvas id="underpainting" aria-hidden="true"></canvas></div></div>
+        <figcaption class="label"><b>Portrait, head and shoulders</b>Study in progress</figcaption>
+      </figure>
+      <div>
+        <p class="lede">I am a Ph.D. student in robotics at UC Berkeley, advised by Krishna Kumar. I study how a robot can learn what a material is from a single touch, and then use what it learned to act.</p>
+        <p>I came to robotics through the ground. At Moscow State University I studied geology and measured how wet sand deforms and when it yields. At UT Austin I learned neural operators and the weak form of momentum balance. Now I bring the two together: world models that recover the physics of a material from one interaction and plan with it.</p>
+        <dl class="facts">
+          <dt>Now</dt><dd>Ph.D. Robotics, UC Berkeley</dd>
+          <dt>Before</dt><dd>M.S. Engineering, UT Austin<br>B.S. Geology with Honours, Moscow State University</dd>
+          <dt>Interests</dt><dd>World models, material identification, deformable manipulation, operator learning</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="research">
+  <div class="sec-in rv">
+    <div class="sec-head"><h2>Research story</h2><canvas class="brush" data-p="meadow" aria-hidden="true"></canvas></div>
+    <p class="lede">Dough, slime, glycerol, sand. The same push moves each one differently, and a robot that cannot tell them apart cannot plan. My work turns one interaction into a law the robot can reason with.</p>
+    <ol class="movements">
+      <li><span class="num" aria-hidden="true">i</span><div><h3>Observe one interaction</h3><p>The robot presses, bends or pours once. Cameras record how the material moves, and a force sensor, when the robot pushes, records how it pushes back.</p></div></li>
+      <li><span class="num" aria-hidden="true">ii</span><div><h3>Recover the law</h3><p>A single least-squares solve on the weak form of momentum balance returns an explicit material law in seconds, with no differentiation through a simulator.</p></div></li>
+      <li><span class="num" aria-hidden="true">iii</span><div><h3>Act on what was learned</h3><p>Held fixed, the law plans new actions on new shapes: pinching dough into a target, putting a golf ball with a soft club, pouring glycerol to a chosen volume.</p></div></li>
+    </ol>
+    <div class="coda">
+      <h3>Physically viable world models</h3>
+      <p>The larger aim is a world model that can answer “what happens if I act this way?” by representing the physics behind the outcome, not only the look of the next frame.</p>
+    </div>
+    <div class="coda">
+      <h3>Before robots, operators</h3>
+      <p>Learning maps between functions from scattered, unordered sensors (SetONet), and inverting ill-posed ones with learned bases (B2B<sup>−1</sup>). The learned function bases from this line of work carry into the robot work.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec-wide" id="publications">
+  <div class="sec-in rv">
+    <div class="sec-head"><h2>Publications</h2><canvas class="brush" data-p="sea" aria-hidden="true"></canvas></div>
+    <div class="pubs">
+      <article class="pub">
+        <div class="frame frame-thin"><div class="mat"><span class="yr">2026</span><h3>FORM: Robot Manipulation through Direct Material Law Identification</h3></div></div>
+        <div class="plaque label">
+          <p class="authors"><b>S. Tretiakov</b>, R. Zhao, C.-H. Hsiao, X. Li, A. Thorpe, H. Iqbal, S. Chinchali, U. Topcu, K. Kumar</p>
+          <p class="venue">Submitted to ICRA 2027 <span class="badge">Lead author</span></p>
+          <div class="links"><a href="https://arxiv.org/abs/2609.38105">arXiv</a><a href="https://form-robots.github.io/">Project</a><a href="https://github.com/form-robots/FORM">Code</a></div>
+        </div>
+      </article>
+      <article class="pub">
+        <div class="frame frame-thin"><div class="mat"><span class="yr">2026</span><h3>Physically Viable World Models: A Case for Query-Conditioned Embodied AI</h3></div></div>
+        <div class="plaque label">
+          <p class="authors">A. J. Thorpe*, <b>S. Tretiakov</b>*, C.-H. Hsiao, S. A. Low, X. Li, H. Iqbal, N. P. Bhatt, U. Topcu, K. Kumar</p>
+          <p class="venue">Preprint. *Equal contribution <span class="badge">Co-first author</span></p>
+          <div class="links"><a href="https://arxiv.org/abs/2605.30542">arXiv</a><a href="https://pvwm.github.io/">Videos</a></div>
+        </div>
+      </article>
+      <article class="pub">
+        <div class="frame frame-thin"><div class="mat"><span class="yr">2026</span><h3>Neural Operators for Multi-Task Control and Adaptation</h3></div></div>
+        <div class="plaque label">
+          <p class="authors">D. Sewell, X. Li, <b>S. Tretiakov</b>, K. Kumar, D. Fridovich-Keil</p>
+          <p class="venue">Preprint</p>
+          <div class="links"><a href="https://arxiv.org/abs/2604.03449">arXiv</a></div>
+        </div>
+      </article>
+      <article class="pub">
+        <div class="frame frame-thin"><div class="mat"><span class="yr">2025</span><h3>Learning Generalizable Neural Operators for Inverse Problems</h3></div></div>
+        <div class="plaque label">
+          <p class="authors">A. J. Thorpe, <b>S. Tretiakov</b>, D. Roy Sarkar, K. Kumar, U. Topcu</p>
+          <p class="venue">Preprint</p>
+          <div class="links"><a href="https://arxiv.org/abs/2512.18120">arXiv</a></div>
+        </div>
+      </article>
+      <article class="pub">
+        <div class="frame frame-thin"><div class="mat"><span class="yr">2025</span><h3>SetONet: A Set-Based Operator Network for Solving PDEs with Variable-Input Sampling</h3></div></div>
+        <div class="plaque label">
+          <p class="authors"><b>S. Tretiakov</b>, X. Li, K. Kumar</p>
+          <p class="venue">Preprint <span class="badge">Lead author</span></p>
+          <div class="links"><a href="https://arxiv.org/abs/2505.04738">arXiv</a><a href="https://github.com/st-ep/SetONet">Code</a></div>
+        </div>
+      </article>
+    </div>
+    <details class="more">
+      <summary>Earlier work in geomechanics, 2023 to 2024</summary>
+      <ol>
+        <li><b>S. D. Tretiakov</b>, N. B. Artamonova. Identification of parameters and verification of a mathematical model of deformation of water-saturated sandy soil. <i>Geological International Student Summit</i>, 2024.</li>
+        <li>N. B. Artamonova, S. V. Sheshenin, E. A. Orlov, <b>S. D. Tretiakov</b>, K. A. Minikhanov. Identification of parameters and verification of a nonlinear coupled consolidation model. <i>Computational Mechanics and Modern Applied Software Systems (VMSPPS)</i>, 2023.</li>
+        <li>N. B. Artamonova, S. V. Sheshenin, A. Yu. Mirny, E. A. Orlov, <b>S. D. Tretiakov</b>, K. A. Minikhanov. Mathematical model of nonlinear soil consolidation and determination of its parameters. <i>Sergeev Readings</i>, vol. 24, 2023.</li>
+      </ol>
+    </details>
+  </div>
+</section>
+
+<section class="sec" id="talks">
+  <div class="sec-in rv">
+    <div class="sec-head"><h2>Talks</h2><canvas class="brush" data-p="violet" aria-hidden="true"></canvas></div>
+    <ul class="talks">
+      <li><span class="when">Jun 2026</span><div><div class="what">Learning Generalizable Neural Operators for Inverse Problems</div><div class="where">Oral, 20th U.S. National Congress on Theoretical and Applied Mechanics (USNC-TAM), Pasadena</div></div></li>
+      <li><span class="when">Jun 2026</span><div><div class="what">Toward Foundation-Ready Operator Surrogates in Mechanics: SetONet for Unstructured Functional Inputs</div><div class="where">Oral, Engineering Mechanics Institute Conference (EMI), Boulder</div></div></li>
+      <li><span class="when">Sep 2025</span><div><div class="what">SetONet: A Set-Based Operator Network for Solving PDEs with Variable-Input Sampling</div><div class="where">Poster, 13th Machine-Ground Interaction Consortium (MaGIC), UW-Madison</div></div></li>
+      <li><span class="when">Jul 2025</span><div><div class="what">Robust Operator Learning via the Basis-to-Basis Framework</div><div class="where">Oral, 18th U.S. National Congress on Computational Mechanics (USNCCM), Chicago</div></div></li>
+    </ul>
+    <details class="more">
+      <summary>Earlier talks in geomechanics, 2023 to 2024</summary>
+      <ul>
+        <li>Large-scale mapping of natural stress anisotropy in dispersed soils. Oral, Lomonosov-2024 forum, Moscow, April 2024.</li>
+        <li>Parameters and verification of a soil consolidation model. Poster, Lomonosov-2024, Moscow, April 2024.</li>
+        <li>A nonlinear coupled consolidation model. Poster, VMSPPS 2023, Divnomorskoe, September 2023.</li>
+        <li>Nonlinear consolidation and parameter identification. Oral, XIII All-Russian Congress on Theoretical and Applied Mechanics, Saint Petersburg, August 2023.</li>
+        <li>An elastoplastic model of water-saturated sandy soil. Oral, Lomonosov-2023, Moscow, April 2023.</li>
+        <li>Snow depth and freezing depth in the Moscow region, winter 2022 to 2023. Oral, Lomonosov-2023, Moscow, April 2023.</li>
+        <li>Parameters of a model of water-saturated sandy soil. Oral, Geological International Student Summit, Saint Petersburg, April 2023. 2nd Prize.</li>
+      </ul>
+    </details>
+  </div>
+</section>
+
+<section class="sec sec-wide" id="projects">
+  <div class="sec-in rv">
+    <div class="sec-head"><h2>Projects and code</h2><canvas class="brush" data-p="meadow" aria-hidden="true"></canvas></div>
+    <div class="projects">
+      <a class="proj" href="https://github.com/form-robots/FORM">
+        <span class="tag">Python · MPM · robotics</span>
+        <h3>FORM</h3>
+        <p>Identify a material law from one robot interaction, then plan new actions with it in simulation and on hardware.</p>
+        <span class="links"><span>github.com/form-robots/FORM</span></span>
+      </a>
+      <a class="proj" href="https://pvwm.github.io/">
+        <span class="tag">Position paper · supplementary videos</span>
+        <h3>Physically Viable World Models</h3>
+        <p>Why world models for embodied AI should answer intervention queries, and what that asks of them.</p>
+        <span class="links"><span>pvwm.github.io</span></span>
+      </a>
+      <a class="proj" href="https://github.com/st-ep/SetONet">
+        <span class="tag">PyTorch · operator learning</span>
+        <h3>SetONet</h3>
+        <p>A permutation-invariant operator network for PDEs whose inputs arrive at variable, unordered sensor locations.</p>
+        <span class="links"><span>github.com/st-ep/SetONet</span></span>
+      </a>
+      <a class="proj" href="https://github.com/st-ep/ChladniBenchmark">
+        <span class="tag">Benchmark · inverse problems</span>
+        <h3>Chladni plate benchmark</h3>
+        <p>An inverse problem with many valid answers, for testing operator learning where the inverse map is not unique.</p>
+        <span class="links"><span>github.com/st-ep/ChladniBenchmark</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec-wide" id="videos">
+  <div class="sec-in rv">
+    <div class="sec-head"><h2>Robot videos</h2><canvas class="brush" data-p="poppy" aria-hidden="true"></canvas></div>
+    <p class="lede">From FORM: each law is identified once from a single probe, then held fixed to plan new tasks.</p>
+    <div class="videos">
+      <figure class="vid">
+        <div class="frame frame-thin"><div class="mat"><video data-auto controls muted loop playsinline preload="none" poster="assets/video/form/pressing.jpg" aria-label="Real presses of red Play-Doh, yellow butter slime and gray plasticine above their simulated predictions"><source src="assets/video/form/pressing.mp4" type="video/mp4"></video></div></div>
+        <figcaption><b>Pressing <span class="kind">HARDWARE</span></b>A new, gentler press on three real materials, above the simulation predicted by each identified law.</figcaption>
+      </figure>
+      <figure class="vid">
+        <div class="frame frame-thin"><div class="mat"><video data-auto controls muted loop playsinline preload="none" poster="assets/video/form/shaping_hw.jpg" aria-label="A robot pinching a block of Play-Doh into an X"><source src="assets/video/form/shaping_hw.mp4" type="video/mp4"></video></div></div>
+        <figcaption><b>Shaping <span class="kind">HARDWARE</span></b>Four planned pinches, executed open loop on a fresh block of Play-Doh.</figcaption>
+      </figure>
+      <figure class="vid">
+        <div class="frame frame-thin"><div class="mat"><video data-auto controls muted loop playsinline preload="none" poster="assets/video/form/pouring.jpg" aria-label="A robot pouring glycerol beside its simulated replay"><source src="assets/video/form/pouring.mp4" type="video/mp4"></video></div></div>
+        <figcaption><b>Pouring <span class="kind">HARDWARE</span></b>One exploratory pour of glycerol identifies its viscosity; the simulation replays it.</figcaption>
+      </figure>
+      <figure class="vid">
+        <div class="frame frame-thin"><div class="mat"><video data-auto controls muted loop playsinline preload="none" poster="assets/video/form/shaping_sim.jpg" aria-label="Simulated pinches shaping a block into an X"><source src="assets/video/form/shaping_sim.mp4" type="video/mp4"></video></div></div>
+        <figcaption><b>Shaping <span class="kind">SIMULATION</span></b>Six pinches shape a block into an X, planned with the right law and with the wrong one.</figcaption>
+      </figure>
+      <figure class="vid">
+        <div class="frame frame-thin"><div class="mat"><video data-auto controls muted loop playsinline preload="none" poster="assets/video/form/insertion.jpg" aria-label="Simulated elastic rod threaded through a hole"><source src="assets/video/form/insertion.mp4" type="video/mp4"></video></div></div>
+        <figcaption><b>Rod insertion <span class="kind">SIMULATION</span></b>An 8 mm elastic rod threads a 12 mm hole only when planned with its own law.</figcaption>
+      </figure>
+      <figure class="vid">
+        <div class="frame frame-thin"><div class="mat"><video data-auto controls muted loop playsinline preload="none" poster="assets/video/form/golf.jpg" aria-label="Simulated golf putt with an elastic club"><source src="assets/video/form/golf.mp4" type="video/mp4"></video></div></div>
+        <figcaption><b>Golf putting <span class="kind">SIMULATION</span></b>A soft club stops the ball on target with the matched law, and misses with the swapped one.</figcaption>
+      </figure>
+    </div>
+    <p class="after mono"><a href="https://form-robots.github.io/#video">Watch FORM in three minutes</a></p>
+  </div>
+</section>
+
+<section class="sec" id="cv">
+  <div class="sec-in rv">
+    <div class="sec-head"><h2>CV</h2><canvas class="brush" data-p="wheat" aria-hidden="true"></canvas></div>
+    <div class="cv-bar">
+      <span class="key"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 8m-1 0a1 1 0 1 1 2 0a2 2 0 1 1 -4 0a3 3 0 1 1 6 0a4.5 4.5 0 1 1 -9 0" fill="none" stroke="#8E6A4A" stroke-width="1.3" transform="translate(8 8) scale(1.45) translate(-8 -8)"/></svg>Paper</span>
+      <span class="key"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13L2 6M8 13L4.5 4M8 13L8 3M8 13L11.5 4M8 13L14 6" stroke="#6E5F8E" stroke-width="1.6" stroke-linecap="round"/></svg>Talk</span>
+      <span class="key"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><ellipse cx="8" cy="9" rx="6" ry="4" fill="#3E4A5E"/><path d="M6 8L10 7" stroke="#F2C46A" stroke-width="2" stroke-linecap="round"/></svg>Award</span>
+      <span class="key"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="4" fill="#C8553D"/></svg>Now</span>
+      <span class="sp"></span>
+      <a class="btn" href="assets/cv/Stepan_Tretiakov_CV.pdf" download>Download CV (PDF)</a>
+    </div>
+    <div class="strata-box" id="strata" role="img" aria-label="The CV painted as a chalk cliff at Etretat. Three layers, youngest on top: UC Berkeley, Ph.D. Robotics, 2026 to present; UT Austin, M.S. Engineering, 2024 to 2026; Moscow State University, B.S. Geology with Honours, 2019 to 2024. Papers, talks and awards sit in their layers. The same details are listed under Read the CV as text, below.">
+      <div class="strata"></div>
+    </div>
+    <details class="more cv-text">
+      <summary>Read the CV as text</summary>
+      <h3>UC Berkeley <span>Ph.D. Robotics, 2026 to present</span></h3>
+      <p>Advisor: Krishna Kumar. World models for robots that handle soft, unruly matter. FORM (lead author, 2026). Now: real-robot experiments with RGB-D capture and wrist force-torque sensing.</p>
+      <h3>UT Austin <span>M.S. Engineering, 2024 to 2026</span></h3>
+      <p>Advisor: Krishna Kumar. SetONet (lead author, 2025), inverse neural operators (2025), neural operators for multi-task control (2026), Physically Viable World Models (co-first author, 2026). Talks at USNCCM18, MaGIC, EMI and USNC-TAM. Cockrell School of Engineering and UT Austin Graduate School Fellowship, 2024 to 2025.</p>
+      <h3>Moscow State University <span>B.S. Geology with Honours, 2019 to 2024</span></h3>
+      <p>Advisor: Nina B. Artamonova. Thesis: determining the deformation and strength properties of sand soil as parameters for deformation plasticity theory. Three papers on soil consolidation and sandy soil models, 2023 to 2024, and talks in Moscow and Saint Petersburg. Full funding scholarship, 2019 to 2024; increased stipend for academic, research and community work, 2023 to 2024; MCFAM grant, 2023; 2nd Prize at the Geological International Student Summit, 2023.</p>
+      <p>Chief Expert, Geology Department, Gazprom Geotechnology, summer 2023: salt mechanics tests, Abaqus models and a geotechnical report for a bischofite site. Geological technician, Kurgan, 2021: soil lab tests, field geology, and a Python tool that automated direct simple-shear test processing.</p>
+      <p>Before university: 1st Prize at the regional stage of the All-Russian Physics Olympiad, 2019.</p>
+    </details>
+  </div>
+</section>
+
+<section class="sec" id="blog">
+  <div class="sec-in rv">
+    <div class="sec-head"><h2>Blog</h2><canvas class="brush" data-p="sea" aria-hidden="true"></canvas></div>
+    <div class="soon"><p>Coming soon.</p></div>
+  </div>
+</section>
+
+<section class="sec" id="contact">
+  <div class="sec-in rv">
+    <div class="sec-head"><h2>Contact</h2><canvas class="brush" data-p="poppy" aria-hidden="true"></canvas></div>
+    <p class="lede">The best way to reach me is email.</p>
+    <a class="contact-mail" href="mailto:stepa@berkeley.edu">stepa@berkeley.edu</a>
+    <div class="links contact-links">
+      <a href="https://github.com/st-ep">GitHub</a>
+      <a href="https://scholar.google.com/citations?user=p7JCBQYAAAAJ">Google Scholar</a>
+      <a href="https://www.linkedin.com/in/stepan-tretiakov-93202230a/">LinkedIn</a>
+      <a href="assets/cv/Stepan_Tretiakov_CV.pdf">CV (PDF)</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="sec-in">
+    <span>© 2026 Stepan Tretiakov</span>
+    <span>Painted in code, after Monet.</span>
+  </div>
+</footer>
+
+<script src="assets/js/riviera.js"></script>
+<script src="assets/js/strata.js"></script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>
