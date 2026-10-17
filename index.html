@@ -20,24 +20,32 @@
 <link rel="stylesheet" href="assets/css/site.css">
 </head>
 <body>
-<a class="skip" href="#about">Skip to content</a>
+<a class="skip" href="#research">Skip to content</a>
 
 <header class="hero" id="top">
   <div class="hero-stage">
     <div class="hero-paint" id="riviera" role="img" aria-label="A Monet-style Riviera afternoon, gently moving: under an umbrella pine above a shimmering blue bay, a white robot arm on a wooden garden table pours pale white wine into a glass, again and again."></div>
-    <div class="hero-text">
-      <p class="hi">Hello, I’m</p>
-      <h1>Stepan Tretiakov</h1>
-      <p class="role">Ph.D. Robotics, UC Berkeley</p>
-      <p class="bio">I build world models and tools that let robots handle soft, unruly things.</p>
-      <p class="now"><span class="dot" aria-hidden="true"></span>Now: shaping dough with a robot arm</p>
-      <nav class="hero-links" aria-label="Quick links">
-        <a href="#publications">Publications</a>
-        <a href="#cv">CV</a>
-        <a href="https://scholar.google.com/citations?user=p7JCBQYAAAAJ">Scholar</a>
-        <a href="https://github.com/st-ep">GitHub</a>
-      </nav>
+    <nav class="wall-nav" aria-label="Sections"><a href="#research">Research</a><a href="#publications">Publications</a><a href="#talks">Talks</a><a href="#projects">Projects</a><a href="#cv">CV</a><a href="#contact">Contact</a></nav>
+    <div class="hero-text" id="about">
+      <figure class="portrait-frame">
+        <div class="frame-a">
+          <span class="rail" aria-hidden="true"><i class="t"></i><i class="r"></i><i class="b"></i><i class="l"></i></span>
+          <div class="sight"><div class="pic"><img src="assets/img/portrait.jpg" width="720" height="1280" alt="Photo of Stepan Tretiakov on a mountain, with pines, a big white cloud and a valley behind him"></div></div>
+        </div>
+      </figure>
+      <div class="hero-label">
+        <p class="hi">Hello, I’m</p>
+        <h1><span>Stepan</span> <span>Tretiakov</span></h1>
+        <p class="role">Ph.D. Robotics, UC Berkeley</p>
+        <p class="bio">I build world models and tools that let robots handle soft, unruly things.</p>
+        <nav class="hero-links" aria-label="Quick links">
+          <a href="https://scholar.google.com/citations?user=p7JCBQYAAAAJ">Scholar</a>
+          <a href="https://github.com/st-ep">GitHub</a>
+          <a href="assets/cv/Stepan_Tretiakov_CV.pdf" download>CV (PDF)</a>
+        </nav>
+      </div>
     </div>
+    <p class="latest"><b>NOW ON VIEW</b><span><a href="https://form-robots.github.io/">FORM: robot manipulation through direct material law identification</a>. Preprint, 2026. Submitted to ICRA 2027.</span></p>
   </div>
 </header>
 
@@ -45,12 +53,11 @@
   <div class="topbar-in">
     <a class="mark" href="#top">Stepan Tretiakov</a>
     <ul>
-      <li><a href="#about">About</a></li>
+      <li><a href="#top">About</a></li>
       <li><a href="#research">Research</a></li>
       <li><a href="#publications">Publications</a></li>
       <li><a href="#talks">Talks</a></li>
       <li><a href="#projects">Projects</a></li>
-      <li><a href="#videos">Videos</a></li>
       <li><a href="#cv">CV</a></li>
       <li><a href="#blog">Blog</a></li>
       <li><a href="#contact">Contact</a></li>
@@ -60,100 +67,140 @@
 
 <main>
 
-<section class="sec" id="about">
+<section class="sec sec-wide" id="research">
   <div class="sec-in rv">
-    <div class="sec-head"><h2>About</h2><canvas class="brush" data-p="wheat" aria-hidden="true"></canvas></div>
-    <div class="about">
-      <figure class="portrait">
-        <div class="frame"><div class="mat"><canvas id="underpainting" aria-hidden="true"></canvas></div></div>
-        <figcaption class="label"><b>Portrait, head and shoulders</b>Study in progress</figcaption>
-      </figure>
-      <div>
-        <p class="lede">I am a Ph.D. student in robotics at UC Berkeley, advised by Krishna Kumar. I study how a robot can learn what a material is from a single touch, and then use what it learned to act.</p>
-        <p>I came to robotics through the ground. At Moscow State University I studied geology and measured how wet sand deforms and when it yields. At UT Austin I learned neural operators and the weak form of momentum balance. Now I bring the two together: world models that recover the physics of a material from one interaction and plan with it.</p>
-        <dl class="facts">
-          <dt>Now</dt><dd>Ph.D. Robotics, UC Berkeley</dd>
-          <dt>Before</dt><dd>M.S. Engineering, UT Austin<br>B.S. Geology with Honours, Moscow State University</dd>
-          <dt>Interests</dt><dd>World models, material identification, deformable manipulation, operator learning</dd>
-        </dl>
+    <div class="sec-head"><h2>Research</h2><canvas class="brush" data-p="meadow" aria-hidden="true"></canvas></div>
+    <article class="feature" aria-labelledby="t-overview">
+      <div class="frame-a">
+        <span class="rail" aria-hidden="true"><i class="t"></i><i class="r"></i><i class="b"></i><i class="l"></i></span><span class="orn tl" aria-hidden="true"></span><span class="orn tr" aria-hidden="true"></span><span class="orn bl" aria-hidden="true"></span><span class="orn br" aria-hidden="true"></span>
+        <div class="sight"><div class="pic"><video id="overview" controls playsinline preload="none" width="1280" height="720" poster="assets/video/form/form_overview.jpg" aria-label="FORM overview video, about three minutes, narrated through on-screen captions"><source src="assets/video/form/form_overview.mp4" type="video/mp4"></video></div></div>
+        <p class="plaque"><span>FORM in three minutes</span><span class="yr">2026</span></p>
       </div>
+      <div class="wl">
+        <h3 id="t-overview">FORM: robot manipulation through direct material law identification</h3>
+        <p class="ln">Observe one interaction, recover an explicit material law with a single least-squares solve, then use that law to plan new robot actions on new shapes. The video is narrated through on-screen captions and has no sound.</p>
+        <p class="links"><a href="https://form-robots.github.io/">Project page</a><a href="https://arxiv.org/abs/2609.38105">arXiv</a><a href="https://github.com/form-robots/FORM">Code</a></p>
+      </div>
+    </article>
+    <h3 class="sub">Hardware</h3>
+    <div class="clips clips-two">
+      <figure class="clip">
+        <div class="frame-a">
+          <span class="rail" aria-hidden="true"><i class="t"></i><i class="r"></i><i class="b"></i><i class="l"></i></span>
+          <div class="sight"><div class="pic"><video data-auto controls muted loop playsinline preload="none" width="424" height="210" poster="assets/video/form/shaping_hw.jpg" aria-label="A robot pinching a block of Play-Doh into an X"><source src="assets/video/form/shaping_hw.mp4" type="video/mp4"></video></div></div>
+          <p class="plaque"><span>Pinching</span></p>
+        </div>
+        <figcaption class="cap">Four planned pinches, executed open loop on a fresh block of Play-Doh.</figcaption>
+      </figure>
+      <figure class="clip">
+        <div class="frame-a">
+          <span class="rail" aria-hidden="true"><i class="t"></i><i class="r"></i><i class="b"></i><i class="l"></i></span>
+          <div class="sight"><div class="pic"><video data-auto controls muted loop playsinline preload="none" width="1280" height="778" poster="assets/video/form/pouring.jpg" aria-label="A robot pouring glycerol beside its simulated replay"><source src="assets/video/form/pouring.mp4" type="video/mp4"></video></div></div>
+          <p class="plaque"><span>Pouring</span></p>
+        </div>
+        <figcaption class="cap">One exploratory pour of glycerol identifies its viscosity; the simulation replays it.</figcaption>
+      </figure>
     </div>
-  </div>
-</section>
-
-<section class="sec" id="research">
-  <div class="sec-in rv">
-    <div class="sec-head"><h2>Research story</h2><canvas class="brush" data-p="meadow" aria-hidden="true"></canvas></div>
-    <p class="lede">Dough, slime, glycerol, sand. The same push moves each one differently, and a robot that cannot tell them apart cannot plan. My work turns one interaction into a law the robot can reason with.</p>
-    <ol class="movements">
-      <li><span class="num" aria-hidden="true">i</span><div><h3>Observe one interaction</h3><p>The robot presses, bends or pours once. Cameras record how the material moves, and a force sensor, when the robot pushes, records how it pushes back.</p></div></li>
-      <li><span class="num" aria-hidden="true">ii</span><div><h3>Recover the law</h3><p>A single least-squares solve on the weak form of momentum balance returns an explicit material law in seconds, with no differentiation through a simulator.</p></div></li>
-      <li><span class="num" aria-hidden="true">iii</span><div><h3>Act on what was learned</h3><p>Held fixed, the law plans new actions on new shapes: pinching dough into a target, putting a golf ball with a soft club, pouring glycerol to a chosen volume.</p></div></li>
-    </ol>
-    <div class="coda">
-      <h3>Physically viable world models</h3>
-      <p>The larger aim is a world model that can answer “what happens if I act this way?” by representing the physics behind the outcome, not only the look of the next frame.</p>
-    </div>
-    <div class="coda">
-      <h3>Before robots, operators</h3>
-      <p>Learning maps between functions from scattered, unordered sensors (SetONet), and inverting ill-posed ones with learned bases (B2B<sup>−1</sup>). The learned function bases from this line of work carry into the robot work.</p>
+    <h3 class="sub">Simulation</h3>
+    <div class="clips clips-one">
+      <figure class="clip">
+        <div class="frame-a">
+          <span class="rail" aria-hidden="true"><i class="t"></i><i class="r"></i><i class="b"></i><i class="l"></i></span>
+          <div class="sight"><div class="pic"><video data-auto controls muted loop playsinline preload="none" width="1616" height="946" poster="assets/video/form/golf_wide.jpg" aria-label="Simulated golf putts with an elastic club for two materials: plans using the matched law and the swapped law"><source src="assets/video/form/golf_wide.mp4" type="video/mp4"></video></div></div>
+          <p class="plaque"><span>Golf putting</span></p>
+        </div>
+        <figcaption class="cap">A soft club, planned with each material’s identified law, stops the ball on target; planned with the other material’s law, it misses.</figcaption>
+      </figure>
     </div>
   </div>
 </section>
 
 <section class="sec sec-wide" id="publications">
+  <div class="wall-light" aria-hidden="true"><div class="sun"><i></i></div></div>
   <div class="sec-in rv">
     <div class="sec-head"><h2>Publications</h2><canvas class="brush" data-p="sea" aria-hidden="true"></canvas></div>
-    <div class="pubs">
-      <article class="pub">
-        <div class="frame frame-thin"><div class="mat"><span class="yr">2026</span><h3>FORM: Robot Manipulation through Direct Material Law Identification</h3></div></div>
-        <div class="plaque label">
-          <p class="authors"><b>S. Tretiakov</b>, R. Zhao, C.-H. Hsiao, X. Li, A. Thorpe, H. Iqbal, S. Chinchali, U. Topcu, K. Kumar</p>
-          <p class="venue">Submitted to ICRA 2027 <span class="badge">Lead author</span></p>
-          <div class="links"><a href="https://arxiv.org/abs/2609.38105">arXiv</a><a href="https://form-robots.github.io/">Project</a><a href="https://github.com/form-robots/FORM">Code</a></div>
+    <div class="salon">
+      <div class="hang">
+      <article class="work lead" id="pub-form" aria-labelledby="t-form">
+        <div class="frame-a">
+          <span class="rail" aria-hidden="true"><i class="t"></i><i class="r"></i><i class="b"></i><i class="l"></i></span><span class="orn tl" aria-hidden="true"></span><span class="orn tr" aria-hidden="true"></span><span class="orn bl" aria-hidden="true"></span><span class="orn br" aria-hidden="true"></span>
+          <div class="sight"><div class="pic"><canvas data-vignette="form" aria-hidden="true" style="aspect-ratio:4 / 3"></canvas></div></div>
+          <p class="plaque"><span>The Pour, Riviera</span><span class="yr">2026</span></p>
+        </div>
+        <div class="wl">
+          <h3 id="t-form">FORM: Robot Manipulation through Direct Material Law Identification</h3>
+          <p class="au"><b>S. Tretiakov</b>, R. Zhao, C.-H. Hsiao, X. Li, A. Thorpe, H. Iqbal, S. Chinchali, U. Topcu, K. Kumar</p>
+          <p class="ve">2026. Submitted to ICRA 2027 <span class="badge">Lead author</span></p>
+          <p class="ln">From one interaction, an explicit material law in seconds. Held fixed, it plans pinches, putts and pours.</p>
+          <p class="links"><a href="https://arxiv.org/abs/2609.38105">arXiv</a><a href="https://form-robots.github.io/">Project</a><a href="https://github.com/form-robots/FORM">Code</a></p>
         </div>
       </article>
-      <article class="pub">
-        <div class="frame frame-thin"><div class="mat"><span class="yr">2026</span><h3>Physically Viable World Models: A Case for Query-Conditioned Embodied AI</h3></div></div>
-        <div class="plaque label">
-          <p class="authors">A. J. Thorpe*, <b>S. Tretiakov</b>*, C.-H. Hsiao, S. A. Low, X. Li, H. Iqbal, N. P. Bhatt, U. Topcu, K. Kumar</p>
-          <p class="venue">Preprint. *Equal contribution <span class="badge">Co-first author</span></p>
-          <div class="links"><a href="https://arxiv.org/abs/2605.30542">arXiv</a><a href="https://pvwm.github.io/">Videos</a></div>
+      <article class="work lead" id="pub-pvwm" aria-labelledby="t-pvwm">
+        <div class="frame-a">
+          <span class="rail" aria-hidden="true"><i class="t"></i><i class="r"></i><i class="b"></i><i class="l"></i></span><span class="orn tl" aria-hidden="true"></span><span class="orn tr" aria-hidden="true"></span><span class="orn bl" aria-hidden="true"></span><span class="orn br" aria-hidden="true"></span>
+          <div class="sight"><div class="pic"><canvas data-vignette="pvwm" aria-hidden="true" style="aspect-ratio:4 / 3"></canvas></div></div>
+          <p class="plaque"><span>Water and Honey</span><span class="yr">2026</span></p>
+        </div>
+        <div class="wl">
+          <h3 id="t-pvwm">Physically Viable World Models: A Case for <span class="nw">Query-Conditioned</span> Embodied AI</h3>
+          <p class="au">A. J. Thorpe*, <b>S. Tretiakov*</b>, C.-H. Hsiao, S. A. Low, X. Li, H. Iqbal, N. P. Bhatt, U. Topcu, K. Kumar</p>
+          <p class="ve">2026. Preprint. *Equal contribution <span class="badge">Co-first author</span></p>
+          <p class="ln">A world model should answer what happens if a robot acts, by representing the physics behind the outcome.</p>
+          <p class="links"><a href="https://arxiv.org/abs/2605.30542">arXiv</a><a href="https://pvwm.github.io/">Videos</a></p>
         </div>
       </article>
-      <article class="pub">
-        <div class="frame frame-thin"><div class="mat"><span class="yr">2026</span><h3>Neural Operators for Multi-Task Control and Adaptation</h3></div></div>
-        <div class="plaque label">
-          <p class="authors">D. Sewell, X. Li, <b>S. Tretiakov</b>, K. Kumar, D. Fridovich-Keil</p>
-          <p class="venue">Preprint</p>
-          <div class="links"><a href="https://arxiv.org/abs/2604.03449">arXiv</a></div>
+      <article class="work lead" id="pub-multitask" aria-labelledby="t-multitask">
+        <div class="frame-a">
+          <span class="rail" aria-hidden="true"><i class="t"></i><i class="r"></i><i class="b"></i><i class="l"></i></span><span class="orn tl" aria-hidden="true"></span><span class="orn tr" aria-hidden="true"></span><span class="orn bl" aria-hidden="true"></span><span class="orn br" aria-hidden="true"></span>
+          <div class="sight"><div class="pic"><canvas data-vignette="multitask" aria-hidden="true" style="aspect-ratio:4 / 3"></canvas></div></div>
+          <p class="plaque"><span>Boats, Many Winds</span><span class="yr">2026</span></p>
+        </div>
+        <div class="wl">
+          <h3 id="t-multitask">Neural Operators for <span class="nw">Multi-Task</span> Control and Adaptation</h3>
+          <p class="au">D. Sewell, X. Li, <b>S. Tretiakov</b>, K. Kumar, D. Fridovich-Keil</p>
+          <p class="ve">2026. Preprint</p>
+          <p class="ln">One operator maps a task to its optimal control law, and adapts quickly to new tasks.</p>
+          <p class="links"><a href="https://arxiv.org/abs/2604.03449">arXiv</a></p>
         </div>
       </article>
-      <article class="pub">
-        <div class="frame frame-thin"><div class="mat"><span class="yr">2025</span><h3>Learning Generalizable Neural Operators for Inverse Problems</h3></div></div>
-        <div class="plaque label">
-          <p class="authors">A. J. Thorpe, <b>S. Tretiakov</b>, D. Roy Sarkar, K. Kumar, U. Topcu</p>
-          <p class="venue">Preprint</p>
-          <div class="links"><a href="https://arxiv.org/abs/2512.18120">arXiv</a></div>
+      <article class="work lead" id="pub-inverse" aria-labelledby="t-inverse">
+        <div class="frame-a">
+          <span class="rail" aria-hidden="true"><i class="t"></i><i class="r"></i><i class="b"></i><i class="l"></i></span><span class="orn tl" aria-hidden="true"></span><span class="orn tr" aria-hidden="true"></span><span class="orn bl" aria-hidden="true"></span><span class="orn br" aria-hidden="true"></span>
+          <div class="sight"><div class="pic"><canvas data-vignette="inverse" aria-hidden="true" style="aspect-ratio:4 / 3"></canvas></div></div>
+          <p class="plaque"><span>Chladni Sand</span><span class="yr">2025</span></p>
+        </div>
+        <div class="wl">
+          <h3 id="t-inverse">Learning Generalizable Neural Operators for Inverse Problems</h3>
+          <p class="au">A. J. Thorpe, <b>S. Tretiakov</b>, D. Roy Sarkar, K. Kumar, U. Topcu</p>
+          <p class="ve">2025. Preprint</p>
+          <p class="ln">Ill-posed inverse maps, learned by separating how functions are represented from how they are inverted.</p>
+          <p class="links"><a href="https://arxiv.org/abs/2512.18120">arXiv</a></p>
         </div>
       </article>
-      <article class="pub">
-        <div class="frame frame-thin"><div class="mat"><span class="yr">2025</span><h3>SetONet: A Set-Based Operator Network for Solving PDEs with Variable-Input Sampling</h3></div></div>
-        <div class="plaque label">
-          <p class="authors"><b>S. Tretiakov</b>, X. Li, K. Kumar</p>
-          <p class="venue">Preprint <span class="badge">Lead author</span></p>
-          <div class="links"><a href="https://arxiv.org/abs/2505.04738">arXiv</a><a href="https://github.com/st-ep/SetONet">Code</a></div>
+      <article class="work lead" id="pub-setonet" aria-labelledby="t-setonet">
+        <div class="frame-a">
+          <span class="rail" aria-hidden="true"><i class="t"></i><i class="r"></i><i class="b"></i><i class="l"></i></span><span class="orn tl" aria-hidden="true"></span><span class="orn tr" aria-hidden="true"></span><span class="orn bl" aria-hidden="true"></span><span class="orn br" aria-hidden="true"></span>
+          <div class="sight"><div class="pic"><canvas data-vignette="setonet" aria-hidden="true" style="aspect-ratio:4 / 3"></canvas></div></div>
+          <p class="plaque"><span>Poppies, Unordered</span><span class="yr">2025</span></p>
+        </div>
+        <div class="wl">
+          <h3 id="t-setonet">SetONet: A <span class="nw">Set-Based</span> Operator Network for Solving PDEs with <span class="nw">Variable-Input</span> Sampling</h3>
+          <p class="au"><b>S. Tretiakov</b>, X. Li, K. Kumar</p>
+          <p class="ve">2025. Preprint <span class="badge">Lead author</span></p>
+          <p class="ln">An operator network that reads its input as an unordered set, so sensors may move, go missing, or arrive as points.</p>
+          <p class="links"><a href="https://arxiv.org/abs/2505.04738">arXiv</a><a href="https://github.com/st-ep/SetONet">Code</a></p>
         </div>
       </article>
+      </div>
+      <aside class="studies" aria-labelledby="earlier-h">
+        <svg viewBox="0 0 132 104" aria-hidden="true" fill="none" stroke-linecap="round"><g stroke="#A0664A" stroke-opacity=".6" stroke-width="1.1"><path d="M4 22 C 30 16, 52 26, 78 20 S 118 16, 128 21"/><path d="M4 44 C 28 40, 56 50, 82 43 S 116 38, 128 44"/><path d="M4 70 C 34 64, 60 76, 88 68 S 118 64, 128 69"/><path d="M4 94 C 30 90, 62 98, 90 92 S 120 90, 128 94"/></g><g stroke="#8A5A44" stroke-opacity=".38" stroke-width=".8"><path d="M10 28 l6 -4 M22 30 l6 -4 M34 31 l6 -4 M46 31 l6 -4 M58 30 l6 -4 M70 28 l6 -4 M82 27 l6 -4 M94 26 l6 -4 M106 26 l6 -4 M118 27 l6 -4"/><path d="M8 36 l6 -4 M20 37 l6 -4 M32 38 l6 -4 M44 39 l6 -4 M56 39 l6 -4 M68 38 l6 -4 M80 36 l6 -4 M92 34 l6 -4 M104 34 l6 -4 M116 35 l6 -4"/></g><g fill="#8A5A44" fill-opacity=".42" stroke="none"><circle cx="14" cy="55" r="1"/><circle cx="26" cy="58" r=".9"/><circle cx="38" cy="54" r="1.1"/><circle cx="50" cy="59" r=".8"/><circle cx="62" cy="57" r="1"/><circle cx="74" cy="55" r=".9"/><circle cx="86" cy="56" r="1.1"/><circle cx="98" cy="53" r=".8"/><circle cx="110" cy="54" r="1"/><circle cx="120" cy="57" r=".9"/><circle cx="20" cy="62" r=".8"/><circle cx="44" cy="63" r="1"/><circle cx="68" cy="62" r=".8"/><circle cx="92" cy="61" r="1"/><circle cx="114" cy="61" r=".8"/></g><g stroke="#5E7A8C" stroke-opacity=".45" stroke-width=".9"><path d="M12 82 h8 M28 84 h10 M46 81 h7 M60 84 h11 M78 82 h8 M94 80 h9 M110 81 h8"/></g></svg>
+        <div><h3 id="earlier-h">Earlier work in geomechanics, 2023 to 2024</h3><ol>
+          <li><b>S. D. Tretiakov</b>, N. B. Artamonova. Identification of parameters and verification of a mathematical model of deformation of water-saturated sandy soil. Geological International Student Summit, 2024.</li>
+          <li>N. B. Artamonova, S. V. Sheshenin, E. A. Orlov, <b>S. D. Tretiakov</b>, K. A. Minikhanov. Identification of parameters and verification of a nonlinear coupled consolidation model. Computational Mechanics and Modern Applied Software Systems (VMSPPS), 2023.</li>
+          <li>N. B. Artamonova, S. V. Sheshenin, A. Yu. Mirny, E. A. Orlov, <b>S. D. Tretiakov</b>, K. A. Minikhanov. Mathematical model of nonlinear soil consolidation and determination of its parameters. Sergeev Readings, vol. 24, 2023.</li>
+        </ol></div>
+      </aside>
     </div>
-    <details class="more">
-      <summary>Earlier work in geomechanics, 2023 to 2024</summary>
-      <ol>
-        <li><b>S. D. Tretiakov</b>, N. B. Artamonova. Identification of parameters and verification of a mathematical model of deformation of water-saturated sandy soil. <i>Geological International Student Summit</i>, 2024.</li>
-        <li>N. B. Artamonova, S. V. Sheshenin, E. A. Orlov, <b>S. D. Tretiakov</b>, K. A. Minikhanov. Identification of parameters and verification of a nonlinear coupled consolidation model. <i>Computational Mechanics and Modern Applied Software Systems (VMSPPS)</i>, 2023.</li>
-        <li>N. B. Artamonova, S. V. Sheshenin, A. Yu. Mirny, E. A. Orlov, <b>S. D. Tretiakov</b>, K. A. Minikhanov. Mathematical model of nonlinear soil consolidation and determination of its parameters. <i>Sergeev Readings</i>, vol. 24, 2023.</li>
-      </ol>
-    </details>
   </div>
 </section>
 
@@ -210,40 +257,6 @@
         <span class="links"><span>github.com/st-ep/ChladniBenchmark</span></span>
       </a>
     </div>
-  </div>
-</section>
-
-<section class="sec sec-wide" id="videos">
-  <div class="sec-in rv">
-    <div class="sec-head"><h2>Robot videos</h2><canvas class="brush" data-p="poppy" aria-hidden="true"></canvas></div>
-    <p class="lede">From FORM: each law is identified once from a single probe, then held fixed to plan new tasks.</p>
-    <div class="videos">
-      <figure class="vid">
-        <div class="frame frame-thin"><div class="mat"><video data-auto controls muted loop playsinline preload="none" poster="assets/video/form/pressing.jpg" aria-label="Real presses of red Play-Doh, yellow butter slime and gray plasticine above their simulated predictions"><source src="assets/video/form/pressing.mp4" type="video/mp4"></video></div></div>
-        <figcaption><b>Pressing <span class="kind">HARDWARE</span></b>A new, gentler press on three real materials, above the simulation predicted by each identified law.</figcaption>
-      </figure>
-      <figure class="vid">
-        <div class="frame frame-thin"><div class="mat"><video data-auto controls muted loop playsinline preload="none" poster="assets/video/form/shaping_hw.jpg" aria-label="A robot pinching a block of Play-Doh into an X"><source src="assets/video/form/shaping_hw.mp4" type="video/mp4"></video></div></div>
-        <figcaption><b>Shaping <span class="kind">HARDWARE</span></b>Four planned pinches, executed open loop on a fresh block of Play-Doh.</figcaption>
-      </figure>
-      <figure class="vid">
-        <div class="frame frame-thin"><div class="mat"><video data-auto controls muted loop playsinline preload="none" poster="assets/video/form/pouring.jpg" aria-label="A robot pouring glycerol beside its simulated replay"><source src="assets/video/form/pouring.mp4" type="video/mp4"></video></div></div>
-        <figcaption><b>Pouring <span class="kind">HARDWARE</span></b>One exploratory pour of glycerol identifies its viscosity; the simulation replays it.</figcaption>
-      </figure>
-      <figure class="vid">
-        <div class="frame frame-thin"><div class="mat"><video data-auto controls muted loop playsinline preload="none" poster="assets/video/form/shaping_sim.jpg" aria-label="Simulated pinches shaping a block into an X"><source src="assets/video/form/shaping_sim.mp4" type="video/mp4"></video></div></div>
-        <figcaption><b>Shaping <span class="kind">SIMULATION</span></b>Six pinches shape a block into an X, planned with the right law and with the wrong one.</figcaption>
-      </figure>
-      <figure class="vid">
-        <div class="frame frame-thin"><div class="mat"><video data-auto controls muted loop playsinline preload="none" poster="assets/video/form/insertion.jpg" aria-label="Simulated elastic rod threaded through a hole"><source src="assets/video/form/insertion.mp4" type="video/mp4"></video></div></div>
-        <figcaption><b>Rod insertion <span class="kind">SIMULATION</span></b>An 8 mm elastic rod threads a 12 mm hole only when planned with its own law.</figcaption>
-      </figure>
-      <figure class="vid">
-        <div class="frame frame-thin"><div class="mat"><video data-auto controls muted loop playsinline preload="none" poster="assets/video/form/golf.jpg" aria-label="Simulated golf putt with an elastic club"><source src="assets/video/form/golf.mp4" type="video/mp4"></video></div></div>
-        <figcaption><b>Golf putting <span class="kind">SIMULATION</span></b>A soft club stops the ball on target with the matched law, and misses with the swapped one.</figcaption>
-      </figure>
-    </div>
-    <p class="after mono"><a href="https://form-robots.github.io/#video">Watch FORM in three minutes</a></p>
   </div>
 </section>
 
@@ -307,6 +320,12 @@
 
 <script src="assets/js/riviera.js"></script>
 <script src="assets/js/strata.js"></script>
+<script src="assets/js/vignettes/form.js"></script>
+<script src="assets/js/vignettes/pvwm.js"></script>
+<script src="assets/js/vignettes/multitask.js"></script>
+<script src="assets/js/vignettes/inverse.js"></script>
+<script src="assets/js/vignettes/setonet.js"></script>
+<script src="assets/js/gallery.js"></script>
 <script src="assets/js/site.js"></script>
 </body>
 </html>

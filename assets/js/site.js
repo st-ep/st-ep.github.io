@@ -1,4 +1,4 @@
-/* Page behaviour: brush marks, the portrait underpainting, videos that play when seen, the live nav. */
+/* Page behaviour: brush marks, videos that play when seen, the live nav. */
 (function () {
   document.documentElement.classList.remove('no-js');
   var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -54,37 +54,8 @@
     };
   }
 
-  /* Until the portrait arrives: a warm underpainting on the canvas, the way a study begins. */
-  function underpainting(cv) {
-    var box = cv.parentNode, dp = Math.min(2, window.devicePixelRatio || 1);
-    var w = box.clientWidth || 220, h = box.clientHeight || 275;
-    cv.width = w * dp; cv.height = h * dp;
-    var c = cv.getContext('2d'), R = rng(2026);
-    c.setTransform(dp, 0, 0, dp, 0, 0); c.lineCap = 'round';
-    c.fillStyle = '#F2E6CC'; c.fillRect(0, 0, w, h);
-    var warm = ['#E9D2A6', '#E3C795', '#EFDDB8', '#DCC9A6', '#E6D5B8', '#D8C2A0'];
-    for (var i = 0; i < 900; i++) {
-      var x = R() * w, y = R() * h, a = -0.6 + (R() - .5) * .5, l = 8 + R() * 14;
-      c.globalAlpha = .55; c.strokeStyle = warm[Math.floor(R() * warm.length)]; c.lineWidth = 3 + R() * 2;
-      c.beginPath(); c.moveTo(x - Math.cos(a) * l / 2, y - Math.sin(a) * l / 2); c.lineTo(x + Math.cos(a) * l / 2, y + Math.sin(a) * l / 2); c.stroke();
-    }
-    /* a loose sienna sketch of head and shoulders */
-    c.globalAlpha = .38; c.strokeStyle = '#A9744F'; c.lineWidth = 1.4;
-    var cx = w * .5, cy = h * .4;
-    c.beginPath(); c.ellipse(cx, cy, w * .16, h * .16, 0, 0, Math.PI * 2); c.stroke();
-    c.beginPath(); c.moveTo(cx - w * .07, cy + h * .15); c.lineTo(cx - w * .08, cy + h * .24);
-    c.quadraticCurveTo(cx - w * .36, cy + h * .29, cx - w * .45, h); c.stroke();
-    c.beginPath(); c.moveTo(cx + w * .07, cy + h * .15); c.lineTo(cx + w * .08, cy + h * .24);
-    c.quadraticCurveTo(cx + w * .36, cy + h * .29, cx + w * .45, h); c.stroke();
-    c.globalAlpha = .18; c.fillStyle = '#B9A9C4';
-    c.beginPath(); c.ellipse(cx + w * .05, cy + h * .02, w * .12, h * .13, 0, 0, Math.PI * 2); c.fill();
-    c.globalAlpha = 1;
-  }
-
   var brushes = document.querySelectorAll('canvas.brush');
   for (var i = 0; i < brushes.length; i++) brush(brushes[i], i);
-  var up = document.getElementById('underpainting');
-  if (up) underpainting(up);
 
   /* Reveal sections gently as they arrive. */
   var rv = document.querySelectorAll('.rv');
@@ -118,6 +89,12 @@
     }, { threshold: 0.35 });
     vids.forEach(function (v) { vo.observe(v); });
   }
+
+  /* The bar slides in only after the first screen has scrolled away (desktop; on phones it simply follows the hero). */
+  var bar = document.querySelector('.topbar'), heroEl = document.getElementById('top');
+  if (bar && heroEl && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function (es) { bar.classList.toggle('show', !es[0].isIntersecting); }, { rootMargin: '-56px 0px 0px 0px' }).observe(heroEl);
+  } else if (bar) bar.classList.add('show');
 
   /* Underline the section in view. */
   var links = document.querySelectorAll('.topbar li a');
