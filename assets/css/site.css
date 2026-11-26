@@ -190,18 +190,188 @@ p { margin: 0 0 1em; }
 
 .feature { max-width: 900px; margin: 0 auto; }
 .feature .frame-a { --m: 30px; }
-.feature video, .clip video { display: block; width: 100%; height: auto; background: #2a241e; }
+.feature video { display: block; width: 100%; height: auto; background: #2a241e; }
 .feature .wl { max-width: 40em; padding-top: 24px; }
 .feature .wl h3 { font-size: 22px; }
-.sec-wide .sub { max-width: var(--col); margin: 76px auto 28px; font-family: var(--display); font-weight: 400; font-size: 25px; line-height: 1.2; }
-.clips { display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 34px; }
-.clips-two { grid-template-columns: repeat(2, 1fr); column-gap: 44px; }
-.clips-one { grid-template-columns: minmax(0, 1fr); max-width: 900px; margin: 0 auto; }
-.clips-one .frame-a { --m: 24px; }
-.clip { display: grid; grid-row: span 2; grid-template-rows: subgrid; row-gap: 0; margin: 0; min-width: 0; }
-.clip > .frame-a { align-self: end; --m: 16px; }
-.clip .plaque { font-size: 9px; letter-spacing: .13em; padding: 3px 13px 2px; min-width: 86px; }
-.clip .cap { align-self: start; margin: 16px 4px 0; font-size: 14.5px; line-height: 1.45; color: var(--ink); }
+
+/* ---------- Research: the clips, hung on the line ---------- */
+/* Under the film the robot clips hang on the line, as in a museum: every row shares one picture height and each frame
+   takes the width its own picture asks for, so tops and bottoms meet and the row runs the full width of the wall.
+   The pairs hang on the columns of the salon below: --g is the gutter of the Publications hang at every width. */
+
+#clips { --g: 48px; --mat-a: #2973A0; --mat-b: #C06A39; margin-top: 88px; }   /* A's blue and B's orange, as the clips paint them */
+#clips, #clips .frame-a { --m: 22px; }
+#clips .wall + .wall { margin-top: 84px; }
+
+/* the wall text of each group: its name at the left edge of the hang, a ruled line, and what hangs there */
+#clips .wall-text { display: flex; align-items: baseline; gap: 16px; margin: 0 0 30px; }
+#clips .wall-text::after { content: ""; flex: 1; order: 1; border-bottom: 1px solid var(--rule); }
+#clips .wall-text h3 { margin: 0; font-family: var(--display); font-weight: 400; font-size: 25px; line-height: 1.2; }
+#clips .wall-text p { order: 2; margin: 0; font-family: var(--mono); font-size: 12.5px; letter-spacing: .04em; color: var(--muted); }
+
+/* a row: each figure starts from the width of its moulding and grows by its picture's aspect ratio */
+#clips .line { display: flex; align-items: flex-start; gap: var(--g); }
+#clips .line + .line { margin-top: 56px; }
+#clips .piece { flex: var(--ar) 1 calc(2 * var(--m) + 4px); min-width: 0; margin: 0; }
+
+/* each picture is cut to its panels. The film is exactly as wide as its window and hangs from the bottom edge, so the
+   player's own controls are never cut: --av trims the sides, the window's height the top, and --drop the margin below
+   while the clip plays by itself. An iPhone or iPad also draws buttons along the top of a player, so there, whenever
+   the controls show, the player fills its window instead and the clip shows its whole width. */
+#clips .pic { aspect-ratio: var(--ar); overflow: hidden; }
+#clips video { position: absolute; left: 0; bottom: 0; width: 100%; height: auto; aspect-ratio: var(--av, var(--ar)); object-fit: cover; object-position: var(--ox, 50%) 0; background: #2a241e; }
+#clips video:not([controls]) { bottom: var(--drop, 0); }
+#clips video:focus-visible { outline-offset: -3px; }
+/* a player taken up by the keyboard is ringed inside its window, in the page's own focus colour, wherever it hangs */
+@supports selector(:has(*)) {
+  #clips video:focus-visible { outline: none; }
+  #clips .pic:has(> video:focus-visible)::after { box-shadow: inset 0 0 0 2px var(--dot), inset 0 0 0 3px rgba(255, 250, 235, .7); }
+}
+@supports (-webkit-touch-callout: none) {
+  #clips video[controls] { top: 0; height: 100%; object-position: 50% 100%; }
+  #clips .quad video[controls] { object-position: 50% 0; }   /* the grids keep their titles whole */
+}
+/* what each cut keeps of its source, in source pixels, while the clip plays by itself. To re-measure a re-exported clip:
+   --ar = kept width / kept height, --av = kept width / source height, --ox = pixels cut on the left / all pixels cut from
+   the sides, --drop = -(rows cut below / kept height). With its controls showing, a clip keeps the rows down to its
+   bottom edge; on an iPhone or iPad it keeps its whole width and these rows: Pouring 144-778, Golf putting 0-930,
+   Shaping 0-915, Rod insertion 0-880.
+     Pinching       shaping_hw    424 x 210   all of it               --ar 424/210
+     Pouring        pouring      1280 x 778   x 31-1249, y 144-747    --ar 1218/603   --av 1218/778   --ox 31/62   --drop -31/603
+     Golf putting   golf_wide    1616 x 946   x 34-1606, y 40-945     --ar 1572/905   --av 1572/946   --ox 34/44   --drop -1/905
+     Shaping        shaping_sim  1332 x 936   x 45-1332, y 52-936     --ar 1287/885   --av 1287/936   --ox 45/45
+     Rod insertion  insertion    1280 x 896   x 45-1263, y 46-883     --ar 1218/837   --av 1218/896   --ox 45/62   --drop -13/837 */
+
+/* where a picture is cut into panels, gilt slips cover the strips of paper between them, making a diptych or a polyptych
+   of it; the slips are fitted only while a clip plays by itself, and step aside whenever the player shows its controls */
+#clips .pair .pic:has(> video:not([controls]))::before, #clips .quad .pic:has(> video:not([controls]))::before {
+  --slip: #3E2C14, #A07E45 14%, #E9D6A2 42%, #CFB070 60%, #8A6B37 86%, #3E2C14;
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(90deg, var(--slip)) 50% 0 / 2% 100% no-repeat;
+}
+#clips .quad .pic:has(> video:not([controls]))::before {
+  background: linear-gradient(90deg, var(--slip)) 50% 0 / 2% 100% no-repeat,
+    linear-gradient(var(--slip)) 0 50% / 100% calc(2% * var(--ar)) no-repeat;
+}
+
+/* smaller tablets of the same brass name the panels the picture is cut into: the columns on the top rail, and on the
+   left rail, read upwards, the two materials, each with a chip of its own colour */
+#clips .tabs .plaque { --screw: none; top: calc(var(--m) * .5); bottom: auto; transform: translate(-50%, -50%); padding: 2px 9px 1px; font-size: 10px; font-weight: 400; }
+#clips .tabs .c1 { left: calc(25% + var(--m) * .5 + 1px); }
+#clips .tabs .c2 { left: calc(75% - var(--m) * .5 - 1px); }
+#clips .tabs .r1, #clips .tabs .r2 {
+  --d: -1;   /* the tablet is turned half round to read upwards, so its light and shadow are turned back with it */
+  display: block; left: calc(var(--m) * .5); padding: 4px 1.5px; writing-mode: vertical-rl; letter-spacing: .05em; transform: translate(-50%, -50%) rotate(180deg);
+  text-shadow: 0 calc(var(--d) * 1px) 0 rgba(255, 250, 230, .6);
+  box-shadow: 0 0 0 1px #6B4F27, inset calc(var(--d) * 1px) calc(var(--d) * 1px) 0 rgba(255, 252, 238, .9),
+    inset calc(var(--d) * -1px) calc(var(--d) * -1px) 0 rgba(110, 80, 34, .45), calc(var(--d) * 1px) calc(var(--d) * 2px) 3px rgba(40, 26, 10, .45);
+}
+#clips .tabs .r1 { top: calc(25% + var(--m) * .5 + 1px); }
+#clips .tabs .r2 { top: calc(75% - var(--m) * .5 - 1px); }
+#clips .tabs .r1::before, #clips .tabs .r2::before {
+  content: ""; display: inline-block; width: 6px; height: 6px; margin-inline-end: 4px; vertical-align: middle; background: var(--mat-a); box-shadow: 0 0 0 1px rgba(43, 34, 25, .65);
+}
+#clips .tabs .r2::before { background: var(--mat-b); }
+/* where a row is too short for its two names to stand 12px apart, clear of the slip between them (golf on phones up to
+   419px, the grids on phones up to 375px and from 701 to 741px), each tablet keeps its chip and the letter, upright */
+#clips .quad .frame-a { container: quad / inline-size; }
+#clips .keyed .frame-a { container-name: golf; }
+@container golf (max-width: 335px) {
+  #clips .tabs .r1 span, #clips .tabs .r2 span { display: none; }
+  #clips .tabs .r1, #clips .tabs .r2 { --d: 1; text-orientation: upright; letter-spacing: 0; transform: translate(-50%, -50%); }
+}
+@container quad (max-width: 291px) {
+  #clips .tabs .r1 span, #clips .tabs .r2 span { display: none; }
+  #clips .tabs .r1, #clips .tabs .r2 { --d: 1; text-orientation: upright; letter-spacing: 0; transform: translate(-50%, -50%); }
+}
+
+/* the wall label beneath each frame: a title, then the caption */
+#clips .wl { padding-top: 18px; }
+#clips .wl h4 { margin: 0; font-family: var(--display); font-weight: 400; font-size: 19px; line-height: 1.3; }
+#clips .wl .ln { margin-top: 4px; text-wrap: balance; }   /* the lines of a label set even, so none ends on a word or two */
+
+/* a sheet pinned beside the first simulation: the key to the four panels of all three grids, set as wall text. A cross of
+   hairlines stands for the gilt slips; the rows and columns are named as the tablets name them. */
+#clips .key {
+  position: relative; padding: 34px 20px 22px;
+  background: repeating-linear-gradient(90deg, rgba(150, 120, 80, .035) 0 1px, transparent 1px 7px), linear-gradient(176deg, #FFFCF4, #FAF2E1);
+  box-shadow: 0 1px 1px rgba(60, 40, 20, .12), 4px 10px 18px -10px rgba(60, 40, 20, .35);
+}
+#clips .key::before, #clips .key::after {
+  content: ""; position: absolute; top: 10px; width: 9px; height: 9px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 32%, #FFF3CF 0 18%, #C9A869 42%, #7A5A2C 100%);
+  box-shadow: 1px 2px 2px rgba(50, 32, 12, .4);
+}
+#clips .key::before { left: 14px; }
+#clips .key::after { right: 14px; }
+#clips .key h4 { margin: 0 0 12px; font-family: var(--mono); font-weight: 400; font-size: 12.5px; letter-spacing: .05em; color: var(--muted); }
+#clips .key table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 14.5px; line-height: 1.35; }
+#clips .key th, #clips .key td { padding: 8px 4px; font-weight: 400; text-align: center; }
+#clips .key thead td { width: 92px; padding: 0; }
+#clips .key thead th { padding-top: 0; font-style: italic; color: var(--hi); vertical-align: bottom; white-space: nowrap; }   /* one line, as the tablets name them */
+#clips .key tbody th { padding-left: 0; text-align: left; white-space: nowrap; }
+#clips .key tbody th::before { content: ""; display: inline-block; width: 9px; height: 9px; margin-right: 6px; background: var(--mat-a); box-shadow: 0 0 0 1px rgba(43, 34, 25, .3); }
+#clips .key tbody tr + tr th::before { background: var(--mat-b); }
+#clips .key tbody td { color: var(--muted); }
+#clips .key tbody td + td { border-left: 1px solid var(--gilt); }
+#clips .key tbody tr + tr td { border-top: 1px solid var(--gilt); }
+#clips .key b { font-weight: 400; color: var(--ink); white-space: nowrap; }
+#clips .key p { margin: 12px 0 0; font-size: 14.5px; line-height: 1.5; }
+
+/* from 980px the sheet hangs beside the golf frame and is cut to its height: the rows of the key share what is spare.
+   Each of these queries is the exact complement of its neighbour, so no width between two whole pixels (browser zoom,
+   display scaling) falls between them. */
+@media not all and (max-width: 979px) {
+  #clips .keyed { display: grid; grid-template-columns: minmax(0, 1fr) 324px; grid-template-rows: auto auto; row-gap: 0; }
+  #clips .keyed .piece { display: grid; grid-row: span 2; grid-template-rows: subgrid; }
+  #clips .keyed .frame-a { align-self: start; }
+  #clips .keyed .key { grid-area: 1 / 2; align-self: stretch; display: flex; flex-direction: column; }
+  #clips .keyed .key h4 { margin-bottom: 17px; }   /* as deep as the sentence below, so the key's rows part where the picture's do */
+  #clips .keyed .key table { flex: 1 0 auto; }
+  #clips .tabs .r1, #clips .tabs .r2 { letter-spacing: .13em; }   /* room enough here to space the names as all the brass is spaced */
+}
+@media (max-width: 1180px) { #clips { --g: 40px; } }
+
+/* tablet: the pairs keep the salon's columns, and the key hangs as a strip above the golf frame, which hangs alone */
+@media (max-width: 979px) {
+  #clips { --g: 32px; margin-top: 72px; }
+  #clips, #clips .frame-a { --m: 20px; }
+  @media not all and (max-width: 700px) {
+    #clips .keyed { display: block; }
+    #clips .keyed > * { max-width: 728px; margin-left: auto; margin-right: auto; }
+    #clips .keyed .key { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: auto 1fr; column-gap: 34px; margin-bottom: 36px; padding: 28px 26px 20px; }
+    #clips .keyed .key h4 { grid-area: 1 / 1; }
+    #clips .keyed .key table { grid-area: 1 / 2 / 3; align-self: center; }
+    #clips .keyed .key p { grid-area: 2 / 1; margin: 0; }
+  }
+}
+/* phone: one column on the film's axis, as wide as Pinching at its largest; the key ahead of the pictures it explains */
+@media (max-width: 700px) {
+  #clips { max-width: 520px; margin: 60px auto 0; }
+  #clips, #clips .frame-a { --m: 18px; }
+  #clips .wall + .wall { margin-top: 64px; }
+  #clips .wall-text { flex-wrap: wrap; row-gap: 6px; margin-bottom: 24px; }
+  #clips .wall-text p { flex-basis: 100%; }
+  #clips .line { display: block; }
+  #clips .line + .line, #clips .line > * + * { margin-top: 40px; }
+  #clips .keyed > * + * { margin-top: 32px; }
+  #clips .tabs .plaque { font-size: 9.5px; }
+  #clips .tabs .c1, #clips .tabs .c2 { padding: 2px 7px 1px; }
+  #clips .wl { padding-top: 16px; }
+  #clips .key { padding: 24px 16px 14px; }
+  #clips .key h4 { margin-bottom: 4px; font-size: 12px; }
+  #clips .key table { font-size: 14px; line-height: 1.3; }
+  #clips .key th, #clips .key td { padding: 6px 4px; }
+  /* a phone's key is the table alone: the sentence says what the table shows, so it stays for screen readers only */
+  #clips .key p { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
+@media (max-width: 359px) {
+  #clips .key { padding-left: 12px; padding-right: 12px; }
+  #clips .key table { font-size: 13px; }
+  #clips .key th, #clips .key td { padding-left: 2px; padding-right: 2px; }
+  #clips .key thead td { width: 84px; }
+  #clips .key tbody th::before { margin-right: 5px; }
+}
 
 /* ---------- Publications: a salon hang ---------- */
 /* Carved gilt frames on the studio wall. Each frame carries a small engraved brass plaque with the painting's
@@ -322,13 +492,15 @@ p { margin: 0 0 1em; }
 .sight .pic::after { content: ""; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 0 1px rgba(40, 26, 10, .5), inset 2px 2px 5px -1px rgba(30, 18, 6, .4); }
 .sight canvas { display: block; width: 100%; height: auto; }
 
-/* the small engraved brass plaque screwed to the bottom rail */
+/* the small engraved brass plaque screwed to the bottom rail. Every frame on the site carries the same plate, centred on
+   the middle of its bottom rail, clear of the picture and of a player's controls. The plate is a paragraph, so the page's
+   paragraph margin is taken off: it would lift the plate onto the picture. */
 .plaque {
   --screw: radial-gradient(circle, #FBF2D6 0 .7px, #8A6D3E 1.1px 1.7px, #CDB27A 2px 2.4px, transparent 2.9px);
   position: absolute; left: 50%; bottom: calc(var(--m) * .5); transform: translate(-50%, 50%);
   display: flex; align-items: baseline; justify-content: center; gap: 9px;
-  padding: 4px 19px 3px; min-width: 120px; white-space: nowrap; text-align: center;
-  font-family: var(--serif); font-size: 10.5px; line-height: 1.25; letter-spacing: .14em; text-transform: uppercase;
+  margin: 0; padding: 2px 16px 1px; white-space: nowrap; text-align: center;
+  font-family: var(--serif); font-size: 10.5px; line-height: 1.2; letter-spacing: .13em; text-transform: uppercase;
   color: #2B2219; text-shadow: 0 1px 0 rgba(255, 250, 230, .6);
   background:
     var(--screw) left 4px center / 7px 7px no-repeat, var(--screw) right 4px center / 7px 7px no-repeat,
@@ -337,7 +509,7 @@ p { margin: 0 0 1em; }
   box-shadow: 0 0 0 1px #6B4F27, inset 1px 1px 0 rgba(255, 252, 238, .9), inset -1px -1px 0 rgba(110, 80, 34, .45), 1px 2px 3px rgba(40, 26, 10, .45);
   border-radius: 1px;
 }
-.plaque .yr { font-size: 9.5px; letter-spacing: .18em; color: #4A3B2A; }
+.plaque .yr { font-size: 10px; letter-spacing: .18em; color: #4A3B2A; }
 .plaque .yr::before { content: ""; display: inline-block; width: 3px; height: 3px; margin: 0 9px 0 0; vertical-align: 2px; background: rgba(74, 59, 42, .7); transform: rotate(45deg); }
 
 /* the wall label beneath each frame */
@@ -381,17 +553,10 @@ p { margin: 0 0 1em; }
   .frame-a { --m: 30px; }
 }
 @media (max-width: 979px) {
-  .clips { grid-template-columns: repeat(2, 1fr); row-gap: 40px; }
-  .clips-two { grid-template-columns: repeat(2, 1fr); column-gap: 28px; }
-  .clips-one { grid-template-columns: minmax(0, 1fr); }
   .feature .frame-a { --m: 22px; }
 }
 @media (max-width: 600px) {
-  .clips { grid-template-columns: minmax(0, 1fr); row-gap: 36px; }
-  .clips-two { grid-template-columns: minmax(0, 1fr); }
-  .clips-one .frame-a { --m: 16px; }
-  .feature .frame-a { --m: 16px; }
-  .sec-wide .sub { margin-top: 56px; }
+  .feature .frame-a { --m: 18px; }   /* a phone's moulding, as on every other frame, so the plate has room on the rail */
 }
 /* tablet: still two to a row, a little tighter */
 @media (max-width: 979px) {
@@ -409,8 +574,8 @@ p { margin: 0 0 1em; }
   .frame-a { --m: 18px; }
   .frame-a { box-shadow: 1px 2px 2px rgba(46, 30, 12, .3), 5px 10px 16px -5px rgba(46, 30, 12, .3); }
   .rail .t, .rail .b, .rail .l, .rail .r { --ribbon-c: transparent; }
-  .plaque { padding: 3px 14px 2px; font-size: 9px; min-width: 96px; }
-  .plaque .yr { font-size: 8.5px; }
+  .plaque { padding: 2px 13px 1px; font-size: 10px; }
+  .plaque .yr { font-size: 9.5px; }
   .wl { padding-top: 18px; }
   .studies { padding: 28px 20px 20px; }
   .sun { width: 80vw; }

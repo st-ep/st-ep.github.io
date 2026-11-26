@@ -82,35 +82,74 @@
         <p class="links"><a href="https://form-robots.github.io/">Project page</a><a href="https://arxiv.org/abs/2609.38105">arXiv</a><a href="https://github.com/form-robots/FORM">Code</a></p>
       </div>
     </article>
-    <h3 class="sub">Hardware</h3>
-    <div class="clips clips-two">
-      <figure class="clip">
-        <div class="frame-a">
-          <span class="rail" aria-hidden="true"><i class="t"></i><i class="r"></i><i class="b"></i><i class="l"></i></span>
-          <div class="sight"><div class="pic"><video data-auto controls muted loop playsinline preload="none" width="424" height="210" poster="assets/video/form/shaping_hw.jpg" aria-label="A robot pinching a block of Play-Doh into an X"><source src="assets/video/form/shaping_hw.mp4" type="video/mp4"></video></div></div>
-          <p class="plaque"><span>Pinching</span></p>
+    <div id="clips">
+      <div class="wall" role="group" aria-labelledby="h-hardware">
+        <div class="wall-text"><h3 id="h-hardware">Hardware</h3><p>Experiments on the real robot</p></div>
+        <div class="line">
+          <figure class="piece" style="--ar: 2.019">
+            <div class="frame-a">
+              <span class="rail" aria-hidden="true"><i class="t"></i><i class="r"></i><i class="b"></i><i class="l"></i></span>
+              <div class="sight"><div class="pic"><video data-auto controls muted loop playsinline preload="none" width="424" height="210" poster="assets/video/form/shaping_hw.jpg" aria-label="A robot pinching a block of Play-Doh into an X"><source src="assets/video/form/shaping_hw.mp4" type="video/mp4"></video></div></div>
+              <p class="plaque" aria-hidden="true"><span>Pinching</span><span class="yr">Hardware</span></p>
+            </div>
+            <figcaption class="wl"><h4>Pinching</h4><p class="ln">Four planned pinches, executed open loop on a fresh block of Play-Doh.</p></figcaption>
+          </figure>
+          <figure class="piece pair" style="--ar: 2.019; --av: 1.5656; --drop: -5.14%">
+            <div class="frame-a">
+              <span class="rail" aria-hidden="true"><i class="t"></i><i class="r"></i><i class="b"></i><i class="l"></i></span>
+              <div class="sight"><div class="pic"><video data-auto controls muted loop playsinline preload="none" width="1280" height="778" poster="assets/video/form/pouring.jpg" aria-label="A robot pouring glycerol beside its simulated replay"><source src="assets/video/form/pouring.mp4" type="video/mp4"></video></div></div>
+              <span class="tabs" aria-hidden="true"><b class="plaque c1">Real</b><b class="plaque c2">Simulation</b></span>
+              <p class="plaque" aria-hidden="true"><span>Pouring</span><span class="yr">Hardware</span></p>
+            </div>
+            <figcaption class="wl"><h4>Pouring</h4><p class="ln">One exploratory pour of glycerol identifies its viscosity; the simulation replays it.</p></figcaption>
+          </figure>
         </div>
-        <figcaption class="cap">Four planned pinches, executed open loop on a fresh block of Play-Doh.</figcaption>
-      </figure>
-      <figure class="clip">
-        <div class="frame-a">
-          <span class="rail" aria-hidden="true"><i class="t"></i><i class="r"></i><i class="b"></i><i class="l"></i></span>
-          <div class="sight"><div class="pic"><video data-auto controls muted loop playsinline preload="none" width="1280" height="778" poster="assets/video/form/pouring.jpg" aria-label="A robot pouring glycerol beside its simulated replay"><source src="assets/video/form/pouring.mp4" type="video/mp4"></video></div></div>
-          <p class="plaque"><span>Pouring</span></p>
+      </div>
+      <div class="wall" role="group" aria-labelledby="h-simulation">
+        <div class="wall-text"><h3 id="h-simulation">Simulation</h3><p>Experiments in simulation</p></div>
+        <div class="line keyed">
+          <aside class="key" aria-labelledby="h-key">
+            <h4 id="h-key">How to read the four panels</h4>
+            <table>
+              <thead><tr><td></td><th scope="col">Matched law</th><th scope="col">Swapped law</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Material A</th><td>planned with <b>A’s law</b></td><td>planned with <b>B’s law</b></td></tr>
+                <tr><th scope="row">Material B</th><td>planned with <b>B’s law</b></td><td>planned with <b>A’s law</b></td></tr>
+              </tbody>
+            </table>
+            <p>On the left, each action is planned with its material’s identified law; on the right, with the other’s.</p>
+          </aside>
+          <figure class="piece quad" style="--ar: 1.737; --av: 1.6617; --ox: 77.3%; --drop: -.11%">
+            <div class="frame-a">
+              <span class="rail" aria-hidden="true"><i class="t"></i><i class="r"></i><i class="b"></i><i class="l"></i></span>
+              <div class="sight"><div class="pic"><video data-auto controls muted loop playsinline preload="none" width="1616" height="946" poster="assets/video/form/golf_wide.jpg" aria-label="Simulated golf putts with an elastic club for two materials: plans using the matched law and the swapped law"><source src="assets/video/form/golf_wide.mp4" type="video/mp4"></video></div></div>
+              <span class="tabs" aria-hidden="true"><b class="plaque c1">Matched law</b><b class="plaque c2">Swapped law</b><b class="plaque r1"><span>Material </span>A</b><b class="plaque r2"><span>Material </span>B</b></span>
+              <p class="plaque" aria-hidden="true"><span>Golf putting</span><span class="yr">Simulation</span></p>
+            </div>
+            <figcaption class="wl"><h4>Golf putting</h4><p class="ln">A soft club, planned with each material’s identified law, stops the ball on target; planned with the other material’s law, it misses.</p></figcaption>
+          </figure>
         </div>
-        <figcaption class="cap">One exploratory pour of glycerol identifies its viscosity; the simulation replays it.</figcaption>
-      </figure>
-    </div>
-    <h3 class="sub">Simulation</h3>
-    <div class="clips clips-one">
-      <figure class="clip">
-        <div class="frame-a">
-          <span class="rail" aria-hidden="true"><i class="t"></i><i class="r"></i><i class="b"></i><i class="l"></i></span>
-          <div class="sight"><div class="pic"><video data-auto controls muted loop playsinline preload="none" width="1616" height="946" poster="assets/video/form/golf_wide.jpg" aria-label="Simulated golf putts with an elastic club for two materials: plans using the matched law and the swapped law"><source src="assets/video/form/golf_wide.mp4" type="video/mp4"></video></div></div>
-          <p class="plaque"><span>Golf putting</span></p>
+        <div class="line">
+          <figure class="piece quad" style="--ar: 1.455; --av: 1.375; --ox: 100%">
+            <div class="frame-a">
+              <span class="rail" aria-hidden="true"><i class="t"></i><i class="r"></i><i class="b"></i><i class="l"></i></span>
+              <div class="sight"><div class="pic"><video data-auto controls muted loop playsinline preload="none" width="1332" height="936" poster="assets/video/form/shaping_sim.jpg" aria-label="Simulated pinches shaping a block into an X"><source src="assets/video/form/shaping_sim.mp4" type="video/mp4"></video></div></div>
+              <span class="tabs" aria-hidden="true"><b class="plaque c1">Matched law</b><b class="plaque c2">Swapped law</b><b class="plaque r1"><span>Material </span>A</b><b class="plaque r2"><span>Material </span>B</b></span>
+              <p class="plaque" aria-hidden="true"><span>Shaping</span><span class="yr">Simulation</span></p>
+            </div>
+            <figcaption class="wl"><h4>Shaping</h4><p class="ln">Six pinches shape a block into an X, planned with the right law and with the wrong one.</p></figcaption>
+          </figure>
+          <figure class="piece quad" style="--ar: 1.455; --av: 1.3594; --ox: 72.6%; --drop: -1.55%">
+            <div class="frame-a">
+              <span class="rail" aria-hidden="true"><i class="t"></i><i class="r"></i><i class="b"></i><i class="l"></i></span>
+              <div class="sight"><div class="pic"><video data-auto controls muted loop playsinline preload="none" width="1280" height="896" poster="assets/video/form/insertion.jpg" aria-label="Simulated elastic rod threaded through a hole"><source src="assets/video/form/insertion.mp4" type="video/mp4"></video></div></div>
+              <span class="tabs" aria-hidden="true"><b class="plaque c1">Matched law</b><b class="plaque c2">Swapped law</b><b class="plaque r1"><span>Material </span>A</b><b class="plaque r2"><span>Material </span>B</b></span>
+              <p class="plaque" aria-hidden="true"><span>Rod insertion</span><span class="yr">Simulation</span></p>
+            </div>
+            <figcaption class="wl"><h4>Rod insertion</h4><p class="ln">An 8 mm elastic rod threads a 12 mm hole only when planned with its own law.</p></figcaption>
+          </figure>
         </div>
-        <figcaption class="cap">A soft club, planned with each material’s identified law, stops the ball on target; planned with the other material’s law, it misses.</figcaption>
-      </figure>
+      </div>
     </div>
   </div>
 </section>
