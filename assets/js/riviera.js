@@ -281,8 +281,53 @@ function mount(pg){
     hero=paint({clientWidth:cw,clientHeight:ch},cv,dp);
     if(window.__HARNESS)cv.style.opacity=1;else requestAnimationFrame(function(){cv.style.opacity=1;});
     if(window.__HARNESS){var acc=0;window.__hero={step:function(dt){acc+=dt;while(acc>=1/60-1e-9){hero.sim();acc-=1/60;}},draw:function(){hero.draw();}};return;}
-    if(still&&still.matches){for(var i=0;i<360;i++)hero.sim();hero.draw();return;}
-    hero.draw();start();
+    if(still&&still.matches){for(var i=0;i<360;i++)hero.sim();hero.draw();edges();return;}
+    hero.draw();edges();start();
+  }
+  /* Stacked layout (phones, upright tablets): the painting's sky and its ground run out onto the wall in loose dabs. They are
+     drawn on the two strips above and below the painting, in the colours of its own top and bottom rows. All lengths are in
+     units of a 390px-wide phone; the strips scale with the screen. */
+  function edges(){
+    var st=pg.parentNode,top=st&&st.querySelector('.hero-edge-top'),foot=st&&st.querySelector('.hero-edge-foot');
+    if(!top||!foot)return;
+    if(!top.clientWidth||!cv.width){top.classList.remove('on');foot.classList.remove('on');return;}  /* side by side: no strips */
+    var W=pg.clientWidth,k=cv.width/W,dp=Math.min(2,window.devicePixelRatio||1),band=Math.max(2,Math.round(8*W/671*k)),cx=cv.getContext('2d'),seed=23;
+    function R(){seed=seed*16807%2147483647;return seed/2147483647;}
+    function strip(el,y0,rows,tilt,x0,sky){
+      var vw=el.clientWidth,u=vw/390,off=W-vw,g=el.getContext('2d'),px,r,x,len,mid;
+      try{px=cx.getImageData(0,y0,cv.width,band).data;}catch(e){return;}
+      el.width=Math.round(vw*dp);el.height=Math.round(el.clientHeight*dp);
+      g.setTransform(dp*u,0,0,dp*u,0,0);
+      if('filter' in g)g.filter='blur('+(.5*dp*u).toFixed(2)+'px)';
+      /* the painting's own colour near this dab; above the sky, only its blues, never the pine or the cloud */
+      function col(x){
+        for(var t=0,i,c;t<6;t++){
+          i=4*(Math.floor(R()*band)*cv.width+Math.max(0,Math.min(cv.width-1,Math.round((off+(x+(R()-.5)*40)*u)*k))));
+          c=[px[i],px[i+1],px[i+2]];
+          if(!sky||(c[2]>c[0]+18&&c[2]>c[1]+8))return c;
+        }
+        return [158,190,228];
+      }
+      function rgb(c,f){return 'rgb('+Math.round(Math.min(255,c[0]*f))+','+Math.round(Math.min(255,c[1]*f))+','+Math.round(Math.min(255,c[2]*f))+')';}
+      function shape(l,th){g.beginPath();g.moveTo(-l/2,0);g.bezierCurveTo(-l/2,-th*.62,-l*.2,-th*.56,0,-th*.52);g.bezierCurveTo(l*.25,-th*.5,l/2,-th*.5,l/2,0);
+        g.bezierCurveTo(l/2,th*.5,l*.2,th*.52,0,th*.5);g.bezierCurveTo(-l*.25,th*.55,-l/2,th*.6,-l/2,0);g.fill();}
+      /* one dab: a body, then three bristle streaks a shade lighter or darker, so it reads as paint */
+      function dab(x,y,l,th,a){
+        var c=col(x),i;
+        g.save();g.translate(x,y);g.rotate(a);
+        g.globalAlpha=.84+R()*.14;g.fillStyle=rgb(c,(sky?1.05:1.02)+(R()-.5)*.1);shape(l,th);
+        for(i=0;i<3;i++){g.globalAlpha=.3+R()*.3;g.fillStyle=rgb(c,1+(R()-.44)*.16);g.save();g.translate((R()-.5)*l*.2,(R()-.5)*th*.55);shape(l*(.5+R()*.4),th*(.22+R()*.2));g.restore();}
+        g.restore();
+      }
+      /* rows of dabs, the farthest from the painting first: solid where they meet it, thinning out toward the bare wall and toward the left edge */
+      for(r=0;r<rows.length;r++){
+        x=-24+R()*24;
+        while(x<414){len=22+R()*44;mid=x+len/2;if(R()<rows[r][1]*Math.min(1,Math.max(0,(mid-x0)/32)))dab(mid,rows[r][0]+(R()-.5)*3.4,len,7.5+R()*4.5,(R()-.5)*tilt);x+=len*(.58+R()*.46);}
+      }
+      el.classList.add('on');
+    }
+    strip(top,0,[[15,.07],[22,.2],[29,.42],[36,.7],[43,.93],[50,1]],.12,14,true);
+    strip(foot,cv.height-band,[[39,.07],[32,.2],[25,.42],[18,.7],[11,.93],[4,1]],.16,14,false);
   }
   function loop(ts){
     raf=0;if(!hero)return;

@@ -56,6 +56,10 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px soli
   -webkit-mask-image: linear-gradient(to right, transparent 0, #000 6%);
           mask-image: linear-gradient(to right, transparent 0, #000 6%); }
 .hero-paint canvas, .strata canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+/* stacked layout only: two strips of loose dabs, painted by riviera.js, where the painting's sky and ground run out onto the wall */
+.hero-edge { display: none; opacity: 0; transition: opacity .6s ease; }
+.hero-edge.on { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .hero-edge { transition: none; } }
 
 /* the first screen's left side: a framed photo with a label beside it, as on a museum wall.
    The painting is 16:10 and pinned to the right, so a window wider than that gains bare wall on its left (--extra).
@@ -119,13 +123,16 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px soli
   @media not all and (max-aspect-ratio: 4/5) { .latest { display: none; } }
 }
 
-/* Stacked: the painting first, then the framed photo and its label. On phones, and on upright tablets and other tall
-   windows up to 949px wide, where the wall beside a full-width painting is too narrow for the pair. */
+/* Stacked, on phones and on upright tablets and other tall windows up to 949px wide, where the wall beside a full-width
+   painting is too narrow for the pair. The wall comes first: the section links, then the framed photo and its label. Under
+   them the painting is brushed straight onto the wall, its sky and ground running out in loose dabs, and the note follows. */
 @media (max-width: 760px), (max-width: 949px) and (max-aspect-ratio: 4/5) {
   .hero { height: auto; min-height: 0; overflow: hidden; }
   .hero-stage { position: static; height: auto; aspect-ratio: auto; display: flex; flex-direction: column; container-type: normal; }
   .hero-wall { display: contents; }
-  .hero-text { padding: 36px var(--gutter) 12px; gap: 20px; }
+  .wall-nav { order: 1; align-self: stretch; justify-content: space-between; max-width: 400px; margin: 14px var(--gutter) 0; gap: 0 10px; font-size: 12px; }
+  .wall-nav a { padding: 8px 0; }
+  .hero-text { order: 2; padding: 18px var(--gutter) 4px; gap: 20px; }
   .portrait-frame { width: 128px; }
   .portrait-frame .frame-a { --m: 11px; }
   .hero-label { container-type: inline-size; }
@@ -134,11 +141,20 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px soli
   .hero-text .role { font-size: 14px; }
   .hero-text .bio { font-size: 16px; max-width: none; }
   .hero-links { font-size: 13px; gap: 6px 16px; margin-top: 1.1em; }
-  .wall-nav { display: none; }
-  .latest { align-self: stretch; width: auto; margin: 6px var(--gutter) 20px; font-size: 14px; }
-  .hero-paint { position: relative; inset: auto; width: 172vw; aspect-ratio: 16 / 10; margin-left: -72vw;
+  .latest { order: 6; align-self: stretch; width: auto; margin: 10px var(--gutter) 20px; font-size: 14px; }
+  /* the strips are sized with the painting: 56 and 50 units high where the screen is 390 wide, overlapping it by 10 */
+  .hero-edge { display: block; position: relative; z-index: 1; width: 100%; pointer-events: none; }
+  .hero-edge-top { order: 3; height: 14.36vw; margin-bottom: -2.56vw; }
+  .hero-edge-foot { order: 5; height: 12.82vw; margin-top: -2.56vw; }
+  .hero-paint { order: 4; position: relative; inset: auto; width: 172vw; aspect-ratio: 16 / 10; margin-left: -72vw;
     -webkit-mask-image: linear-gradient(to right, transparent 41%, #000 47%);
             mask-image: linear-gradient(to right, transparent 41%, #000 47%); }
+  /* the narrowest phones: a smaller photo and name, so the surname stays inside the screen and the links keep to one row */
+  @media (max-width: 340px) {
+    .wall-nav { font-size: 11px; gap: 0 8px; }
+    .portrait-frame { width: 104px; }
+    .hero-text h1 { font-size: 31px; }
+  }
 }
 
 /* ---------- Top bar ---------- */
@@ -646,7 +662,12 @@ details.more li { margin-bottom: 10px; padding-left: 1.2em; text-indent: -1.2em;
 .no-js .strata-box { display: none; }
 .strata { position: absolute; left: 0; top: 0; width: 680px; height: 812px; transform-origin: 0 0; background: transparent; overflow: hidden; }
 .strata-lab { position: absolute; inset: 0; pointer-events: none; font-family: var(--serif); color: var(--ink); line-height: 1.35; }
+/* the CV in words. Screen readers always get it. It is put on screen only where the painted cliff cannot be read:
+   on a phone, without scripts, or if the cliff fails to draw. */
 .cv-text { max-width: 680px; margin: 28px 0 0; }
+@media (min-width: 601px) {
+  html:not(.no-js) .cv-text:not(.show) { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
 .cv-text h3 { font-family: var(--display); font-weight: 400; font-size: 20px; margin: 22px 0 4px; }
 .cv-text h3 span { font-family: var(--serif); font-size: 15px; color: var(--muted); margin-left: 8px; }
 

@@ -124,9 +124,9 @@
   window.addEventListener('resize', mark);
   mark();
 
-  /* On a phone the cliff is too small to read, so the CV opens as text beneath it. */
-  var cvText = document.querySelector('details.cv-text');
-  if (cvText && window.matchMedia && matchMedia('(max-width: 600px)').matches) cvText.open = true;
+  /* The CV in words. The stylesheet puts it on screen on a phone, where the cliff is too small to read, and without scripts;
+     here it is also shown if the cliff fails to draw. */
+  var cvText = document.querySelector('.cv-text');
 
   /* The paintings start after the page's first paint, each on its own so one failure cannot stop the other. */
   var hero = document.getElementById('riviera'), strata = document.getElementById('strata');
@@ -135,7 +135,7 @@
       try { if (hero && window.Riviera) window.Riviera.mount(hero); }
       catch (e) { hero.classList.add('poster-only'); }
       try { if (strata && window.Strata) window.Strata.mount(strata); }
-      catch (e) { strata.hidden = true; if (cvText) cvText.open = true; }
+      catch (e) { strata.hidden = true; if (cvText) cvText.classList.add('show'); }
     }, 0);
   });
 })();
