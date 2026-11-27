@@ -1,563 +1,549 @@
-/* Chladni Sand: a square brass Chladni plate seen from above, clamped by a bolt at its centre and lying in the
-   sun on a light wooden studio table. Pale sand is heaped along the nodal lines of one classic low mode (both
-   diagonals and four arcs: the zero set of cos 2pi x cos 4pi y - cos 4pi x cos 2pi y) and, over a slow 14 s
-   cycle, twists smoothly into a nearby pinwheel mode and back, the clamped centre always staying a node.
-   Vignette for "Learning Generalizable Neural Operators for Inverse Problems". Painting space is 100 units tall
-   and as wide as the frame (133 units at 4:3); the plate keeps its size against the height and stays square, with
-   sunlit table on both sides and a violin bow resting on the left, its tip against the plate's lit edge.
-   Value plan: sunlit table (light), brass plate (a darker field), sand (lightest), deep blue violet cast shadow.
-   Still layers: table, cast shadow and plate in one canvas, plus the sand alone baked at NK modes.
-   Every frame lays the whole still canvas, then the trembling sunlight on the brass, then the sand. The sand
-   changes mode as a union of neighbouring keyframes with an opaque layer always on top (the next mode fades in
-   beneath, the two trade places briefly, the old one fades out beneath), so a ridge never goes see-through.
-   Live grains ride the moving lines and shiver as the plate hums, stray grains dance, and glints catch the sun. */
+/* Stepping Stones (Learning Generalizable Neural Operators for Inverse Problems). A stream between a sunlit meadow
+   and a shady wood, after Monet's river pictures around Giverny, as a 4:3 landscape. The water cannot be crossed
+   where you like, only on a handful of stones: the paper maps one space of functions to another through a few
+   coefficients of a basis learned on each side, never through the functions themselves. The two banks are painted
+   in two hands, round flower dabs in the meadow and long upright strokes in the wood. A walker in white crosses
+   from the meadow (what was observed) into the wood (what caused it). Past the last stone the path fans into three
+   trails and on each crossing she takes a different one: an ill-posed inverse has several plausible answers.
+   Design space is 400 x 300, horizon at 78; things on the ground shrink with their height above the bottom edge.
+   Painted once: an opaque still canvas (sky, far fields, water, meadow), the water alone (for its shimmer), and two
+   transparent layers of the wood, one behind the walker (the depth of the wood, its floor and trails, the stones)
+   and one in front of her (the near trunks, the canopy, the reeds). Each frame lays the still canvas, drifts the
+   clouds behind the canopy, sways the water in strips and paints a small live layer: glints, leaves riding the
+   current between the stones, wakes below them, a ring where she lands, flecks of sun on the wood floor, the
+   walker, and a few nodding flowers. With motion reduced, frame(6) shows her resting on the fourth stone. */
 (function () {
-  var PI = Math.PI, TAU = 2 * PI;
-  function mb(s) { return function () { s |= 0; s = s + 0x6D2B79F5 | 0; var t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-  var R = mb(1);
-  function sd(n) { R = mb(n * 7919 + 13); }
-  function rr(a, b) { return a + (b - a) * R(); }
-  function pk(a) { return a[Math.floor(R() * a.length)]; }
-  function cl(v, a, b) { return v < a ? a : v > b ? b : v; }
-  function lp(a, b, t) { return a + (b - a) * t; }
-  function ss(a, b, x) { var t = cl((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); }
-  function hs(i, j) { var h = Math.imul(i, 374761393) + Math.imul(j, 668265263) | 0; h = Math.imul(h ^ h >>> 13, 1274126177); return ((h ^ h >>> 16) >>> 0) / 4294967296; }
-  function vn(x, y) { var i = Math.floor(x), j = Math.floor(y), u = x - i, v = y - j, a = u * u * (3 - 2 * u), b = v * v * (3 - 2 * v); return lp(lp(hs(i, j), hs(i + 1, j), a), lp(hs(i, j + 1), hs(i + 1, j + 1), a), b); }
-  function fb(x, y) { return 0.65 * vn(x, y) + 0.35 * vn(x * 2.7 + 5, y * 2.7 + 9); }
-  function gs() { return (R() + R() + R() - 1.5) * 2; }
-  function sp(s) { return s.split(' ').map(function (v) { return '#' + v; }); }
-
-  /* A tapered, slightly bowed dab (the hero's stroke). */
-  function B(c, x, y, a, l, w, col, al, bd) {
-    var ca = Math.cos(a), sa = Math.sin(a), h = l / 2, nx = -sa, ny = ca, q = w / 2, b = (bd || 0) * l,
-      tx = x - ca * h, ty = y - sa * h, hx = x + ca * h, hy = y + sa * h, mx = x + nx * b, my = y + ny * b;
-    c.globalAlpha = al; c.fillStyle = col; c.beginPath();
-    c.moveTo(tx + nx * q, ty + ny * q);
-    c.quadraticCurveTo(mx + nx * q * 1.4, my + ny * q * 1.4, hx - ca * q * 0.3, hy - sa * q * 0.3);
-    c.quadraticCurveTo(mx - nx * q * 1.4, my - ny * q * 1.4, tx - nx * q, ty - ny * q);
-    c.quadraticCurveTo(tx - ca * q * 1.3, ty - sa * q * 1.3, tx + nx * q, ty + ny * q);
-    c.fill();
-  }
-
-  var C = {
-    /* table in sun: light wood, mid wood, honey, peach, rose, seam brown (seams only), sun flecks, lilac reflections,
-       green gold, far-corner violet */
-    tl: sp('D4AA84 CEA480 D8B08A CAA282 D2A886'), tm: sp('C4946E BE906C C89A74 BA8C6E C0926E'), th: sp('D4A46C CC9E68 D8AC76'),
-    tp: sp('E0AA86 DAA282 E4B28E'), tr: sp('D69888 CE9286 DCA294'), td: sp('9A7864 927262 A07C68'), tz: sp('84626A 7C5E70 8A6862 765C6E'), ty: sp('F0D8B4 F4DEBC ECD0AA'),
-    tv: sp('B4A6C2 AEA0BC BAACC6'), tg: sp('C6AE7A BEA87A'), tc: sp('9286AC 8A7EA6 988CB0 847A9E'),
-    /* the plate's cast shadow on the table: blue violet core, warm reflected light, lighter rim, deepest at the corner */
-    sh: sp('4E4C8A 54528E 4A4A84 585490 504E8A'), sw: sp('7C5C7C 725A80 806080'), sl: sp('706CA4 7874AA 6C68A0 7C76AA'),
-    cn: sp('46447C 4C4A82 504A80 44427A'),
-    /* brass: sun, light gold, old gold, bronze, deep bronze, violet, sky reflections, deep blue, copper, patina, rose */
-    hi: sp('FFEFC0 FBE4AC FFE6A6 FFF2D2'), lt: sp('E2B868 DCAE60 E8C276 D8AA5C'),
-    md: sp('C09248 B88A44 C69C56 B2884A BC9050'), bz: sp('A0703C 966838 A87A44 8E6238 9C6E3E'),
-    dk: sp('7A4E36 724834 805438 6E4632 784C38'), vi: sp('6E5E8C 786698 665888 7E6C9C 6A588A'),
-    co: sp('8A94C0 929AC4 808AB8 9AA0C8 8690BE'), cd: sp('626AA0 5C6298 6A6AA0 605E94'),
-    cu: sp('B8703E C07A48 AE6A3A'), gr: sp('7E8E5E 74886A'), ro: sp('C88C7C C08474 D09A88'),
-    /* sand: lit ivory, cream crest, ochre, rose, lemon, lilac shade; grain shadow; sparkle */
-    sL: sp('FFF8E8 FFF4DC FCEED2 FFF6E2 FBEACA'), sC: sp('F6E6C8 F2DEB8 EFD8AE F6E2C0 EDD4A6'), sO: sp('E8C890 E2BE84 DCB47A ECCC98'),
-    sR: sp('F0CDBC EAC2B0 F2D4C4'), sY: sp('FFF2BC FBEAB0'), sS: sp('B8A6C8 AC9CC6 A496C4 BCA4BE A094C2'),
-    gS: sp('6A5A98 5E5690 72609C 66589A'), gW: sp('FFFFFF FFFDF4 FFF8E4'),
-    /* the violin bow: pernambuco stick, its sunlit edge, its violet brown underside, the head, ivory, hair */
-    bS: sp('8C4A2C 96522F 82442A 9E5A36 884830'), bL: sp('D88E52 E4A464 CC7E46 F0B878'), bD: sp('5E3440 663A44 54304A 6E3E3E'),
-    bH: sp('5A3026 4E2A28 62362A 563040'), bM: sp('B4643A A8582E 8E4040 9A4C3E C0703E'), bR: sp('D49A78 C88C70 DCA686'), iv: sp('FBF2DC F4EAD0 FFF8E8'), bh: sp('F2EAD6 EAE0CA FAF4E4 E6DCCC')
-  };
-
-  /* Plate geometry: centre, half side, rotation. Light falls from the upper left. CX is set per size in build(). */
-  var CX = 50, CY = 50.4, HS = 39.6, PHI = -0.056, CA = Math.cos(PHI), SA = Math.sin(PHI), LX = -0.62, LY = -0.78;
-  function wx(u, v) { return CX + (u - 0.5) * 2 * HS * CA - (v - 0.5) * 2 * HS * SA; }
-  function wy(u, v) { return CY + (u - 0.5) * 2 * HS * SA + (v - 0.5) * 2 * HS * CA; }
-  function pu(x, y) { return 0.5 + ((x - CX) * CA + (y - CY) * SA) / (2 * HS); }
-  function pv(x, y) { return 0.5 + (-(x - CX) * SA + (y - CY) * CA) / (2 * HS); }
-  function inP(x, y, m) { var u = pu(x, y), v = pv(x, y); return u > m && u < 1 - m && v > m && v < 1 - m; }
-  function platePath(c, m) {
-    c.beginPath(); c.moveTo(wx(-m, -m), wy(-m, -m)); c.lineTo(wx(1 + m, -m), wy(1 + m, -m)); c.lineTo(wx(1 + m, 1 + m), wy(1 + m, 1 + m)); c.lineTo(wx(-m, 1 + m), wy(-m, 1 + m)); c.closePath();
-  }
-  /* The plate floats on its post, so its shadow falls well down and to the right. */
-  var SOX = 3.6, SOY = 4.6;
-  function shp(x, y) {
-    var u = pu(x - SOX, y - SOY), v = pv(x - SOX, y - SOY), d = Math.max(Math.abs(u - 0.5), Math.abs(v - 0.5)) - 0.5;
-    return 1 - ss(-0.028, 0.02, d + (vn(x * 0.35, y * 0.35) - 0.5) * 0.016);
-  }
-
-  /* Mode family G = cos(th) X + sin(th) P, th in [0, DM]. X: the diagonals-and-arcs mode, P = cos pi u cos pi v.
-     Both vanish at the clamped centre, so the bolt always sits on a node. FG: value, d/du, d/dv. */
-  var DM = 16 * PI / 180, PER = 14, NK = 7, FG = [0, 0, 0];
-  function fld(u, v, c, s) {
-    var cu = Math.cos(PI * u), su = Math.sin(PI * u), cv = Math.cos(PI * v), sv = Math.sin(PI * v),
-      ca = 2 * cu * cu - 1, sa = 2 * su * cu, cb = 2 * cv * cv - 1, sb = 2 * sv * cv,
-      c2a = 2 * ca * ca - 1, s2a = 2 * sa * ca, c2b = 2 * cb * cb - 1, s2b = 2 * sb * cb;
-    FG[0] = c * 0.5 * (ca * c2b - c2a * cb) + s * cu * cv;
-    FG[1] = c * 0.5 * (-TAU * sa * c2b + 2 * TAU * s2a * cb) - s * PI * su * cv;
-    FG[2] = c * 0.5 * (-2 * TAU * ca * s2b + TAU * c2a * sb) - s * PI * cu * sv;
-    return FG;
-  }
-  /* Nodal lines of X as polylines in plate coordinates: two diagonals and four arcs around the edge midpoints. */
-  function nodal() {
-    var E = 0.01, L = [[[E, E], [1 - E, 1 - E]], [[E, 1 - E], [1 - E, E]]], A = [[], [], [], []], k, i;
-    for (k = 0; k <= 40; k++) {
-      var al = PI * k / 40, dx = Math.cos(al), dy = Math.sin(al), lo = 0.05, hi = 0.32;
-      for (i = 0; i < 20; i++) { var r = (lo + hi) / 2, p = Math.cos(TAU * (0.5 + r * dx)), q = Math.cos(TAU * r * dy); if (2 * p * q + 1 < 0) lo = r; else hi = r; }
-      r = (lo + hi) / 2; var a = 0.5 + r * dx, b = Math.max(E, r * dy);
-      A[0].push([a, b]); A[1].push([a, 1 - b]); A[2].push([b, a]); A[3].push([1 - b, a]);
-    }
-    return L.concat(A);
-  }
-
-  /* Brass colour. The sun bloom is a tight pool of light set inside the left triangle (between the two left arms
-     of the cross and the left arc), so it never washes the sand. The field is otherwise a darker bronze and old
-     gold, lighter toward the lit upper left, deeper in the middle right, and lifted again by reflected sky near
-     the far edges so they stand clear of the cast shadow. */
-  var BU = 0.305, BV0 = 0.5;
-  function bloom(u, v) { var a = (u - BU) / 0.085, b = (v - BV0) / 0.12; return Math.exp(-(a * a + b * b)); }
-  function farE(u, v) { return ss(0.84, 0.985, Math.max(u, v)); }
-  /* sky reflected in broad soft passages: one in the right triangle, one above the top arc, one beside the bottom arc */
-  function blob(u, v, cu, cv, r) { var a = u - cu, b = v - cv; return Math.exp(-(a * a + b * b) / (r * r)); }
-  function coolz(u, v) {
-    return ss(0.25, 0.8, Math.max(blob(u, v, 0.76, 0.45, 0.21), blob(u, v, 0.34, 0.82, 0.17), blob(u, v, 0.58, 0.12, 0.15)) + (fb(u * 2.2 + 11, v * 2 + 4) - 0.5) * 0.8 - bloom(u, v) * 0.8);
-  }
-  function pcol(u, v, x, y, j) {
-    var g = bloom(u, v), fe = farE(u, v), dp = ss(0.32, 0.95, (u + v) / 2 + (fb(x * 0.07, y * 0.07) - 0.5) * 0.3) * (1 - fe), cz = coolz(u, v),
-      k = 0.4 + 0.62 * g - 0.24 * dp + 0.12 * fe + (fb(x * 0.11 + 4, y * 0.11) - 0.5) * 0.32 + rr(-j, j);
-    if (R() < cz * 0.66) return R() < 0.42 ? pk(C.co) : R() < 0.6 ? pk(C.vi) : pk(C.cd);
-    if (fe > 0.2 && R() < fe * 0.25) return pk(C.co);
-    if (R() < 0.03) return pk(C.cu);
-    if (R() < 0.006) return pk(C.gr);
-    if (R() < 0.014) return pk(C.ro);
-    if (k > 0.9) return R() < 0.35 ? pk(C.hi) : pk(C.lt);
-    if (k > 0.68) return R() < 0.5 ? pk(C.lt) : pk(C.md);
-    if (k > 0.45) return R() < 0.1 ? pk(C.cu) : pk(C.md);
-    if (k > 0.26) return R() < 0.12 ? pk(C.md) : pk(C.bz);
-    return R() < 0.5 ? pk(C.vi) : pk(C.dk);
-  }
-
-  function create(canvas) {
-    var X = canvas.getContext('2d'), st = null;
-    function mk(w, h, op) { var o = document.createElement('canvas'); o.width = Math.max(1, w); o.height = Math.max(1, h); var c = o.getContext('2d', op ? { alpha: false } : undefined); c.lineCap = 'round'; c.lineJoin = 'round'; return [o, c]; }
-    function build() {
-      var cw = canvas.clientWidth || 400, ch = canvas.clientHeight || Math.round(cw * 0.75), dp = Math.min(2, window.devicePixelRatio || 1);
-      canvas.width = Math.max(1, Math.round(cw * dp)); canvas.height = Math.max(1, Math.round(ch * dp));
-      /* one uniform scale, 100 units to the frame height; PW is the frame width in units */
-      var W = canvas.width, H = canvas.height, K = Math.min(H / 100, W / 100), KX = K, KY = K, PW = W / K, PH = H / K, i, j, k, m, v, u, x, y, e, t;
-      CX = PW / 2 + 1.6 * cl((PW - 100) / 33, 0, 1); CY = PH / 2 + 0.4;
-      /* at small sizes the strokes grow and thin out, so they still read as strokes */
-      var Z = 1 + 0.3 * cl((520 - Math.min(cw, ch)) / 300, 0, 1), NQ = 1 / (Z * Z), WQ = PW / 100;
-      function b(c, x, y, a, l, w, col, al, bd) { B(c, x, y, a, l * Z, w * Z, col, al, bd); }
-
-      /* the still canvas is opaque, so laying it each frame is a plain copy */
-      var bg = mk(W, H, true), G = bg[1], pl = mk(W, H), P = pl[1];
-      G.setTransform(KX, 0, 0, KY, 0, 0); P.setTransform(KX, 0, 0, KY, 0, 0);
-
-      /* ---- the table: light boards in the sun, the plate's blue violet shadow, violet only in the far corners ---- */
-      sd(11);
-      var EA = 0.035, SM = [-14, 8.5, 30.5, 56, 79.5, 104];
-      var tg0 = G.createLinearGradient(0, 0, PW * 0.8, PH); tg0.addColorStop(0, '#D8AE84'); tg0.addColorStop(0.55, '#C69C76'); tg0.addColorStop(1, '#B48C76');
-      G.globalAlpha = 1; G.fillStyle = tg0; G.fillRect(-2, -2, PW + 4, PH + 4);
-      /* the cast shadow's ground, laid first so the dabs over it never open onto light wood */
-      G.save(); G.translate(SOX, SOY); G.fillStyle = '#56548E';
-      [[0.014, 0.3], [0.002, 0.42], [-0.012, 0.6]].forEach(function (q) { platePath(G, q[0]); G.globalAlpha = q[1]; G.fill(); });
-      G.restore();
-      /* light on the table: brightest toward the window at the upper left; each board has its own tone */
-      function tlt(x, y) {
-        var yy = y - x * EA, bi = 0; while (bi < 5 && SM[bi + 1] < yy) bi++;
-        return 0.56 + 0.4 * (1 - (x * 0.8 + y) / (0.8 * PW + PH) * 1.6) - 0.14 * (1 - ss(0, 13, Math.min(y + 2, x * 1.5 + 4))) + (hs(bi, 7) - 0.5) * 0.24 + (fb(x * 0.04 + bi * 3, y * 0.09 + bi * 1.7) - 0.5) * 0.24;
-      }
-      function tcol(x, y) {
-        var s = shp(x, y), fc = Math.max(ss(34, 8, Math.hypot(x - PW - 6, y + 6)), ss(34, 8, Math.hypot(x + 6, y - PH - 6))), lt = tlt(x, y) + rr(-0.06, 0.06);
-        if (s > 0.5 || R() < s * 1.2) return s < 0.75 && R() < 0.55 ? pk(C.sl) : R() < 0.16 ? pk(C.sw) : x - CX + y - CY > 68 && R() < 0.5 ? pk(C.cn) : pk(C.sh);
-        if (fc > 0.04 && R() < fc * 0.7) return R() < 0.55 ? pk(C.tc) : pk(C.tv);
-        var r = R();
-        if (r < 0.04) return pk(C.tr);
-        if (r < 0.06) return pk(C.tg);
-        if (r < 0.15) return pk(C.tp);
-        if (lt > 0.8) return R() < 0.25 ? pk(C.ty) : R() < 0.3 ? pk(C.th) : pk(C.tl);
-        if (lt > 0.6) return R() < 0.2 ? pk(C.th) : R() < 0.62 ? pk(C.tl) : pk(C.tm);
-        return R() < 0.72 ? pk(C.tm) : R() < 0.3 ? pk(C.tv) : pk(C.tl);
-      }
-      /* strokes follow the grain of the boards, except in the shadow's penumbra, where they follow its edge */
-      function tang(x, y, j) {
-        var s = shp(x, y); if (s < 0.06 || s > 0.94) return EA + rr(-j, j) + (R() < 0.06 ? rr(-0.2, 0.2) : 0);
-        var u = pu(x - SOX, y - SOY) - 0.5, v = pv(x - SOX, y - SOY) - 0.5;
-        return (Math.abs(u) > Math.abs(v) ? PHI + PI / 2 : PHI) + rr(-0.06, 0.06);
-      }
-      /* long plank strokes, then shorter grain strokes over them, leaving the ground showing between */
-      for (i = 0; i < 430 * NQ * WQ; i++) {
-        x = rr(-8, PW + 8); y = rr(-8, PH + 8);
-        if (inP(x, y, 0.06)) continue;
-        var pen = shp(x, y), pn = pen > 0.06 && pen < 0.94;
-        b(G, x, y, tang(x, y, 0.035), rr(9, 18) * (pn ? 0.4 : 1), rr(1.7, 2.5), tcol(x, y), 0.8, rr(-0.04, 0.04));
-      }
-      for (i = 0; i < 1350 * NQ * WQ; i++) {
-        x = rr(-4, PW + 4); y = rr(-4, PH + 4);
-        if (inP(x, y, 0.025)) continue;
-        var pen2 = shp(x, y), pn2 = pen2 > 0.06 && pen2 < 0.94, ln = 3.5 + 7 * R() * R();
-        b(G, x, y, tang(x, y, 0.07), ln * (pn2 ? 0.5 : 1), rr(0.7, 1.15), tcol(x, y), rr(0.62, 0.86), rr(-0.08, 0.08));
-      }
-      /* thin streaks along the grain: lilac where the room light falls, pale gold where the sun does */
-      for (i = 0; i < 120 * NQ * WQ; i++) {
-        x = rr(-4, PW + 4); y = rr(-4, PH + 4);
-        if (inP(x, y, 0.02) || shp(x, y) > 0.1) continue;
-        var lt2 = tlt(x, y) + rr(-0.1, 0.1), sun = lt2 > 0.74;
-        if (sun && R() < 0.5) continue;
-        b(G, x, y, EA + rr(-0.03, 0.03), rr(4, 9), rr(0.45, 0.7), sun ? (R() < 0.6 ? pk(C.ty) : pk(C.th)) : R() < 0.75 ? pk(C.tv) : pk(C.tc), rr(0.45, 0.65), rr(-0.03, 0.03));
-      }
-      /* board seams: soft, broken, violet brown, with a sunlit lip below */
-      for (k = 0; k < SM.length; k++) {
-        var s0 = SM[k] + rr(-0.4, 0.4);
-        for (t = -4; t < PW + 6; t += rr(3.5, 7)) {
-          x = t; y = s0 + t * EA + rr(-0.12, 0.12);
-          if (y < -3 || y > PH + 3 || inP(x, y, 0.02) || R() < 0.18) continue;
-          var sh = shp(x, y);
-          if (sh > 0.5) continue;
-          b(G, x, y, EA + rr(-0.015, 0.015), rr(5, 9.5), rr(0.48, 0.66), pk(C.tz), rr(0.42, 0.66));
-          if (R() < 0.7) b(G, x + rr(-1, 1), y + 0.95, EA, rr(3.5, 7), 0.6, R() < 0.6 ? pk(C.ty) : pk(C.tl), 0.6);
-        }
-      }
-      /* the shadow again, laid along its two bands so the core is deep and the rim soft */
-      var DU = (SOX + 1) / (2 * HS), DV = (SOY + 1) / (2 * HS);
-      for (i = 0; i < 560 * NQ; i++) {
-        var rt = R() < 0.5;
-        u = rt ? 1 + rr(-0.004, DU) : rr(0.05, 1 + DU); v = rt ? rr(0.06, 1 + DV) : 1 + rr(-0.004, DV);
-        x = wx(u, v); y = wy(u, v); var s1 = shp(x, y);
-        if (s1 < 0.15 || R() > s1) continue;
-        b(G, x, y, (rt ? PHI + PI / 2 : EA) + rr(-0.1, 0.1), rr(2.2, 4.4), rr(0.7, 1.2), R() < 0.14 ? pk(C.sw) : s1 < 0.6 ? pk(C.sl) : pk(C.sh), rr(0.5, 0.8) * (0.5 + 0.5 * s1), rr(-0.1, 0.1));
-      }
-      /* ---- the violin bow lying on the table, its point against the plate's left edge, the hair toward the sun.
-         Local frame: s runs from the point out along the stick, n across it toward the light. ---- */
-      var BWA = PI - 0.42, BDX = Math.cos(BWA), BDY = Math.sin(BWA), BNX = -BDY, BNY = BDX, BVB = 0.6,
-        BTX = wx(-0.004, BVB) + BDX * 0.25, BTY = wy(-0.004, BVB) + BDY * 0.25, BL = 1.1 * Math.hypot(PW, PH);
-      function bgap(s) { return 4.9 - 1.1 * ss(4, 40, s); }
-      function bX(s, n) { return BTX + BDX * s + BNX * n; }
-      function bY(s, n) { return BTY + BDY * s + BNY * n; }
-      /* its cast shadow, a little down and to the right: the stick, the hair, the head */
-      sd(41);
-      for (t = 2; t < BL; t += rr(1.6, 2.6)) {
-        x = bX(t, rr(-0.15, 0.15)) + 1.0; y = bY(t, rr(-0.15, 0.15)) + 1.25;
-        b(G, x, y, BWA + rr(-0.025, 0.025), rr(5.5, 8.5), rr(1.4, 1.8), R() < 0.65 ? pk(C.sh) : pk(C.sl), rr(0.3, 0.42));
-        if (t > 3 && R() < 0.7) b(G, bX(t, bgap(t)) + 0.55, bY(t, bgap(t)) + 0.7, BWA + rr(-0.03, 0.03), rr(2.4, 3.6), rr(0.5, 0.7), pk(C.sl), rr(0.25, 0.4));
-      }
-      for (k = 0; k < 7; k++) { var hs0 = rr(0.4, 4.4), hn0 = rr(0.4, 4.6) * (1 - hs0 / 7);
-        b(G, bX(hs0, hn0) + 1.0, bY(hs0, hn0) + 1.25, BWA + PI / 2 + rr(-0.3, 0.3), rr(2, 3.4), rr(1, 1.4), pk(C.sh), 0.5); }
-
-      /* warm light from the window at the upper left, on the table only */
-      G.save(); G.globalCompositeOperation = 'soft-light';
-      var gl = G.createRadialGradient(12, 5, 4, 12, 5, 150); gl.addColorStop(0, 'rgba(255,214,150,.4)'); gl.addColorStop(0.6, 'rgba(255,214,150,.1)'); gl.addColorStop(1, 'rgba(255,220,160,0)');
-      G.globalAlpha = 1; G.fillStyle = gl; G.fillRect(-2, -2, PW + 4, PH + 4); G.restore();
-
-      /* ---- the plate: painted unclipped on its own layer, then cut to a clean square ---- */
-      sd(31);
-      platePath(P, 0.01);
-      var lg = P.createLinearGradient(wx(0, 0), wy(0, 0), wx(1, 1), wy(1, 1)); lg.addColorStop(0, '#8E6C42'); lg.addColorStop(0.6, '#6E5038'); lg.addColorStop(1, '#5E5060');
-      P.globalAlpha = 1; P.fillStyle = lg; P.fill();
-      function fa(x, y) { return PHI + 0.22 + 0.7 * (fb(x * 0.03 + 7, y * 0.03) - 0.5); }
-      for (i = 0; i < 360 * NQ; i++) {
-        u = rr(-0.03, 1.03); v = rr(-0.03, 1.03); x = wx(u, v); y = wy(u, v);
-        b(P, x, y, fa(x, y) + rr(-0.1, 0.1), rr(9, 14), rr(2.8, 3.8), pcol(u, v, x, y, 0.03), 0.72, rr(-0.05, 0.05));
-      }
-      for (i = 0; i < 1600 * NQ; i++) {
-        u = rr(-0.03, 1.03); v = rr(-0.03, 1.03); x = wx(u, v); y = wy(u, v);
-        b(P, x, y, fa(x, y) + rr(-0.16, 0.16), rr(4, 7.2), rr(1.1, 1.7), pcol(u, v, x, y, 0.05), rr(0.72, 0.9), rr(-0.1, 0.1));
-      }
-      for (i = 0; i < 900 * NQ; i++) {
-        u = rr(-0.02, 1.02); v = rr(-0.02, 1.02); x = wx(u, v); y = wy(u, v);
-        b(P, x, y, fa(x, y) + rr(-0.22, 0.22), rr(2.2, 4), rr(0.6, 1), pcol(u, v, x, y, 0.06), rr(0.8, 0.95), rr(-0.12, 0.12));
-      }
-      /* sun glitter in the pool of light, like light on water */
-      for (i = 0; i < 220 * NQ; i++) {
-        u = rr(0.12, 0.5); v = rr(0.28, 0.72); var gb = bloom(u, v);
-        if (R() > gb * 1.15) continue;
-        x = wx(u, v); y = wy(u, v);
-        b(P, x, y, PHI + 0.12 + rr(-0.12, 0.12), rr(1.6, 3.6), rr(0.5, 0.9), gb > 0.7 && R() < 0.3 ? pk(C.hi) : R() < 0.16 ? pk(C.ro) : R() < 0.22 ? pk(C.cu) : pk(C.lt), rr(0.55, 0.85));
-      }
-      /* scattered stray grains */
-      for (i = 0; i < 130 * NQ; i++) {
-        u = rr(0.03, 0.97); v = rr(0.03, 0.97); x = wx(u, v); y = wy(u, v);
-        B(P, x + 0.16, y + 0.22, rr(0, PI), 0.55 * Z, 0.4 * Z, pk(C.gS), 0.35);
-        B(P, x, y, rr(0, PI), rr(0.4, 0.7) * Z, rr(0.3, 0.45) * Z, R() < 0.6 ? pk(C.sC) : pk(C.sO), rr(0.7, 0.92));
-      }
-      /* the bevel: light along the upper and left edges, brightest at their shared corner and sinking to old gold
-         toward the far ends, with a few breaks; the far edges are bronze, edged by a thin line of warm light
-         reflected up from the table, which keeps them clear of the shadow */
-      var EG = [[0, 0, 1, 0, 1], [0, 0, 0, 1, 1], [1, 0, 1, 1, 0], [0, 1, 1, 1, 0]], BV = 0.0115;
-      for (e = 0; e < 4; e++) {
-        var q = EG[e], lit = q[4], ea = Math.atan2(wy(q[2], q[3]) - wy(q[0], q[1]), wx(q[2], q[3]) - wx(q[0], q[1])),
-          iu = q[0] === q[2] ? (q[0] ? -1 : 1) : 0, iv = q[1] === q[3] ? (q[1] ? -1 : 1) : 0;
-        for (t = 0.005; t <= 0.995; t += rr(0.007, 0.014)) {
-          var sg0 = Math.floor(t * 12 + e * 0.37), gap = hs(sg0, e + 5) < 0.3 + 0.25 * ss(0.3, 0.7, t) && (t * 12 + e * 0.37) % 1 < 0.34;
-          u = lp(q[0], q[2], t); v = lp(q[1], q[3], t);
-          var ins = BV * rr(0.25, 0.75); x = wx(u + iu * ins, v + iv * ins); y = wy(u + iu * ins, v + iv * ins);
-          if (lit) {
-            if (gap) continue;
-            var bf = 1 - t + rr(-0.12, 0.12);
-            B(P, x, y, ea + rr(-0.03, 0.03), rr(1.8, 3.6) * Z, BV * 2 * HS * rr(0.5, 0.8) * (0.75 + 0.25 * (1 - t)),
-              bf > 0.66 ? (R() < 0.75 ? pk(C.hi) : '#FFE2B8') : bf > 0.36 ? (R() < 0.3 ? pk(C.hi) : pk(C.lt)) : R() < 0.35 ? pk(C.lt) : pk(C.md), rr(0.7, 0.95) * (0.7 + 0.3 * (1 - t)));
-          } else {
-            B(P, x, y, ea + rr(-0.03, 0.03), rr(2, 4) * Z, BV * 2 * HS * rr(0.6, 0.9), R() < 0.6 ? pk(C.bz) : R() < 0.5 ? pk(C.dk) : pk(C.vi), rr(0.6, 0.85));
-            if (!gap && R() < 0.85) { ins = BV * rr(0.06, 0.2); x = wx(u + iu * ins, v + iv * ins); y = wy(u + iu * ins, v + iv * ins);
-              B(P, x, y, ea + rr(-0.02, 0.02), rr(2, 4.5) * Z, rr(0.34, 0.5) * Z, R() < 0.5 ? '#D2A470' : R() < 0.5 ? '#C89A68' : '#DDB282', rr(0.6, 0.85)); }
-          }
-          if (lit && R() < 0.3) { ins = BV * rr(1.2, 1.5); x = wx(u + iu * ins, v + iv * ins); y = wy(u + iu * ins, v + iv * ins);
-            B(P, x, y, ea + rr(-0.03, 0.03), rr(1.5, 3) * Z, 0.35 * Z, pk(C.bz), 0.45); }
-        }
-      }
-      P.setTransform(1, 0, 0, 1, 0, 0); P.globalAlpha = 1; P.globalCompositeOperation = 'destination-in';
-      P.setTransform(KX, 0, 0, KY, 0, 0); platePath(P, 0); P.fillStyle = '#000'; P.fill();
-      P.globalCompositeOperation = 'source-over';
-      G.save(); G.setTransform(1, 0, 0, 1, 0, 0); G.globalAlpha = 1; G.drawImage(pl[0], 0, 0); G.restore();
-      /* a few soft shadow dabs just outside the far edges, so the square sits in its shadow */
-      sd(35);
-      for (e = 2; e < 4; e++) {
-        var q2 = EG[e], ea2 = Math.atan2(wy(q2[2], q2[3]) - wy(q2[0], q2[1]), wx(q2[2], q2[3]) - wx(q2[0], q2[1])), on = e === 2 ? [1, 0] : [0, 1];
-        for (t = 0.05; t <= 0.99; t += rr(0.02, 0.05)) {
-          u = lp(q2[0], q2[2], t) + on[0] * 0.016; v = lp(q2[1], q2[3], t) + on[1] * 0.016;
-          b(G, wx(u, v), wy(u, v), ea2 + rr(-0.04, 0.04), rr(2, 3.8), rr(0.5, 0.8), pk(C.sh), rr(0.4, 0.65));
-        }
-      }
-      /* the bow itself: a red brown stick, lit along its upper edge, violet brown beneath; the pale hair ribbon
-         seen edge on; the dark head with its ivory face at the point */
-      sd(43);
-      var gp;
-      for (t = 5; t < BL; t += rr(2, 2.8)) b(G, bX(t, 0), bY(t, 0), BWA + rr(-0.02, 0.02), rr(4.4, 6), rr(1.5, 1.7), pk(C.bS), 0.92);
-      /* broken colour along it: orange and red violet in the body, violet blue in the underside, a warm reflection
-         from the table at its lower edge, and the sun in broken dashes on top */
-      for (t = 5.5; t < BL; t += rr(2.2, 3.4)) b(G, bX(t, rr(-0.2, 0.2)), bY(t, rr(-0.2, 0.2)), BWA + rr(-0.02, 0.02), rr(2.4, 4), rr(0.7, 1), pk(C.bM), rr(0.6, 0.85));
-      for (t = 5.5; t < BL; t += rr(2.4, 3.6)) b(G, bX(t, -0.5), bY(t, -0.5), BWA + rr(-0.02, 0.02), rr(3.4, 6), rr(0.5, 0.65), R() < 0.4 ? pk(C.vi) : pk(C.bD), rr(0.55, 0.8));
-      for (t = 7; t < BL; t += rr(4, 7)) b(G, bX(t, -0.78), bY(t, -0.78), BWA, rr(2.4, 4), 0.32, pk(C.bR), rr(0.5, 0.7));
-      for (t = 4.6; t < BL; t += rr(2.4, 4)) b(G, bX(t, 0.42), bY(t, 0.42), BWA + rr(-0.015, 0.015), rr(3, 6.5), rr(0.36, 0.5), R() < 0.2 ? pk(C.hi) : pk(C.bL), rr(0.72, 0.92));
-      for (t = 3.6; t < BL; t += rr(2.4, 3.6)) { gp = bgap(t); b(G, bX(t, gp), bY(t, gp), BWA + rr(-0.012, 0.012), rr(4.5, 6.5), rr(0.42, 0.56), R() < 0.15 ? pk(C.sS) : pk(C.bh), rr(0.8, 0.95)); }
-      /* the head: a hatchet from the stick down to the hair, its face sloping back from the point, its throat
-         curving back up into the stick */
-      var HP = [[0, -0.82], [1.8, 4.9], [3.6, 4.95], [4.6, 3.6], [5.6, 2.1], [6.8, 1.1], [8, 0.78], [8, -0.82]];
-      G.globalAlpha = 0.96; G.fillStyle = '#5A3228'; G.beginPath();
-      HP.forEach(function (p, i) { if (i) G.lineTo(bX(p[0], p[1]), bY(p[0], p[1])); else G.moveTo(bX(p[0], p[1]), bY(p[0], p[1])); });
-      G.closePath(); G.fill();
-      B(G, bX(3.4, 2.2), bY(3.4, 2.2), BWA + 0.9, 3.2, 1.6, pk(C.bH), 0.7);
-      /* soften the throat's edge into the stick */
-      B(G, bX(5.3, 2.2), bY(5.3, 2.2), Math.atan2(BDY * 2.4 - BNY * 2.6, BDX * 2.4 - BNX * 2.6), 3.6, 0.7, pk(C.bS), 0.55);
-      B(G, bX(5.2, 0.1), bY(5.2, 0.1), BWA, 4.4, 1.2, pk(C.bS), 0.8);
-      /* the sun on the throat and along the top of the head */
-      B(G, bX(5.4, 2.5), bY(5.4, 2.5), Math.atan2(BDY * 2.4 - BNY * 2.6, BDX * 2.4 - BNX * 2.6), 3.4, 0.42, pk(C.bL), 0.85);
-      B(G, bX(3.4, -0.55), bY(3.4, -0.55), BWA, 5.2, 0.4, pk(C.bD), 0.7);
-      /* the ivory face along the front, catching the sun, and the hair meeting the head */
-      var fa3 = Math.atan2(BDY * 1.8 + BNY * 5.7, BDX * 1.8 + BNX * 5.7);
-      B(G, bX(0.98, 2.05), bY(0.98, 2.05), fa3, 5.8, 0.85, pk(C.iv), 0.96);
-      B(G, bX(0.7, 1.1), bY(0.7, 1.1), fa3, 2.6, 0.42, '#FFFFFF', 0.9);
-      B(G, bX(2.7, 4.95), bY(2.7, 4.95), BWA, 2, 0.5, pk(C.iv), 0.8);
-
-      /* ---- sand sprites ---- */
-      /* clumps: NV variants (four tones: lit flank, crest, warm flank, shade flank; two shapes) at NB orientations and NS sizes */
-      var NB = 10, NV = 8, NS = 3, SCL = [0.85, 1.15, 1.55], CS = [], CR = [], ay = 0, VD = [];
-      for (i = 0; i < NS; i++) { CS.push(Math.ceil(2.9 * SCL[i] * K * Z) + 2); CR.push(ay); ay += CS[i] * NV; }
-      sd(100);
-      for (v = 0; v < NV; v++) {
-        var tone = v % 4, loose = v >= 4, n = loose ? 7 : 10, d = [];
-        for (k = 0; k < n; k++) {
-          var r = R(), cc = tone === 0 ? (r < 0.6 ? pk(C.sL) : r < 0.8 ? pk(C.sY) : r < 0.92 ? pk(C.sC) : pk(C.sR))
-            : tone === 1 ? (r < 0.5 ? pk(C.sC) : r < 0.72 ? pk(C.sL) : r < 0.88 ? pk(C.sO) : pk(C.sR))
-            : tone === 2 ? (r < 0.42 ? pk(C.sO) : r < 0.68 ? pk(C.sR) : r < 0.86 ? pk(C.sC) : pk(C.sS))
-            : (r < 0.5 ? pk(C.sS) : r < 0.72 ? pk(C.sR) : r < 0.88 ? pk(C.sO) : pk(C.sC));
-          d.push([rr(-1, 1) * (loose ? 1.15 : 0.95), gs() * (loose ? 0.2 : 0.12), rr(-0.4, 0.4), rr(0.55, 1.05) * (loose ? 0.85 : 1), rr(0.36, 0.6) * (loose ? 0.85 : 1), cc, rr(0.86, 0.97)]);
-        }
-        VD.push(d);
-      }
-      var at = mk(CS[NS - 1] * NB, ay), A = at[1];
-      for (i = 0; i < NS; i++) for (v = 0; v < NV; v++) for (j = 0; j < NB; j++) {
-        var cs = CS[i], an = j * PI / NB, can = Math.cos(an), san = Math.sin(an), dd = VD[v];
-        A.save(); A.beginPath(); A.rect(j * cs, CR[i] + v * cs, cs, cs); A.clip();
-        A.setTransform(K * SCL[i] * Z, 0, 0, K * SCL[i] * Z, j * cs + cs / 2, CR[i] + v * cs + cs / 2);
-        for (k = 0; k < dd.length; k++) {
-          var g0 = dd[k], gx = g0[0] * can - g0[1] * san, gy = g0[0] * san + g0[1] * can;
-          B(A, gx, gy, an + g0[2], g0[3], g0[4], g0[5], g0[6]);
-          if (v % 4 === 0 && k % 3 === 1) B(A, gx - 0.1, gy - 0.13, an + g0[2], g0[3] * 0.5, g0[4] * 0.4, pk(C.gW), 0.75);
-        }
-        A.restore();
-      }
-      /* small cells: loose grains with their own shadows, a glint, the bolt */
-      var NLV = 6, lc = Math.ceil(2.0 * K * Z), bc = Math.ceil(5.8 * K), la = mk(lc * (NLV + 1) + bc, Math.max(lc, bc)), l = la[1];
-      sd(150);
-      for (i = 0; i < NLV; i++) {
-        l.save(); l.setTransform(K * Z, 0, 0, K * Z, i * lc + lc / 2, lc / 2);
-        for (j = 0; j < 2; j++) { var hx = rr(-0.3, 0.3), hy = rr(-0.25, 0.25), ha = rr(0, PI), hl = rr(0.45, 0.8), hw = rr(0.34, 0.5);
-          B(l, hx + 0.14, hy + 0.2, ha, hl * 1.1, hw * 1.25, pk(C.gS), 0.3); B(l, hx, hy, ha, hl, hw, R() < 0.5 ? pk(C.sL) : R() < 0.6 ? pk(C.sC) : pk(C.sO), 0.95); }
-        if (i % 2) B(l, -0.12, -0.15, rr(0, PI), 0.36, 0.24, pk(C.gW), 0.8);
-        l.restore();
-      }
-      l.save(); l.setTransform(K * Z, 0, 0, K * Z, NLV * lc + lc / 2, lc / 2);
-      var gg = l.createRadialGradient(0, 0, 0, 0, 0, 0.95); gg.addColorStop(0, 'rgba(255,250,232,.95)'); gg.addColorStop(1, 'rgba(255,246,218,0)');
-      l.globalAlpha = 1; l.fillStyle = gg; l.fillRect(-1, -1, 2, 2);
-      B(l, 0, 0, -0.5, 1.1, 0.34, '#FFFFFF', 0.9); B(l, 0, 0, 1.07, 0.6, 0.28, '#FFF8E0', 0.7); l.restore();
-      /* the bolt: a brass washer, a dark hexagonal nut lit on its upper left, a violet shadow */
-      sd(160);
-      l.save(); l.setTransform(K, 0, 0, K, (NLV + 1) * lc + bc / 2, bc / 2);
-      l.globalAlpha = 0.55; l.fillStyle = '#4E4282'; l.beginPath(); l.arc(0.45, 0.6, 2.05, 0, TAU); l.fill();
-      for (i = 0; i < 44; i++) { var qa = rr(0, TAU), rd = rr(1.45, 2.1), lw = Math.cos(qa) * LX + Math.sin(qa) * LY + rr(-0.3, 0.3);
-        B(l, Math.cos(qa) * rd, Math.sin(qa) * rd, qa + PI / 2 + rr(-0.2, 0.2), rr(0.6, 1.1), rr(0.32, 0.5), lw > 0.4 ? pk(C.hi) : lw > -0.1 ? pk(C.lt) : lw > -0.6 ? pk(C.md) : pk(C.bz), 0.92); }
-      l.globalAlpha = 1; l.fillStyle = '#4A3A46'; l.beginPath();
-      for (i = 0; i < 6; i++) { var ha2 = 0.3 + i * PI / 3; l.lineTo(Math.cos(ha2) * 1.35, Math.sin(ha2) * 1.35); } l.closePath(); l.fill();
-      for (i = 0; i < 6; i++) {
-        var fa2 = 0.3 + (i + 0.5) * PI / 3, fl = Math.cos(fa2) * LX + Math.sin(fa2) * LY;
-        B(l, Math.cos(fa2) * 0.95, Math.sin(fa2) * 0.95, fa2 + PI / 2, 1.2, 0.5, fl > 0.5 ? '#C8A060' : fl > 0 ? '#8A6A50' : fl > -0.5 ? '#5E4658' : '#3E3452', 0.95);
-      }
-      l.fillStyle = '#5A4A5C'; l.beginPath(); l.arc(0, 0, 0.62, 0, TAU); l.fill();
-      B(l, -0.22, -0.28, -0.7, 0.62, 0.24, '#FFF0C8', 0.95); B(l, -0.95, -0.55, -0.55, 0.7, 0.22, '#F8E0A0', 0.8); l.restore();
-
-      /* ---- grains: homes on the nodal lines of X, continued through the modes by Newton steps ---- */
-      var PL = nodal(), SEG = [], tot = 0;
-      for (i = 0; i < PL.length; i++) for (j = 0; j + 1 < PL[i].length; j++) { var p0 = PL[i][j], p1 = PL[i][j + 1], sl = Math.hypot(p1[0] - p0[0], p1[1] - p0[1]); tot += sl; SEG.push([tot, p0, p1, sl]); }
-      function wfac(g) { return cl(Math.pow(5.5 / (g + 0.4), 0.6), 0.8, 1.9); }
-      sd(200);
-      var NC = Math.round(1800 * NQ), W0 = 0.0108 * Math.sqrt(Z), HU = new Float32Array(NC), HV = new Float32Array(NC), OF = new Float32Array(NC),
-        SZ = new Float32Array(NC), TN = new Uint8Array(NC), SH = new Uint8Array(NC), TJ = new Float32Array(NC), FJ = new Float32Array(NC), JX = new Float32Array(NC * NK), JY = new Float32Array(NC * NK);
-      for (i = 0; i < NC;) {
-        var ps = R() * tot, lo2 = 0, hi2 = SEG.length - 1;
-        while (lo2 < hi2) { var mid = (lo2 + hi2) >> 1; if (SEG[mid][0] < ps) lo2 = mid + 1; else hi2 = mid; }
-        var sg = SEG[lo2], f2 = 1 - (sg[0] - ps) / sg[3]; u = lp(sg[1][0], sg[2][0], f2); v = lp(sg[1][1], sg[2][1], f2);
-        fld(u, v, 1, 0); var gm = Math.hypot(FG[1], FG[2]);
-        if (R() > wfac(gm) / 1.9) continue;
-        HU[i] = u; HV[i] = v; i++;
-      }
-      /* per-grain draws come from their own stream, so they are not tied to where the grain landed */
-      sd(210);
-      for (i = 0; i < NC; i++) {
-        OF[i] = R() < 0.8 ? gs() : (R() < 0.5 ? -1 : 1) * (1.5 + 2.4 * R() * R()); SZ[i] = rr(0.75, 1.2); SH[i] = R() < 0.5 ? 0 : 4; TJ[i] = rr(-0.25, 0.25); FJ[i] = rr(-0.3, 0.3);
-        for (k = 0; k < NK; k++) { JX[i * NK + k] = rr(-0.03, 0.03); JY[i * NK + k] = rr(-0.03, 0.03); }
-      }
-      /* sort so the crest of each ridge is laid last, over its flanks */
-      var ord = []; for (i = 0; i < NC; i++) ord.push(i); ord.sort(function (a, c) { return Math.abs(OF[c]) - Math.abs(OF[a]); });
-      /* positions per mode: X0/Y0 in units, angle, size, and the side of the ridge that faces the sun */
-      var PX = new Float32Array(NC * NK), PY = new Float32Array(NC * NK), PA = new Float32Array(NC * NK), PW = new Float32Array(NC * NK), cu2 = new Float32Array(NC), cv2 = new Float32Array(NC);
-      for (i = 0; i < NC; i++) { cu2[i] = HU[i]; cv2[i] = HV[i]; }
-      for (k = 0; k < NK; k++) {
-        var th = DM * k / (NK - 1), cth = Math.cos(th), sth = Math.sin(th);
-        for (i = 0; i < NC; i++) {
-          u = cu2[i]; v = cv2[i];
-          for (j = 0; j < (k ? 4 : 1); j++) {
-            fld(u, v, cth, sth); var g2 = FG[1] * FG[1] + FG[2] * FG[2], mm = FG[0] / (g2 + 0.6), du = mm * FG[1], dv = mm * FG[2], dl = Math.sqrt(du * du + dv * dv);
-            if (dl > 0.03) { du *= 0.03 / dl; dv *= 0.03 / dl; }
-            u = cl(u - du, 0.004, 0.996); v = cl(v - dv, 0.004, 0.996);
-          }
-          cu2[i] = u; cv2[i] = v;
-          fld(u, v, cth, sth); var gn = Math.hypot(FG[1], FG[2]) + 1e-5, nu = FG[1] / gn, nv = FG[2] / gn, wf = wfac(gn), o = OF[i] * W0 * wf;
-          var uu = cl(u + nu * o, 0.021, 0.979), vv = cl(v + nv * o, 0.021, 0.979), nx = nu * CA - nv * SA, ny = nu * SA + nv * CA;
-          PX[i * NK + k] = wx(uu, vv) + JX[i * NK + k]; PY[i * NK + k] = wy(uu, vv) + JY[i * NK + k];
-          PA[i * NK + k] = Math.atan2(ny, nx) + PI / 2; PW[i * NK + k] = wf;
-          if (k === 0) { var side = OF[i] * (nx * LX + ny * LY) + TJ[i]; TN[i] = side > 0.3 ? 0 : side < -0.45 ? 3 : Math.abs(OF[i]) > 1.3 + FJ[i] ? 2 : 1; }
-        }
-      }
-
-      /* ---- keyframes: the sand alone, with its violet shadow, baked over the plate box at each mode ---- */
-      var cx0 = 1e9, cy0 = 1e9, cx1 = -1e9, cy1 = -1e9;
-      [[0, 0], [1, 0], [1, 1], [0, 1]].forEach(function (p) { var X0 = wx(p[0], p[1]), Y0 = wy(p[0], p[1]); cx0 = Math.min(cx0, X0); cy0 = Math.min(cy0, Y0); cx1 = Math.max(cx1, X0); cy1 = Math.max(cy1, Y0); });
-      var bx = Math.max(0, Math.floor(cx0 * KX) - 2), by = Math.max(0, Math.floor(cy0 * KY) - 2), bw = Math.min(W, Math.ceil(cx1 * KX) + 2) - bx, bh = Math.min(H, Math.ceil(cy1 * KY) + 2) - by,
-        KF = [], tl = mk(bw, bh), TL = tl[1], ox = Math.max(1, Math.round(0.3 * K)), oy = Math.max(1, Math.round(0.4 * K)),
-        bxp = Math.round(wx(0.5, 0.5) * KX - bc / 2), byp = Math.round(wy(0.5, 0.5) * KY - bc / 2);
-      for (m = 0; m < NK; m++) {
-        var kf = mk(bw, bh), kc = kf[1];
-        TL.clearRect(0, 0, bw, bh);
-        for (j = 0; j < NC; j++) {
-          i = ord[j]; var ix = i * NK + m, X1 = PX[ix] * KX - bx, Y1 = PY[ix] * KY - by;
-          if (Math.abs(OF[i]) > 2.1) { TL.drawImage(la[0], (i % NLV) * lc, 0, lc, lc, Math.round(X1 - lc / 2), Math.round(Y1 - lc / 2), lc, lc); continue; }
-          var sc = SZ[i] * (0.72 + 0.32 * PW[ix]), ci = sc < 0.98 ? 0 : sc < 1.3 ? 1 : 2, cz = CS[ci], a2 = ((PA[ix] % PI) + PI) % PI, bn = Math.round(a2 / (PI / NB)) % NB;
-          TL.drawImage(at[0], bn * cz, CR[ci] + (TN[i] + SH[i]) * cz, cz, cz, Math.round(X1 - cz / 2), Math.round(Y1 - cz / 2), cz, cz);
-        }
-        /* the sand and, in the same pass, its violet shadow thrown away from the sun */
-        kc.shadowColor = 'rgba(60,52,140,0.5)'; kc.shadowOffsetX = ox; kc.shadowOffsetY = oy; kc.drawImage(tl[0], 0, 0);
-        KF.push(kf[0]);
-      }
-
-      /* live grains: ridge grains followed through every mode; glints ride on some of them */
-      sd(300);
-      var NL = Math.round(54 * NQ), LXs = new Float32Array(NL * NK), LYs = new Float32Array(NL * NK), LP = new Float32Array(NL * 5), LV = new Uint8Array(NL), nl = 0;
-      for (j = 0; j < 4000 && nl < NL; j++) {
-        i = Math.floor(R() * NC); if (Math.abs(OF[i]) > 1.4) continue;
-        for (k = 0; k < NK; k++) { LXs[nl * NK + k] = PX[i * NK + k] * KX - lc / 2 + rr(-0.3, 0.3) * K; LYs[nl * NK + k] = PY[i * NK + k] * KY - lc / 2 + rr(-0.3, 0.3) * K; }
-        LV[nl] = Math.floor(R() * NLV); LP[nl * 5] = rr(0, TAU); LP[nl * 5 + 1] = rr(0, TAU); LP[nl * 5 + 2] = TAU * rr(1.4, 2.6); LP[nl * 5 + 3] = TAU * rr(1.4, 2.6); LP[nl * 5 + 4] = rr(0.08, 0.18) * K; nl++;
-      }
-      NL = nl;
-      /* dancers: stray grains between the lines, hopping with the local amplitude of the vibration */
-      var ND = Math.round(24 * NQ), DX = new Float32Array(ND), DY = new Float32Array(ND), DP = new Float32Array(ND * 5), DV = new Uint8Array(ND), nd = 0;
-      for (j = 0; j < 3000 && nd < ND; j++) {
-        u = rr(0.05, 0.95); v = rr(0.05, 0.95); fld(u, v, 1, 0); var amp = Math.abs(FG[0]);
-        if (amp < 0.22 || R() > amp) continue;
-        DX[nd] = wx(u, v) * KX - lc / 2; DY[nd] = wy(u, v) * KY - lc / 2; DV[nd] = Math.floor(R() * NLV);
-        DP[nd * 5] = rr(0, TAU); DP[nd * 5 + 1] = rr(0, TAU); DP[nd * 5 + 2] = TAU * rr(1.8, 3.2); DP[nd * 5 + 3] = TAU * rr(1.8, 3.2); DP[nd * 5 + 4] = (0.12 + 0.3 * amp) * K; nd++;
-      }
-      ND = nd;
-      var NG = NL ? Math.min(NL, 16) : 0, GI = new Uint16Array(NG), GP = new Float32Array(NG * 2);
-      for (i = 0; i < NG; i++) { GI[i] = Math.floor(R() * NL); GP[i * 2] = rr(0, TAU); GP[i * 2 + 1] = TAU * rr(0.12, 0.3); }
-
-      /* the sheen: soft brushed light in the pool of sun, which trembles as the plate hums; it is laid under the
-         sand, so it can never veil a ridge */
-      var shs = Math.ceil(22 * K), shc2 = mk(shs, shs), shc = shc2[1], scx = wx(BU, BV0), scy = wy(BU, BV0);
-      shc.setTransform(K, 0, 0, K, shs / 2, shs / 2); sd(170);
-      for (i = 0; i < 120; i++) { var sr = Math.sqrt(R()), sq = rr(0, TAU), sx2 = Math.cos(sq) * sr * 6, sy2 = Math.sin(sq) * sr * 8.5;
-        B(shc, sx2, sy2, PHI + 0.12 + rr(-0.15, 0.15), rr(2.2, 4.4) * Z, rr(0.7, 1.2) * Z, R() < 0.6 ? pk(C.hi) : pk(C.lt), rr(0.5, 0.9)); }
-      shc.setTransform(1, 0, 0, 1, 0, 0); shc.globalCompositeOperation = 'destination-in';
-      var sg2 = shc.createRadialGradient(shs / 2, shs / 2, 0, shs / 2, shs / 2, shs / 2); sg2.addColorStop(0, 'rgba(0,0,0,1)'); sg2.addColorStop(0.5, 'rgba(0,0,0,.6)'); sg2.addColorStop(1, 'rgba(0,0,0,0)');
-      shc.fillStyle = sg2; shc.fillRect(0, 0, shs, shs); shc.globalCompositeOperation = 'source-over';
-
-      /* settle every cached layer now, so no first-time rasterizing lands in a later frame */
-      var fz = mk(1, 1), f = fz[1];
-      for (m = 0; m < NK; m++) f.drawImage(KF[m], 0, 0, 1, 1);
-      f.drawImage(bg[0], 0, 0, 1, 1); f.drawImage(shc2[0], 0, 0, 1, 1); f.drawImage(la[0], 0, 0, 1, 1); f.getImageData(0, 0, 1, 1);
-      st = { BG: bg[0], SH: shc2[0], shx: scx * KX - shs / 2, shy: scy * KY - shs / 2, K: K, at: la[0], lc: lc, bc: bc, bxp: bxp, byp: byp, bx: bx, by: by, KF: KF,
-        NL: NL, LXs: LXs, LYs: LYs, LP: LP, LV: LV, NG: NG, GI: GI, GP: GP, NLV: NLV, ND: ND, DX: DX, DY: DY, DP: DP, DV: DV };
-    }
-    function frame(t) {
-      var s = st, c = X, md = (1 - Math.cos(TAU * t / PER)) / 2 * (NK - 1), m = Math.min(NK - 2, Math.floor(md)), g = cl(md - m, 0, 1), i, k, x, y;
-      c.setTransform(1, 0, 0, 1, 0, 0); c.globalCompositeOperation = 'source-over'; c.globalAlpha = 1;
-      /* the whole still canvas: table, shadow and the bare plate */
-      c.drawImage(s.BG, 0, 0);
-      /* sunlight trembling on the humming brass, under the sand */
-      var sa = 0.26 + 0.12 * Math.sin(TAU * t / 3.3) + 0.06 * Math.sin(TAU * t / 1.7 + 1.3);
-      c.globalAlpha = sa; c.drawImage(s.SH, Math.round(s.shx + 0.4 * s.K * Math.sin(TAU * t / 5.1)), Math.round(s.shy + 0.5 * s.K * Math.sin(TAU * t / 4.3 + 0.7)));
-      /* the sand as a union of neighbouring keyframes, with a fully opaque layer always on top: first the next mode
-         fades in beneath the current one, then a short exchange brings it to the top, then the current one fades
-         out beneath it. The ridge envelope moves smoothly; only the grains inside it trade places, briefly. */
-      var A = s.KF[m], N = s.KF[m + 1], bx = s.bx, by = s.by, w;
-      if (g < 0.34) {
-        w = g / 0.34; if (w > 0.003) { c.globalAlpha = w; c.drawImage(N, bx, by); }
-        c.globalAlpha = 1; c.drawImage(A, bx, by);
-      } else if (g < 0.66) {
-        w = ss(0.34, 0.66, g);
-        if (w > 0.003) { c.globalAlpha = w; c.drawImage(A, bx, by); }
-        c.globalAlpha = 1; c.drawImage(N, bx, by);
-        if (w < 0.997) { c.globalAlpha = 1 - w; c.drawImage(A, bx, by); }
-      } else {
-        w = (1 - g) / 0.34; if (w > 0.003) { c.globalAlpha = w; c.drawImage(A, bx, by); }
-        c.globalAlpha = 1; c.drawImage(N, bx, by);
-      }
-      c.globalAlpha = 1;
-      c.drawImage(s.at, (s.NLV + 1) * s.lc, 0, s.bc, s.bc, s.bxp, s.byp, s.bc, s.bc);
-      /* live grains ride the moving ridges and shiver as the plate hums */
-      var hum = 0.65 + 0.35 * Math.sin(TAU * t / 2.9), LXs = s.LXs, LYs = s.LYs, LP = s.LP, lc = s.lc, at = s.at;
-      for (i = 0; i < s.NL; i++) {
-        k = i * NK + m; var am = hum * LP[i * 5 + 4];
-        x = LXs[k] + (LXs[k + 1] - LXs[k]) * g + am * Math.sin(LP[i * 5 + 2] * t + LP[i * 5]);
-        y = LYs[k] + (LYs[k + 1] - LYs[k]) * g + am * Math.sin(LP[i * 5 + 3] * t + LP[i * 5 + 1]);
-        c.drawImage(at, s.LV[i] * lc, 0, lc, lc, Math.round(x), Math.round(y), lc, lc);
-      }
-      /* stray grains dance where the plate swings most */
-      var DP = s.DP;
-      for (i = 0; i < s.ND; i++) {
-        var ad = hum * DP[i * 5 + 4];
-        c.drawImage(at, s.DV[i] * lc, 0, lc, lc, Math.round(s.DX[i] + ad * Math.sin(DP[i * 5 + 2] * t + DP[i * 5])), Math.round(s.DY[i] + ad * Math.sin(DP[i * 5 + 3] * t + DP[i * 5 + 1])), lc, lc);
-      }
-      /* slow glints of sun on single grains */
-      for (i = 0; i < s.NG; i++) {
-        var q = Math.sin(s.GP[i * 2 + 1] * t + s.GP[i * 2]);
-        if (q < 0.1) continue;
-        k = s.GI[i] * NK + m;
-        x = LXs[k] + (LXs[k + 1] - LXs[k]) * g; y = LYs[k] + (LYs[k + 1] - LYs[k]) * g;
-        c.globalAlpha = 0.85 * q * q * q;
-        c.drawImage(at, s.NLV * lc, 0, lc, lc, Math.round(x), Math.round(y), lc, lc);
-      }
-      c.globalAlpha = 1;
-    }
-    build();
-    return { frame: frame, resize: build };
-  }
-
+  'use strict';
   window.Vignettes = window.Vignettes || {};
-  window.Vignettes.inverse = { title: 'Chladni Sand', aspect: 4 / 3, create: create };
+  const PI = Math.PI;
+  const mb = s => () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const hs = (i, j) => { let h = Math.imul(i, 374761393) + Math.imul(j, 668265263) | 0; h = Math.imul(h ^ h >>> 13, 1274126177); return ((h ^ h >>> 16) >>> 0) / 4294967296; };
+  const lp = (a, b, t) => a + (b - a) * t, cl = (v, a, b) => v < a ? a : v > b ? b : v;
+  const ss = (a, b, x) => { const t = cl((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+  const vn = (x, y) => { const i = Math.floor(x), j = Math.floor(y), u = x - i, v = y - j, a = u * u * (3 - 2 * u), b = v * v * (3 - 2 * v); return lp(lp(hs(i, j), hs(i + 1, j), a), lp(hs(i, j + 1), hs(i + 1, j + 1), a), b); };
+  const fb = (x, y) => .6 * vn(x, y) + .3 * vn(x * 2.3 + 5.1, y * 2.3 + 1.7) + .1 * vn(x * 5.1 + 9.3, y * 5.1 + 3.1);
+  const hx = s => [parseInt(s.slice(0, 2), 16), parseInt(s.slice(2, 4), 16), parseInt(s.slice(4, 6), 16)];
+  const pl = s => s.split(' ').map(hx);
+  const mx = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+  const rgb = q => 'rgb(' + (cl(q[0], 0, 255) | 0) + ',' + (cl(q[1], 0, 255) | 0) + ',' + (cl(q[2], 0, 255) | 0) + ')';
+  const ip = (P, x) => { if (x <= P[0][0]) return P[0][1]; for (let i = 1; i < P.length; i++) if (x <= P[i][0]) return lp(P[i - 1][1], P[i][1], (x - P[i - 1][0]) / (P[i][0] - P[i - 1][0])); return P[P.length - 1][1]; };
+  const ramp = (st, t) => { if (t <= st[0][0]) return st[0][1]; for (let i = 1; i < st.length; i++) if (t <= st[i][0]) return mx(st[i - 1][1], st[i][1], (t - st[i - 1][0]) / (st[i][0] - st[i - 1][0])); return st[st.length - 1][1]; };
+  /* polylines: a smooth curve through points, its running length, and the point a fraction u along it */
+  const cr = (P, k) => { const O = [], f = (a, b, c, d, t) => .5 * (2 * b + (c - a) * t + (2 * a - 5 * b + 4 * c - d) * t * t + (3 * b - a - 3 * c + d) * t * t * t);
+    for (let i = 0; i < P.length - 1; i++) { const a = P[Math.max(0, i - 1)], b = P[i], c = P[i + 1], d = P[Math.min(P.length - 1, i + 2)]; for (let j = 0; j < k; j++) O.push([f(a[0], b[0], c[0], d[0], j / k), f(a[1], b[1], c[1], d[1], j / k)]); }
+    O.push(P[P.length - 1]); return O; };
+  const plen = P => { const L = [0]; for (let i = 1; i < P.length; i++) L.push(L[i - 1] + Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1])); return L; };
+  const pat = (P, L, u) => { const d = cl(u, 0, 1) * L[L.length - 1]; let i = 1; while (i < P.length - 1 && L[i] < d) i++; const f = (d - L[i - 1]) / Math.max(1e-6, L[i] - L[i - 1]); return [lp(P[i - 1][0], P[i][0], f), lp(P[i - 1][1], P[i][1], f)]; };
+
+  /* One brush dab: blunt tail, tapered head, slight belly. */
+  function dab(c, x, y, a, l, w, col, al, bd) {
+    const ca = Math.cos(a), sa = Math.sin(a), h = l / 2, nx = -sa, ny = ca, q = w / 2, b = (bd || 0) * l,
+      tx = x - ca * h, ty = y - sa * h, ex = x + ca * h, ey = y + sa * h, cx = x + nx * b, cy = y + ny * b;
+    c.globalAlpha = al; c.fillStyle = col; c.beginPath(); c.moveTo(tx + nx * q, ty + ny * q);
+    c.quadraticCurveTo(cx + nx * q * 1.4, cy + ny * q * 1.4, ex - ca * q * .3, ey - sa * q * .3);
+    c.quadraticCurveTo(cx - nx * q * 1.4, cy - ny * q * 1.4, tx - nx * q, ty - ny * q);
+    c.quadraticCurveTo(tx - ca * q * 1.3, ty - sa * q * 1.3, tx + nx * q, ty + ny * q); c.fill();
+  }
+
+  /* Palettes */
+  const SKYS = [[0, hx('5E92CE')], [.3, hx('74A4D9')], [.55, hx('90B7E2')], [.78, hx('B2CDE8')], [.92, hx('CDDBE2')], [1, hx('E2E1D2')]];
+  const LAV = hx('A0A6DC'), GRB = hx('9CCAD6'), PNK = hx('ECD6D0'), HAZ = [170, 188, 206];
+  const CW = pl('FFF8E8 FCF0DA FFF4E0 FAEBD2 FFFBF2'), CMd = pl('F1EEEC ECE9EE F4EEE4 E8E6EC EEEAE6'), CLg = pl('DEDBE6 D8D7E6 E3DCE0 D6D8E6'), CSd = pl('CBCADF C4C6DE CFC7DA C0C4DE'), CBs = pl('B6B8D8 B0B6D6 BCB8D6'), CPk = pl('ECD8D2 E9D3CE F0DCD0');
+  const HZP = pl('9AA8CC 8E9CC8 A7A6CF B7AACB A9B4D2');
+  const GOLDF = hx('DCCB7C'), LAVF = hx('A8AED0');
+  /* foliage: sunlit, middle, shade, deep shade */
+  const FOL = pl('B9C46A C2C26A A8BE62 D2C46A 9DBA62 C8CC72'), FOM = pl('7FA35A 6E9A56 86A062 94A866 72925A'), FOS = pl('4E7E62 4A6E7A 5E6E96 56708A 4E6A6A 5A7A70'), FOD = pl('3E5A6E 45527E 3A5660 4A4E7A 3C6058'),
+    DEEP = pl('34506A 3C4A76 2E4E5A 44487A'), WIL = pl('CDD080 D6D488 C2CC78 DAD890');
+  /* trunks: sunlit edge, body, shaded side */
+  const TRL = pl('EADCC2 E2D0B4 F0E4CC DCC8AA'), TRM = pl('A89AB0 9E94B4 B0A2B0 9C98B8'), TRS = pl('6E6890 62628A 7A6E92 585C84');
+  /* the floor of the wood in shade, and where the sun gets through; the trails */
+  const FLS = pl('56688A 5E6E96 4E6A6A 4A6E7A 6A6A9A 5A7A6E 64749C'), FLD = pl('D9CC7A E4D68A C8C86A EBD99A B8C870');
+  const TRLT = pl('E8D8AE F0E2BC E0CCA0 EADBB6'), TRSH = pl('B4A8C4 A89EC0 C0B2C8');
+  const EARTH = pl('B89868 A88A6A C4A478 9A7E72'), WLINE = pl('3E4E7A 45567E 3A5670');
+  /* the meadow */
+  const MZ = [[0, hx('C4CE8C')], [.25, hx('B0C66A')], [.6, hx('96B652')], [1, hx('7EA648')]], GOLDM = hx('D8C460'), COOLM = hx('6E90A0');
+  const MW = pl('DCC05A E4B64C D2BE66 E6CA6C'), MC = pl('6E7EAC 7A8AB4 8690BE 7090AA'), MDK = pl('557A3E 4E7246 5E8048'), PALE = hx('CCD474');
+  const GRL = pl('B7C66A C6CA72 AABF5E D4CE76 BFCB6E'), GRM = pl('80A44E 8BAB53 739A4A 92AE58'), GOLDP = pl('E4C66C D9BA5C ECD282 CCAA54 F1DA92'), STEMC = pl('5E8A4A 668E4E 587E52 6A8A50');
+  const PTHL = pl('EAD9A8 E4CC96 F0E2BC DCC48E E8D2B0'), PTHS = pl('BCA8C4 B0A0C0 C8B4C4');
+  /* its flowers, each a round touch: daisies, buttercups, campion, cornflowers */
+  const FLW = [{ c: pl('FBF6EA FFFBF2 F6F0E4'), d: pl('D6D2E6 CBC8E2'), o: 1.3, k: 1 }, { c: pl('F6D95C F2CE48 FAE272'), d: pl('E0B040 D6A63A'), o: 7.9, k: 1 },
+    { c: pl('EE9CB0 F2ACBC E88CA4'), d: pl('CC6E90 D47C98'), o: 13.1, k: .8 }, { c: pl('9E94DC A89EE2 8E8AD4'), d: pl('6E66B8 7A70C0'), o: 21.7, k: .7 }];
+  /* the stones: sunlit top, top, shaded top; lit side, dark side; their shadow on the water */
+  const STL = pl('F6EEDC F2E6D2 FAF2E4 EEDFCC'), STM = pl('E0D6CC D8D0D2 E6DACA'), STS = pl('BEB8D0 C6BECE B2B0CC'), SDL = pl('9A8FA8 8E88A6 A4949E'), SDD = pl('5E5A88 54547E 6A5E86 4E5A7A'), STR = pl('3E4E86 46568E 39507A 4A4C84');
+  /* the walker */
+  const FIG = { sk: hx('FBF5E8'), skS: hx('C4C2E0'), skF: hx('FFFDF6'), hem: hx('DEDAEC'), to: hx('FFFBF0'), toS: hx('CCC8E2'), sash: hx('D9705A'), armL: hx('ECE7F2'), armS: hx('BCBAD8'),
+    hair: hx('6E4E3A'), brim: hx('E6C878'), brimS: hx('A88A5E'), crown: hx('F2E0A2'), rib: hx('C8553D') }, SHD = hx('66709E');
+
+  /* Wind over the meadow: two gust trains travel left to right, each a narrow bump with a small recoil behind it. */
+  const b4 = p => { let s = .5 + .5 * Math.sin(p); s *= s; return s * s; }, b8 = p => { const s = b4(p); return s * s; };
+  const wind = (g, t) => { const e1 = .78 + .22 * Math.sin(.093 * t + 1.3), e2 = .62 + .38 * Math.sin(.061 * t + .4), p1 = .0105 * g - .8 * t, p2 = .0172 * g - 1.21 * t + 2.1;
+    return .05 * Math.sin(.7 * t + g * .004) + .3 * e1 * (b4(p1) - .3 * b4(p1 + .9)) + .17 * e2 * (b8(p2) - .3 * b8(p2 + .8)); };
+
+  /* One crossing lasts LOOP seconds: TWALK to walk in, TON onto the first stone, PAUSE resting on each stone and STEP to
+     the next, then TTR along one of the trails (SEQ says which, crossing by crossing). T0 sets where the loop starts. */
+  const LOOP = 29, T0 = 5.75, TWALK = 5.6, TON = .6, PAUSE = .95, STEP = .75, TTR = 6.5, SEQ = [1, 0, 2, 0, 2, 1], NS = 8;
+  const A0 = TWALK + TON, aK = k => A0 + k * (PAUSE + STEP), TLAND = aK(NS - 1) + PAUSE + STEP;
+
+  function build(cv) {
+    const W = Math.max(40, cv.clientWidth || 400), H = Math.max(30, cv.clientHeight || 300);
+    const dp = Math.min(2, window.devicePixelRatio || 1);
+    const PW = Math.max(1, Math.round(W * dp)), PH = Math.max(1, Math.round(H * dp));
+    cv.width = PW; cv.height = PH;
+    const X = cv.getContext('2d');
+    const S = W / 400, DS = dp * S, DH = H / S;
+    let R = mb(1);
+    const sd = n => { R = mb(n * 7919 + 13); }, rr = (a, b) => a + (b - a) * R(), pk = a => a[Math.floor(R() * a.length)];
+    const cj = (q, j) => 'rgb(' + (cl(q[0] + (R() - .5) * 2 * j, 0, 255) | 0) + ',' + (cl(q[1] + (R() - .5) * 2 * j, 0, 255) | 0) + ',' + (cl(q[2] + (R() - .5) * 2 * j, 0, 255) | 0) + ')';
+    const mk = (w, h, opaque) => { const o = document.createElement('canvas'); o.width = Math.max(1, w); o.height = Math.max(1, h); const c = o.getContext('2d', opaque ? { alpha: false } : undefined); c.lineCap = 'round'; c.lineJoin = 'round'; return [o, c]; };
+    const layer = opaque => { const L = mk(PW, PH, opaque); L[1].setTransform(DS, 0, 0, DS, 0, 0); return L; };
+
+    /* Geometry. The stream runs off to the far left: both banks leave one vanishing point on the horizon. */
+    const HZ = 78, VX = -200, KF = .1856, KN = .438;
+    const sc = y => cl((y - HZ) / 222, .03, 1.4);
+    const FT = new Float32Array(452), NT = new Float32Array(452);
+    for (let i = 0; i < 452; i++) { const x = i - 25; FT[i] = HZ + KF * (x - VX) + 4.5 * Math.sin(x * .0125 + 1.2) + 2.2 * Math.sin(x * .031 + .6) + (vn(x * .05, 3.1) - .5) * 2.4;
+      NT[i] = HZ + KN * (x - VX) + 8 * Math.sin(x * .0115 + .4) + 3 * Math.sin(x * .027 + 2.2) + (vn(x * .04, 7.7) - .5) * 4; }
+    const tab = T => x => { const f = cl(x + 25, 0, 450.999), i = f | 0; return lp(T[i], T[i + 1], f - i); };
+    const Fy = tab(FT), Ny = tab(NT);                                        // far bank, near bank
+    const WTop = x => Fy(x) - (Fy(x) - HZ) * .5 * ss(215, 262, x);           // back edge of the wood floor
+    const XE = [[-6, 279], [30, 253], [60, 257], [78, 263], [100, 270], [110, 258], [130, 250]];
+    const xe = y => ip(XE, y) + (vn(y * .09, 5.5) - .5) * 6;                 // the left edge of the wood's solid depth
+
+    /* The stones, evenly spaced on the ground, so closer together with distance. y is the top face, where she stands. */
+    const ST = []; sd(5);
+    const SY0 = Ny(181) - 8.5, SY1 = Fy(279) + 6.5;
+    for (let k = 0; k < NS; k++) { const u = lp(1 / (SY0 - HZ), 1 / (SY1 - HZ), k / (NS - 1)), y = HZ + 1 / u, x = 181 + 98 * (SY0 - y) / (SY0 - SY1), s = sc(y), e = k > 0 && k < NS - 1 ? 1 : .3;
+      ST.push({ x: x + rr(-1.6, 1.6) * s * e, y: y + rr(-1, 1) * s * e, s: s, w: rr(21, 26) * s, h: rr(6.6, 8) * s, th: rr(2.6, 3.4) * s, seed: 60 + k, sh: ss(.5, 1, k / (NS - 1)) }); }
+    for (const st of ST) { const f = Fy(st.x), fr = (st.y - f) / (Ny(st.x) - f), sl = lp(KF, KN, fr), m = Math.hypot(1, sl); st.fr = fr; st.dx = 1 / m; st.dy = sl / m; }
+    /* The path through the meadow, the landing, and the three trails beyond it. */
+    const gl = P => { const L = [0]; for (let i = 1; i < P.length; i++) L.push(L[i - 1] + Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1]) / sc((P[i][1] + P[i - 1][1]) / 2)); return L; };   // length on the ground
+    const WP = cr([[-8, 384], [18, 342], [46, 311], [78, 292], [112, 277], [145, 263], [171, Ny(171) + 5]], 6), WL = plen(WP), WG = gl(WP), LD = [291, Fy(291) - 5.5];
+    const TR = [[[-14, -8], [-27, -16.5], [-37, -24.5], [-43, -31]], [[5, -12.5], [11, -23.5], [19, -31], [26, -36]], [[21, .5], [45, 4.5], [71, 11.5], [99, 21.5], [125, 32.5]]].map(T => cr([LD].concat(T.map(q => [LD[0] + q[0], LD[1] + q[1]])), 6)), TL = TR.map(plen), TG = TR.map(gl);
+    const pathD = (x, y) => { let m = 9; for (let i = 0; i < WP.length; i++) { const p = WP[i], hw = 8.5 * sc(p[1]), dx = (x - p[0]) / hw, dy = (y - p[1]) / (hw * .55), d = dx * dx + dy * dy; if (d < m) m = d; } return Math.sqrt(m); };
+
+    /* ---------- the still canvas: sky and the far fields (water and meadow are added below) ---------- */
+    const BG = layer(true), B = BG[1];
+    B.fillStyle = '#ECDDBC'; B.fillRect(-5, -5, 410, DH + 10);
+    (function () {
+      const g = B.createLinearGradient(0, 0, 0, HZ + 4);
+      g.addColorStop(0, '#5F92CE'); g.addColorStop(.35, '#7FACDC'); g.addColorStop(.72, '#ABC9E6'); g.addColorStop(1, '#DDE0D2');
+      B.globalAlpha = 1; B.fillStyle = g; B.fillRect(-5, -5, 410, HZ + 8);
+      sd(11);
+      for (let i = 0; i < 820; i++) {
+        const x = rr(-8, 300), y = Math.pow(R(), 1.1) * (HZ + 6) - 6, t = cl(y / HZ, 0, 1), n = fb(x / 60 + 2, y / 24), r = R();
+        let q = ramp(SKYS, cl(t + (n - .5) * .24 + rr(-.04, .04), 0, 1));
+        if (r < .08) q = mx(q, LAV, .5); else if (r < .13) q = mx(q, GRB, .4); else if (r < .2 && t > .72) q = mx(q, PNK, .5);
+        dab(B, x, y, -.48 + rr(-.32, .32) + (R() < .2 ? .85 : 0), lp(15, 6.5, t) * rr(.7, 1.3), lp(5.5, 2.4, t) * rr(.8, 1.2), cj(q, 5), rr(.5, .78), rr(-.08, .08));
+      }
+      /* low blue hills under the sky */
+      sd(21);
+      const HL = x => 74 - 13 * Math.pow(fb(x * .009 + 4, 1.7), 1.6) - 5 * ss(210, 30, x), HL2 = x => 76.5 - 4.5 * fb(x * .021 + 9, 5.5);
+      B.globalAlpha = 1; B.fillStyle = '#AEB8D6'; B.beginPath(); B.moveTo(-6, HZ + 2); for (let x = -6; x <= 304; x += 4) B.lineTo(x, HL(x)); B.lineTo(304, HZ + 2); B.closePath(); B.fill();
+      for (let i = 0; i < 520; i++) { const x = rr(-8, 300), y = rr(56, HZ + 2), h = HL(x); if (y < h) continue;
+        dab(B, x, y, rr(-.25, .15), rr(3.5, 7), rr(1.3, 2), cj(mx(pk(HZP), hx('CCD5E6'), .55 * ss(h + 5, h, y)), 4), rr(.6, .85)); }
+      for (let i = 0; i < 420; i++) { const x = rr(-8, 300), y = rr(70, HZ + 2), h = HL2(x); if (y < h) continue;
+        dab(B, x, y, rr(-PI, PI), rr(2.4, 4), rr(1.3, 1.9), cj(mx(y < h + 2 ? pk(FOM) : pk(FOS), HAZ, .52), 4), rr(.65, .88)); }
+      /* fields beyond the stream, in bands that run to the same vanishing point as its banks: pasture, wheat, grass,
+         and the bank's own meadow; hedgerows part them, with a round tree here and there */
+      const BND = [[0, hx('BFCBB6')], [.04, hx('C4CFAC')], [.046, hx('EAD27A')], [.08, hx('E4CA6C')], [.086, hx('A9C56C')], [.125, hx('9FBE60')], [.131, hx('BBCD7E')], [.2, hx('AEC66E')]];
+      const g2 = B.createLinearGradient(0, HZ, 0, 150); g2.addColorStop(0, '#C9CFAE'); g2.addColorStop(.4, '#BFCB8E'); g2.addColorStop(1, '#A9C06C');
+      B.globalAlpha = 1; B.fillStyle = g2; B.beginPath(); B.moveTo(-6, HZ - 1); B.lineTo(304, HZ - 1); for (let x = 304; x >= -6; x -= 4) B.lineTo(x, Fy(x) + 2); B.closePath(); B.fill();
+      for (let i = 0; i < 1700; i++) {
+        const x = rr(-8, 290), y = rr(HZ - 1, 166); if (y > Fy(x) + 1) continue;
+        const s = sc(y), sl = (y - HZ) / (x - VX), n = fb(x / 40 + 3, y / 7); let q = ramp(BND, sl + (fb(x / 30, 2.2) - .5) * .008);
+        if (n > .62) q = mx(q, GOLDF, Math.min(.45, (n - .62) * 3)); else if (n < .4) q = mx(q, sl > .13 ? hx('D2A6C4') : LAVF, Math.min(.5, (.4 - n) * 2.6));
+        dab(B, x, y, Math.atan(sl) + rr(-.1, .1), (3 + 20 * s) * rr(.7, 1.3), (1 + 4.6 * s) * rr(.8, 1.2), cj(q, 6), rr(.72, .92), rr(-.06, .06));
+      }
+      sd(22);
+      for (const sl of [.043, .083, .128]) {
+        for (let x = -10; x < 262; x += rr(1.6, 3.4)) {            // the hedge itself: a low dark ribbon, broken by gateways
+          if (fb(x / 26 + sl * 70, 8.8) < .34) continue;
+          const y = HZ + sl * (x - VX), s = sc(y), up = R() < .45;
+          dab(B, x, y - (up ? 1.6 + 5 * s : 0) * rr(.5, 1), Math.atan(sl) + rr(-.2, .2), (4 + 12 * s) * rr(.8, 1.2), (1.5 + 4.4 * s) * rr(.8, 1.2), cj(mx(up ? (R() < .5 ? pk(FOL) : pk(FOM)) : pk(FOS), HAZ, .36 - sl * 1.7), 5), .88, rr(-.1, .1));
+        }
+        for (let x = rr(0, 30); x < 250; x += rr(22, 60)) {         // round trees standing in it
+          const y = HZ + sl * (x - VX), s = sc(y), r = (9 + 26 * s) * rr(.7, 1.15), cy = y - r * .95;
+          for (let i = 0; i < r * r * 1.1; i++) { const u = rr(-1, 1), v = rr(-1, 1); if (u * u + v * v > 1) continue; const li = -(u * .62 + v * .78) + rr(-.3, .3);
+            dab(B, x + u * r, cy + v * r * .9, rr(-PI, PI), (2 + 5 * s) * rr(.8, 1.2), (1.2 + 3 * s) * rr(.8, 1.2), cj(mx(li > .35 ? pk(FOL) : li > -.15 ? pk(FOM) : pk(FOS), HAZ, .34 - sl * 1.6), 5), .9, rr(-.2, .2)); }
+        }
+      }
+    })();
+
+    /* ---------- the wood, behind the walker ---------- */
+    const FA = layer(false), Ac = FA[1];
+    (function () {
+      sd(31);
+      /* its depth: a wall of leaves in shade, solid from its left edge on, so the clouds pass behind it */
+      Ac.globalAlpha = 1; Ac.fillStyle = '#42586C'; Ac.beginPath(); for (let y = -6; y <= 128; y += 4) Ac.lineTo(xe(y), y); for (let x = 246; x <= 414; x += 4) Ac.lineTo(x, WTop(x) + 3); Ac.lineTo(414, -6); Ac.closePath(); Ac.fill();
+      for (let i = 0; i < 2300; i++) {
+        const x = rr(240, 412), y = rr(-6, 142), e = xe(y); if (y > WTop(x) + 4 || x < e - rr(0, 5)) continue;
+        const dpt = cl((x - e) / 46, 0, 1), n = fb(x / 22 + 7, y / 40) + (1 - dpt) * .22, far = R() < .05 + .1 * (1 - dpt);
+        const q = far ? pk(FOL) : n > .68 ? pk(FOM) : n > .5 ? pk(FOS) : n > .34 ? pk(FOD) : pk(DEEP);
+        dab(Ac, x, y, -PI / 2 + rr(-.16, .16), rr(8, 16), rr(1.5, 2.8), cj(q, 6), far ? rr(.35, .6) : rr(.72, .92), rr(-.08, .08));
+      }
+      /* the floor: cool shade, a few flecks of sun, and a sunlit clearing where the stones land */
+      sd(32);
+      Ac.globalAlpha = 1; Ac.fillStyle = '#4E6480'; Ac.beginPath(); for (let x = 205; x <= 414; x += 4) Ac.lineTo(x, WTop(x) + 1); for (let x = 414; x >= 205; x -= 4) Ac.lineTo(x, Fy(x) + 1); Ac.closePath(); Ac.fill();
+      for (let i = 0; i < 900; i++) {
+        const x = rr(205, 412), y = rr(118, 200); if (y < WTop(x) || y > Fy(x) + .5) continue;
+        const s = sc(y), c0 = Math.exp(-Math.pow((x - 292) / 24, 2) - Math.pow((y - 159) / 9, 2)), sun = fb(x / 14 + 2, y / 5 + 9) + c0 * .55;
+        const q = sun > .8 ? pk(FLD) : sun > .68 ? mx(pk(FLS), pk(FLD), .4) : pk(FLS);
+        dab(Ac, x, y, rr(-.15, .15) + .1, (4 + 12 * s) * rr(.7, 1.3), (1.2 + 3.4 * s) * rr(.8, 1.2), cj(q, 6), rr(.75, .92), rr(-.08, .08));
+      }
+      /* the trails: pale ribbons that thin and fade as they leave the clearing */
+      sd(33);
+      const trail = (P, Ln, w0, w1, a0, a1) => { const n = Math.ceil(Ln[Ln.length - 1] / 1.1);
+        for (let i = 0; i <= n; i++) { const u = i / n, p = pat(P, Ln, u), w = lp(w0, w1, u), sun = fb(p[0] / 9 + 3, p[1] / 5 + 1) + .2 * (1 - u);
+          for (let k = 0; k < 2; k++) dab(Ac, p[0] + rr(-.4, .4) * w, p[1] + rr(-.3, .3) * w * .5, rr(-.2, .2) + .1, w * rr(1.3, 1.9), w * rr(.36, .5), cj(sun > .4 ? pk(TRLT) : pk(TRSH), 5), lp(a0, a1, u) * rr(.88, 1), rr(-.08, .08)); } };
+      trail(TR[0], TL[0], 5.2, 1.8, .97, .6); trail(TR[1], TL[1], 5.2, 1.7, .97, .6); trail(TR[2], TL[2], 5.2, 7, .97, .85);
+      for (let i = 0; i < 60; i++) { const u = rr(-1, 1), v = rr(-1, 1); if (u * u + v * v > 1) continue; dab(Ac, LD[0] + u * 13, LD[1] - 1 + v * 5, rr(-.2, .2) + .1, rr(4, 7), rr(1.4, 2.2), cj(R() < .75 ? pk(TRLT) : pk(FLD), 5), .92); }
+      /* slim trunks deeper in the wood, each a few long upright strokes; all stand beyond the trails */
+      sd(34);
+      for (const [x, yb, h, w] of [[256, 138, 122, 2.2], [270, 133, 126, 2], [284, 140, 130, 2.6], [299, 134, 124, 2.2], [318, 131, 112, 1.8], [328, 140, 140, 2.8], [344, 147, 150, 3], [358, 139, 132, 2.2], [374, 151, 160, 3.2], [388, 146, 150, 2.6], [404, 158, 172, 3.6]]) {
+        const lean = rr(-.02, .02);
+        for (let i = 0, n = Math.ceil(h / 5); i < n; i++) { const v = R(), u = rr(-.5, .5), lit = -u * 2 + rr(-.4, .4) - .45, ww = w * (1 - .55 * v);
+          dab(Ac, x + lean * v * h + u * ww * .8, yb - v * h, -PI / 2 + lean + rr(-.04, .04), rr(9, 17), Math.max(.8, ww * rr(.4, .6)), cj(lit > .3 ? pk(TRL) : lit > -.5 ? pk(TRM) : pk(TRS), 5), .85 * (1 - .5 * ss(.6, 1, v)), rr(-.03, .03)); }
+      }
+      /* undergrowth along the back of the floor */
+      for (let i = 0; i < 380; i++) { const x = rr(232, 412), y = WTop(x) + rr(-7, 3), r = R(); dab(Ac, x, y, -PI / 2 + rr(-.6, .6), rr(3, 6), rr(1.5, 2.4), cj(r < .14 ? pk(FOL) : r < .45 ? pk(FOM) : pk(FOS), 6), .88, rr(-.2, .2)); }
+      /* the far bank: sunny grass at the left, earth and dark grass under the wood, and its line on the water */
+      sd(35);
+      for (let x = -12; x < 414; x += rr(1.5, 3)) { const y = Fy(x), s = sc(y), wd = ss(140, 215, x), r = R();
+        dab(Ac, x, y - rr(0, 4.4) * s, .18 + rr(-.2, .2), rr(4, 8) * (s + .25), rr(1.4, 2.4) * (s + .3), cj(R() < wd ? (r < .4 ? pk(EARTH) : pk(FOS)) : (r < .25 ? pk(GOLDP) : pk(GRL)), 6), .9);
+        dab(Ac, x, y + .9 * s + .4, .18 + rr(-.05, .05), rr(4, 8) * (s + .25), s + .5, cj(pk(WLINE), 5), .6); }
+    })();
+
+    /* ---------- the wood, in front of the walker ---------- */
+    const FB = layer(false), Fc = FB[1];
+    const crown = (c, cx, cy, rx, ry, n, k, hz, sp) => {
+      for (let i = 0; i < n; i++) {
+        const x = cx + rr(-1.2, 1.2) * rx, y = cy + rr(-1.15, 1.1) * ry, ex = (x - cx) / rx, ey = (y - cy) / ry;
+        if (ex * ex + ey * ey > 1 + (fb(x / 6 + cx, y / 6) - .5) * 1.1) continue;
+        const li = -(ex * .62 + ey * .78) + rr(-.35, .35) + (fb(x / 14 + 3, y / 11) - .5) * .9;
+        let q = li > .42 ? pk(FOL) : li > -.08 ? pk(FOM) : li > -.55 ? pk(FOS) : pk(FOD); if (hz) q = mx(q, HAZ, hz);
+        const w = (i < n * .3 ? rr(2.4, 3.4) : rr(1.4, 2.2)) * k;
+        dab(c, x, y, -PI / 2 + rr(-sp, sp), w * rr(2.1, 3.3), w, cj(q, 6), .9, rr(-.15, .15));
+      }
+    };
+    /* A trunk: a tapering body, then long upright strokes, warm on the sunlit left and violet on the right. */
+    const trunk = (c, x, yb, h, wB, lean, shade) => {
+      const n = Math.ceil(h / 9), cxAt = v => x + lean * v * h + (vn(v * 3 + x * .13, 1.7) - .5) * wB * 1.1 * v, wAt = v => wB * (1 - .6 * v) * (v < .08 ? 1 + (.08 - v) * 6 : 1);
+      c.globalAlpha = 1; c.fillStyle = '#8E86A8'; c.beginPath();
+      for (let i = 0; i <= n; i++) { const v = i / n; c.lineTo(cxAt(v) - wAt(v) / 2, yb - v * h); }
+      for (let i = n; i >= 0; i--) { const v = i / n; c.lineTo(cxAt(v) + wAt(v) / 2, yb - v * h); }
+      c.closePath(); c.fill();
+      for (let i = 0, m = Math.ceil(h / 6 * (wB > 4 ? 3 : 2)); i < m; i++) { const v = R(), u = rr(-.5, .5), lit = -u * 2 + rr(-.35, .35) - shade;
+        dab(c, cxAt(v) + u * wAt(v) * .85, yb - v * h, -PI / 2 + lean + rr(-.05, .05), rr(10, 19), Math.max(.9, wAt(v) * rr(.3, .46)), cj(lit > .45 ? pk(TRL) : lit > -.25 ? pk(TRM) : pk(TRS), 5), .92, rr(-.03, .03)); }
+    };
+    (function () {
+      sd(41);
+      /* growth along the far bank: a low hedge at the left, hazier with distance, rising to bushes before the wood */
+      for (let i = 0; i < 1500; i++) {
+        const x = rr(-10, 252), yb = Fy(x) - 1, hh = (4 + 10 * fb(x / 16 + 1, 4.4)) * lp(.7, 1.5, cl(x / 150, 0, 1)) + 16 * ss(150, 250, x) * fb(x / 11 + 5, 2.2), v = Math.pow(R(), 1.3), y = yb - v * hh, li = v * .9 - .35 + rr(-.3, .3) + (fb(x / 9, 1.1) - .5) * .5;
+        dab(Fc, x, y, x < 150 ? rr(-PI, PI) : -PI / 2 + rr(-.5, .5), rr(2.6, 4.4), rr(1.5, 2.4), cj(mx(li > .3 ? pk(FOL) : li > -.1 ? pk(FOM) : pk(FOS), HAZ, .24 * (1 - cl(x / 150, 0, 1))), 6), .9, rr(-.2, .2));
+      }
+      /* a willow leaning over the water, then two young poplars */
+      sd(42);
+      { const x = 170, yb = Fy(x) - 1;
+        for (let i = 0; i < 8; i++) dab(Fc, x + 2 + rr(-.6, .6), yb - rr(0, 12), -PI / 2 + rr(-.1, .1) - .12, rr(4, 7), rr(1.1, 1.6), cj(pk(TRM), 5), .9);
+        for (let i = 0; i < 330; i++) { const u = rr(-1, 1), v = rr(-1, 1); if (u * u + v * v > 1 + (fb(u * 3 + 2, v * 3) - .5) * .8) continue; const li = -(u * .55 + v * .8) + rr(-.3, .3);
+          dab(Fc, x + u * 17, yb - 17 + v * 14, PI / 2 + u * .5 + rr(-.2, .2), rr(5, 9), rr(1.2, 1.9), cj(li > .3 ? pk(WIL) : li > -.2 ? pk(FOL) : pk(FOM), 6), .9, rr(-.15, .15) + u * .1); } }
+      for (const [x, h, rx] of [[207, 74, 6.5], [226, 90, 7.5]]) { const yb = Fy(x) - 1;
+        for (let i = 0; i < 9; i++) dab(Fc, x + rr(-.4, .4), yb - rr(0, .32) * h, -PI / 2 + rr(-.05, .05), rr(5, 8), rr(1, 1.5), cj(R() < .35 ? pk(TRL) : pk(TRM), 5), .9);
+        crown(Fc, x, yb - h * .58, rx, h * .44, rx * h * 1.1, .8, .03, .14); }
+      /* the wood's first row of trunks: two flank the landing like a gate, the rest stand to its right */
+      sd(43);
+      for (const [x, h, w, lean, sh] of [[262, 150, 3.6, .012, 0], [312, 205, 5, -.012, .1], [338, 215, 4.4, .008, .25], [362, 232, 5.6, -.006, .25], [391, 255, 7.5, .012, .15]]) trunk(Fc, x, Fy(x) - 1.5, h, w, lean, sh);
+      /* the canopy: crowns overlap into one mass, each lit from the upper left, the whole lit along the wood's edge;
+         the dark strokes go down first and the sunlit ones over them, all long and upright */
+      sd(44);
+      const CRN = [[256, 30, 17, 28], [268, 76, 15, 24], [286, 40, 26, 46], [312, 50, 27, 48], [338, 40, 27, 46], [362, 46, 28, 50], [391, 42, 30, 52],
+        [280, 96, 13, 12], [300, 84, 18, 15], [322, 100, 15, 13], [344, 88, 20, 16], [368, 104, 16, 12], [388, 92, 20, 18], [408, 106, 12, 12]], LF = [];
+      for (let i = 0; i < 6800; i++) {
+        const x = rr(234, 414), y = rr(-8, 122); let best = 9, bl = 0;
+        for (let j = 0; j < CRN.length; j++) { const c = CRN[j], ex = (x - c[0]) / c[2], ey = (y - c[1]) / c[3], d = ex * ex + ey * ey; if (d < best) { best = d; bl = j < 7 ? -(ex * .62 + ey * .78) : -(ex * .2 + ey * .3) - .42; } }   // the low boughs hang in the shade of the rest
+        if (best > 1 + (fb(x / 7 + 3, y / 7) - .5)) continue;
+        LF.push([x, y, bl * .7 + .55 * ss(300, 240, x) + (fb(x / 22 + 1, y / 16 + 5) - .5) * 1.1 + rr(-.14, .14) - .12, best]);
+      }
+      for (let pass = 0; pass < 2; pass++) for (const f of LF) { const li = f[2]; if ((li > .1) !== (pass === 1)) continue;
+        const k = lp(.9, 1.3, ss(250, 400, f[0])), q = li > .5 ? pk(FOL) : li > .1 ? pk(FOM) : li > -.35 ? pk(FOS) : pk(FOD);
+        dab(Fc, f[0], f[1], -PI / 2 + rr(-.2, .2) + (fb(f[0] / 30, f[1] / 30 + 2) - .5) * .5, rr(7, 13) * k, rr(1.5, 2.5) * k, cj(q, 6), .9, rr(-.12, .12)); }
+      for (const f of LF) if (f[3] > .72 && f[0] < 300 && f[1] < 74 && R() < .1) dab(Fc, f[0], f[1], rr(-PI, PI), rr(3, 5), rr(2, 3), cj(ramp(SKYS, cl(f[1] / HZ, 0, 1)), 4), .85);
+      /* reeds along the far bank, upright, leaving the landing clear */
+      sd(45);
+      for (let i = 0; i < 300; i++) { const x = rr(148, 412); if (Math.abs(x - 289) < 9) continue; const y = Fy(x) + rr(-1, 1.5), s = sc(y), h = rr(4, 10) * s * 1.4, r = R();
+        dab(Fc, x, y - h / 2, -PI / 2 + rr(-.22, .22), h, rr(.8, 1.4) * (s + .3), cj(r < .3 ? pk(GOLDP) : r < .62 ? pk(FOM) : pk(FOS), 6), .9, rr(-.1, .1)); }
+    })();
+
+    /* ---------- the water: what stands over the far bank, mirrored and shortened, then broken into strokes ---------- */
+    const WAT = layer(false), Wc = WAT[1];
+    (function () {
+      const C = mk(PW, PH, true), c = C[1]; c.drawImage(BG[0], 0, 0); c.drawImage(FA[0], 0, 0); c.drawImage(FB[0], 0, 0);
+      const D = c.getImageData(0, 0, PW, PH).data;
+      const smp = (x, y) => { const px = cl(Math.round(x * DS), 0, PW - 1), py = cl(Math.round(y * DS), 0, PH - 1), i = (py * PW + px) * 4; return [D[i], D[i + 1], D[i + 2]]; };
+      const RC = .55, TE = hx('4A8A8E'), BL = hx('3F7AB8'), DE = hx('2F5C9C'), TU = hx('3E9A9A'), VI = hx('5A5EAA'), LI = hx('CFE0EE'), DK = hx('2C5486'), BKR = hx('4E7A52');
+      sd(51);
+      Wc.save(); Wc.beginPath(); for (let x = -12; x <= 414; x += 4) Wc.lineTo(x, Fy(x)); for (let x = 414; x >= -12; x -= 4) Wc.lineTo(x, Ny(x)); Wc.closePath(); Wc.clip();
+      const g = Wc.createLinearGradient(0, 110, 0, DH); g.addColorStop(0, '#5E8FA6'); g.addColorStop(.35, '#5587BE'); g.addColorStop(1, '#3F6FAE');
+      Wc.globalAlpha = 1; Wc.fillStyle = g; Wc.fillRect(-12, 100, 426, DH);
+      for (let y = 108; y < DH + 6;) {
+        const s0 = sc(y), dy = lp(1.1, 4.4, Math.pow(s0, 1.1));
+        for (let x = -12 - rr(0, 8); x < 414;) {
+          const l = lp(4, 24, Math.pow(s0, 1.15)) * rr(.6, 1.4), w = lp(1.3, 5.4, s0) * rr(.8, 1.2), yy = y + rr(-.3, .3) * dy, f = Fy(x), nn = Ny(x);
+          if (yy < f - 1 || yy > nn + 2) { x += l * .7; continue; }
+          const ys = f - (yy - f) / RC - .6 + rr(-1, 1) * (.4 + s0 * 2.2), d = cl((yy - f) / Math.max(8, nn - f), 0, 1), n = fb(x * .016 + 7, yy * .04);
+          let base = mx(mx(TE, BL, ss(0, .3, d)), DE, ss(.5, 1, d) * .55);
+          if (n > .56) base = mx(base, TU, Math.min(.5, (n - .56) * 1.6)); else if (n < .38) base = mx(base, VI, (.38 - n) * 1.1);
+          let col = mx(smp(x + rr(-.3, .3) * l, ys), base, cl(lp(.3, .55, ss(0, .8, d)) + rr(-.08, .08), 0, 1));
+          col = [col[0] * .93, col[1] * .95, col[2] * .99];
+          const nb = (nn - yy) / (9 * s0); if (nb < 1) col = mx(col, BKR, (1 - nb) * .5);
+          const rp = vn(x * .04 + 3, yy * .22), ck = lp(1.2, 1.9, s0);
+          if (rp > .68) col = mx(col, LI, Math.min(.6, (rp - .68) * ck)); else if (rp < .3) col = mx(col, DK, Math.min(.5, (.3 - rp) * ck));
+          dab(Wc, x, yy, .08 + rr(-.04, .04), l, w, rgb(col), rr(.82, .95), rr(-.08, .08));
+          x += l * rr(.5, .85);
+        }
+        y += dy;
+      }
+      /* clouds on the water, and the dark each stone leaves below itself */
+      sd(52);
+      for (const [cx, cy, rx, ry, n] of [[118, 178, 34, 9, 30], [226, 238, 44, 12, 36]]) for (let i = 0; i < n; i++) { const u = rr(-1, 1), v = rr(-1, 1), e = u * u + v * v; if (e > 1) continue; const y = cy + v * ry, s = sc(y);
+        dab(Wc, cx + u * rx, y, .08, rr(8, 16) * (s + .2), rr(1.6, 2.6) * (s + .3), cj(v < 0 ? hx('F4EEE4') : hx('D9D6E6'), 4), rr(.25, .5) * (1 - e * .6), 0); }
+      for (const st of ST) { sd(st.seed + 20); const yb = st.y + st.h / 2 + st.th; for (let i = 0; i < 9; i++) { const v = R();
+        dab(Wc, st.x + rr(-.5, .6) * st.w + v * st.w * .25, yb + v * st.h * 1.5 + rr(-.3, .3), .1 + rr(-.05, .05), st.w * rr(.35, .6), st.h * rr(.22, .34), cj(pk(STR), 5), lp(.7, .3, v)); } }
+      Wc.restore();
+    })();
+    B.setTransform(1, 0, 0, 1, 0, 0); B.globalAlpha = 1; B.drawImage(WAT[0], 0, 0); B.setTransform(DS, 0, 0, DS, 0, 0);
+
+    /* ---------- the meadow: rows of strokes from far to near, flowers placed where their drifts ask ---------- */
+    const mdc = (x, y) => { const z = cl(sc(y), 0, 1), n = fb(x / (26 + 60 * z) + 3, y / (8 + 26 * z)); let q = ramp(MZ, ss(.33, 1, z));
+      if (n > .56) q = mx(q, GOLDM, Math.min(.6, (n - .56) * 2.6)); else if (n < .42) q = mx(q, COOLM, Math.min(.5, (.42 - n) * 2)); return q; };
+    const fden = (i, x, y) => { const z = cl(sc(y), 0, 1.1), f = FLW[i]; return ss(.5, .75, fb(x / (20 + 50 * z) + f.o, y / (7 + 22 * z) + f.o * .7)) * f.k; };
+    const flower = (c, x, y, z, i) => { const f = FLW[i], s = (1.2 + 6 * Math.pow(z, 1.3)) * (i === 0 ? 1.05 : i === 3 ? .9 : 1);
+      dab(c, x, y - s * .35, rr(-PI, PI), s * rr(1.05, 1.3), s * rr(.85, 1.05), cj(pk(f.c), 6), .94, rr(-.1, .1));
+      if (s > 2.4 && R() < .65) dab(c, x + rr(.1, .4) * s, y - s * .35 + rr(.05, .35) * s, rr(-PI, PI), s * .7, s * .5, cj(pk(f.d), 6), .6);
+      if (i === 0 && s > 3.6) dab(c, x - .05 * s, y - s * .4, 0, s * .36, s * .32, cj(hx('F2C84A'), 5), .9); };
+    (function () {
+      const g = B.createLinearGradient(0, 160, 0, DH); g.addColorStop(0, '#BCC87E'); g.addColorStop(.4, '#A4BC5E'); g.addColorStop(1, '#82A64A');
+      B.beginPath(); for (let x = -8; x <= 372; x += 4) B.lineTo(x, Ny(x) - .5); B.lineTo(372, DH + 8); B.lineTo(-8, DH + 8); B.closePath(); B.globalAlpha = 1; B.fillStyle = g; B.fill();
+      sd(61);
+      for (let i = 0; i < 300; i++) { const x = rr(-10, 340), y = rr(160, DH + 6), z = sc(y); if (y < Ny(x) + 2) continue; dab(B, x, y, rr(-.3, .3) - z * .4, 8 + 26 * z, 3 + 11 * z, rgb(mx(mdc(x, y), [94, 120, 80], .12 * z)), .5, 0); }
+      sd(62);
+      let y = 156;
+      while (y < DH + 8) {
+        const w0 = 1.3 + 5 * Math.pow(cl(sc(y), 0, 1.1), 1.3); let x = -8 + rr(0, 4);
+        while (x < 366) {
+          const yy = y + rr(-.4, .4) * w0; if (yy < Ny(x) + rr(-.6, 1.6)) { x += 2.6; continue; }
+          const z = cl(sc(yy), 0, 1.1), w = 1.3 + 5 * Math.pow(z, 1.3), l = 3 + 13 * Math.pow(z, 1.2);
+          if (pathD(x, yy) < .9 + rr(-.2, .2)) { x += l * .5; continue; }
+          let fl = -1; for (let i = 0; i < 4 && fl < 0; i++) if (R() < fden(i, x, yy) * .42) fl = i;
+          if (fl >= 0) { flower(B, x, yy, z, fl); x += l * rr(.36, .6); continue; }
+          let q = mdc(x + rr(-5, 5), yy + rr(-3, 3)); const r = R();
+          if (r < .07) q = mx(q, pk(MW), .55); else if (r < .14) q = mx(q, pk(MC), .5); else if (r < .2 + .07 * ss(.5, 1, z)) q = mx(q, pk(MDK), .6); else if (r < .26) q = mx(q, PALE, .45);
+          const a = -PI / 2 + .14 + rr(-.6, .6) * lp(1.5, 1, z) + (fb(x / 45, yy / 16) - .5) * 1.1, ll = l * rr(.75, 1.25), ww = w * rr(.8, 1.2);
+          dab(B, x, yy, a, ll, ww, cj(q, 9), lp(.7, .9, ss(.35, .7, z)), rr(-.15, .15));
+          if (ww > 3) { const ca = Math.cos(a), sa = Math.sin(a), o2 = rr(-.3, .3) * ww, f0 = rr(.2, .38), f1 = rr(.15, .36);
+            B.globalAlpha = .4; B.strokeStyle = cj(mx(q, R() < .55 ? [250, 244, 206] : [66, 86, 124], rr(.15, .3)), 5); B.lineWidth = ww * rr(.1, .18);
+            B.beginPath(); B.moveTo(x - ca * ll * f0 - sa * o2, yy - sa * ll * f0 + ca * o2); B.lineTo(x + ca * ll * f1 - sa * o2, yy + sa * ll * f1 + ca * o2); B.stroke(); }
+          x += l * rr(.38, .62);
+        }
+        y += w0 * .6;
+      }
+      /* the trodden path to the first stone, with the sun across it, and grass leaning over its edges */
+      sd(63);
+      for (let i = 0, n = Math.ceil(WL[WL.length - 1] / 1.1); i <= n; i++) { const p = pat(WP, WL, i / n), hw = 8.5 * sc(p[1]);
+        for (let k = 0; k < 4; k++) { const xx = p[0] + rr(-.9, .9) * hw, yy = p[1] + rr(-.5, .5) * hw * .5, sun = fb(xx / 12 + 5, yy / 6);
+          dab(B, xx, yy, -.5 + rr(-.25, .25), hw * rr(.8, 1.4), hw * rr(.24, .38), cj(sun > .68 ? pk(PTHS) : pk(PTHL), 5), rr(.82, .95), rr(-.1, .1)); } }
+      for (let i = 0; i < 900; i++) { const x = rr(-6, 190), y = rr(236, DH + 4), d = pathD(x, y); if (d < .78 || d > 1.2) continue; const z = cl(sc(y), 0, 1.1);
+        dab(B, x, y, -PI / 2 + .14 + rr(-.6, .6), (3 + 13 * Math.pow(z, 1.2)) * rr(.6, 1), (1.3 + 5 * Math.pow(z, 1.3)) * rr(.5, .8), cj(R() < .4 ? pk(GRL) : pk(GRM), 7), .9, rr(-.15, .15)); }
+    })();
+
+    /* warm afternoon light from the upper left, on the still canvas and on the water */
+    const glow = c => { const g = c.createRadialGradient(40, 60, 10, 40, 60, 380); g.addColorStop(0, 'rgba(255,214,150,.55)'); g.addColorStop(1, 'rgba(255,214,150,0)');
+      c.globalCompositeOperation = 'soft-light'; c.globalAlpha = .45; c.fillStyle = g; c.fillRect(-5, -5, 410, DH + 10); c.globalCompositeOperation = 'source-over'; c.globalAlpha = 1; };
+    glow(B);
+    (function () { const T = mk(PW, PH); T[1].drawImage(WAT[0], 0, 0); glow(Wc);
+      Wc.setTransform(1, 0, 0, 1, 0, 0); Wc.globalCompositeOperation = 'destination-in'; Wc.drawImage(T[0], 0, 0); Wc.globalCompositeOperation = 'source-over'; Wc.setTransform(DS, 0, 0, DS, 0, 0); })();
+
+    /* ---------- over the water: the stones, and the grass along the near bank ---------- */
+    (function () {
+      for (const st of ST) {
+        sd(st.seed);
+        const x = st.x, y = st.y, rx = st.w / 2, ry = st.h / 2, th = st.th, s = st.s, O = [];
+        for (let i = 0; i < 20; i++) { const a = i / 20 * 2 * PI, k = 1 + (vn(i * .7 + st.seed, 2.2) - .5) * .24; O.push([x + Math.cos(a) * rx * k, y + Math.sin(a) * ry * k]); }
+        const path = dy => { Ac.beginPath(); O.forEach((p, i) => i ? Ac.lineTo(p[0], p[1] + dy) : Ac.moveTo(p[0], p[1] + dy)); Ac.closePath(); };
+        Ac.globalAlpha = 1; Ac.fillStyle = '#625E8A'; path(th); Ac.fill(); Ac.fillRect(x - rx * .98, y, rx * 1.96, th);
+        for (let i = 0; i < 12; i++) { const u = rr(-1, 1);
+          dab(Ac, x + u * rx * .86, y + ry * Math.sqrt(1 - u * u * .8) * .7 + th * rr(.3, .95), rr(-.15, .15), rr(3, 5) * s, rr(1.3, 2) * s, cj(u < -.15 ? pk(SDL) : pk(SDD), 5), .9); }
+        Ac.save(); path(0); Ac.globalAlpha = 1; Ac.fillStyle = rgb(mx(hx('EDE4D4'), hx('B4B2CE'), st.sh * .6)); Ac.fill(); Ac.clip();
+        for (let i = 0; i < 18; i++) { const u = rr(-1, 1), v = rr(-1, 1), lit = -u * .5 - v * .5 + rr(-.3, .3) - st.sh * .45;
+          dab(Ac, x + u * rx, y + v * ry, rr(-.2, .2), rr(3.5, 6) * s, rr(1.5, 2.4) * s, cj(lit > .25 ? pk(STL) : lit > -.2 ? pk(STM) : pk(STS), 4), .9); }
+        Ac.restore();
+        for (let i = 0; i < 5; i++) { const a = PI + rr(.15, 1.3); dab(Ac, x + Math.cos(a) * rx * .9, y + Math.sin(a) * ry * .9, a + PI / 2, rr(3, 5) * s, s, cj(hx('FFFAEC'), 3), .7 * (1 - st.sh * .6)); }
+      }
+      /* the near bank: grass standing over the water's edge, an iris here and there; bare where the path meets the stones */
+      sd(71);
+      for (let x = -12; x < 356; x += rr(1.2, 2.6)) { const y = Ny(x), s = sc(y), h = rr(5, 11) * s, r = R(), gap = Math.abs(x - 175) < 7;
+        if (gap) { dab(Ac, x, y + rr(0, 2), rr(-.2, .2), rr(3, 5) * s, rr(1.4, 2) * s, cj(pk(PTHL), 5), .9); continue; }
+        dab(Ac, x + rr(-1, 1), y + rr(-.5, 2) * s - h * .4, -PI / 2 + .1 + rr(-.3, .3), h, rr(1.2, 2.2) * s, cj(r < .2 ? pk(GOLDP) : r < .55 ? pk(GRL) : pk(GRM), 6), .92, rr(-.15, .15));
+        if (R() < .09) dab(Ac, x, y - h * .9, rr(-.6, .6), 3.2 * s, 2.4 * s, cj(R() < .5 ? hx('F4D050') : hx('8E86D6'), 6), .95); }
+    })();
+
+    /* ---------- clouds: cumulus sprites that drift right and slip behind the wood ---------- */
+    const CM = 8, CLOUDS = [];
+    function cloud(cx, yb, puffs, v, seed, flat, k) {
+      sd(seed);
+      const P = [], ks = lp(1, k, .7); let x0 = 1e9, x1 = -1e9, y0 = 1e9;
+      for (const p of puffs) { const px = cx + p[0] * k, py = yb + p[1] * k, r = p[2] * k, ry = (p[3] || p[2]) * k; P.push([px, py, r * r, ry * ry]); x0 = Math.min(x0, px - r); x1 = Math.max(x1, px + r); y0 = Math.min(y0, py - ry); }
+      x0 -= 6 * k; x1 += 6 * k; y0 -= 6 * k; const y1 = yb + 8 * k, w = x1 - x0, h = y1 - y0;
+      const den = (x, y) => { let s = 0; for (const p of P) { const dx = x - p[0], dy = y - p[1]; s += Math.exp(-dx * dx / p[2] - dy * dy / p[3]); }
+        const yl = yb + (vn(x / (18 * k), seed) - .5) * 5 * k; if (y > yl) s *= Math.exp(-Math.pow((y - yl) / ((flat ? 3 : 5) * k), 2));
+        return s + (fb(x / (14 * k) + seed, y / (10 * k)) - .5) * .32; };
+      const nrm = (x, y) => { const e = 5 * k, gx = den(x + e, y) - den(x - e, y), gy = den(x, y + e) - den(x, y - e), gm = Math.sqrt(gx * gx + gy * gy) + 1e-6; return [gx / gm, gy / gm, gm]; };
+      const O = mk(Math.ceil((w + 2 * CM) * DS), Math.ceil((h + 2 * CM) * DS)), c = O[1];
+      c.setTransform(DS, 0, 0, DS, (CM - x0) * DS, (CM - y0) * DS);
+      c.save(); c.filter = 'blur(' + (3.6 * k * DS).toFixed(2) + 'px)'; c.globalAlpha = flat ? .5 : .62; c.fillStyle = '#E8E6EE';
+      for (const p of P) { c.beginPath(); c.ellipse(p[0], Math.min(p[1], yb - 2 * k), Math.sqrt(p[2]) * .8, Math.sqrt(p[3]) * .8, 0, 0, 7); c.fill(); }
+      c.globalAlpha = flat ? .35 : .55; c.fillStyle = '#FFF6E4';
+      for (const p of P) { const r3 = Math.sqrt(p[2]), q3 = Math.sqrt(p[3]); c.beginPath(); c.ellipse(p[0] - r3 * .2, p[1] - q3 * .3, r3 * .55, q3 * .55, 0, 0, 7); c.fill(); }
+      c.restore();
+      const N = w * h * (flat ? .05 : .055) / ks;
+      for (let j = 0; j < N; j++) {
+        const x = rr(x0, x1), y = rr(y0, y1), d = den(x, y); if (d < .42) continue;
+        const n = nrm(x, y), lit = n[0] * .55 + n[1] * .83, edge = ss(.015, .12, n[2]), vv = (y - y0) / h,
+          k2 = .6 + .45 * lit * edge + .22 * (1 - vv) - .36 * ss(.6, 1.05, vv) + rr(-.12, .12) - (flat ? .08 : 0);
+        const q = k2 > .8 ? pk(CW) : k2 > .58 ? pk(CMd) : k2 > .42 ? pk(CLg) : k2 > .26 ? (R() < .22 && vv > .7 ? pk(CPk) : pk(CSd)) : pk(CBs);
+        let a = edge > .5 && R() < .75 ? Math.atan2(n[1], n[0]) + PI / 2 + rr(-.25, .25) : -.4 + rr(-.45, .45); if (flat) a = rr(-.12, .12);
+        dab(c, x, y, a, rr(8, 16) * (flat ? 1.3 : 1) * ks, rr(3, 5.5) * (flat ? .7 : 1) * ks, cj(q, 4), .3 + .55 * ss(.42, .75, d), rr(-.12, .12));
+      }
+      for (let m = 0; m < N * .2; m++) { const x = rr(x0, x1), y = rr(y0, yb), d = den(x, y); if (d < .5) continue; const n = nrm(x, y); if (n[0] * .55 + n[1] * .83 < .35 || n[2] < .04) continue;
+        dab(c, x, y, Math.atan2(n[1], n[0]) + PI / 2 + rr(-.3, .3), rr(6, 11) * ks, rr(2.2, 3.4) * ks, cj(pk(CW), 3), .8); }
+      for (let m = 0; m < N * .25; m++) { const x = rr(x0, x1), y = rr(y0, y1), d = den(x, y); if (d < .3 || d > .5) continue; const n = nrm(x, y);
+        dab(c, x, y, Math.atan2(n[1], n[0]) + PI / 2 + rr(-.4, .4), rr(6, 12) * ks, rr(2.4, 4) * ks, cj(ramp(SKYS, cl(y / HZ, 0, 1)), 4), .5); }
+      CLOUDS.push({ o: O[0], x0: x0, y0: y0, w: w, v: v, span: 286 + w + 2 * CM + 14 });
+    }
+    cloud(108, 54, [[-92, -9, 16], [-70, -17, 21], [-44, -26, 26], [-12, -34, 30], [22, -38, 31], [54, -29, 27], [82, -18, 21], [104, -8, 14], [-28, -54, 20], [6, -62, 22], [34, -53, 19], [-58, -38, 14], [64, -44, 14]], 1.5, 71, 0, .48);
+    cloud(214, 34, [[-46, -5, 11], [-28, -12, 15], [-6, -19, 19], [18, -21, 18], [40, -13, 14], [58, -6, 10], [6, -33, 13], [-16, -29, 11]], 2.1, 75, 0, .5);
+    cloud(30, 64, [[-62, -2, 14, 4], [-40, -3, 18, 5], [-14, -4, 20, 6], [12, -4, 20, 6], [38, -3, 18, 5], [62, -2, 13, 4]], 1.2, 74, 1, .5);
+    cloud(-150, 30, [[-26, -4, 8], [-12, -8, 11], [4, -11, 12], [18, -7, 9], [30, -3, 6]], 2.6, 73, 0, .62);
+
+    /* ---------- the live layer ---------- */
+    /* the water sways in strips, each as wide as the stream is at its height */
+    const BAND = [];
+    for (let y = 106; y < DH; y += 3.4) { let x0 = 1e9, x1 = -1e9; for (let x = 0; x <= 400; x += 2) if (Fy(x) < y + 3.4 && Ny(x) > y) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); }
+      const p0 = Math.round(y * DS), p1 = Math.min(PH, Math.round((y + 3.4) * DS)), a0 = Math.round(cl(x0 - 3, 0, 400) * DS), a1 = Math.round(cl(x1 + 3, 0, 400) * DS);
+      if (p1 > p0 && a1 > a0) BAND.push([p0, p1 - p0, a0, a1 - a0, lp(.3, .9, sc(y)), y, hs(BAND.length, 7) - .5]); }
+    /* glints whose light breathes in and out, each on its own phase, clear of the stones */
+    const GC = ['#CFE2F0', '#DCEAF2', '#EEF3F2', '#F8EED4', '#FFF6DA', '#3F5F9E', '#4A5A9A'], GL = [];
+    sd(81);
+    for (let i = 0; i < 5000 && GL.length < 110; i++) {
+      const x = rr(-5, 405), y = rr(112, DH); if (y < Fy(x) + 3 || y > Ny(x) - 3 || fb(x * .02 + 11, y * .09) < .5 + rr(-.08, .08)) continue;
+      let ok = true; for (const st of ST) if (Math.abs(x - st.x) < st.w * .95 && Math.abs(y - st.y - st.th) < st.h * 1.7) ok = false; if (!ok) continue;
+      const s = sc(y), r = R(), ci = r < .5 ? R() * 3 | 0 : r < .7 ? 3 + (R() * 2 | 0) : 5 + (R() * 2 | 0);
+      GL.push([x, y, lp(3, 16, Math.pow(s, 1.2)) * rr(.7, 1.3), lp(.7, 2.1, s) * rr(.8, 1.2), ci, rr(.35, .65), rr(.45, 1.2), rr(0, 6.3), lp(.5, 2.6, s), rr(.25, .6), rr(0, 6.3)]);
+    }
+    /* leaves on the current, each keeping to a line of flow that passes between two stones */
+    const LVS = []; sd(83);
+    for (let i = 0; i < NS - 1; i++) LVS.push({ a: (ST[i].fr + ST[i + 1].fr) / 2 + rr(-.01, .01), x0: rr(0, 460), v: rr(7, 11), c: pk(['#E8C050', '#D99A3C', '#C8D070', '#E2B04A', '#B8C860']), ph: rr(0, 6.3), w: rr(.85, 1.2) });
+    /* flecks of sun that come and go on the floor of the wood */
+    const DP = []; sd(85);
+    for (let i = 0; i < 600 && DP.length < 22; i++) { const x = rr(250, 406), y = rr(122, 196); if (y < WTop(x) + 2 || y > Fy(x) - 2) continue; const s = sc(y);
+      DP.push([x, y, (5 + 12 * s) * rr(.7, 1.2), (1.4 + 3.2 * s) * rr(.8, 1.2), cj(pk(FLD), 6), rr(.3, .7), rr(0, 6.3), rr(.35, .6), rr(-.1, .2)]); }
+    /* tall grasses and flowers in the near meadow that lean with the wind, sorted by their roots */
+    const LV = []; sd(87);
+    for (let i = 0; i < 6000 && LV.length < 54; i++) {
+      const x = rr(-6, 330), y = rr(206, DH + 4); if (y < Ny(x) + 6 || pathD(x, y) < 1.3) continue;
+      const z = cl(sc(y), 0, 1.1); if (R() > Math.pow(z, 1.6) * 1.15) continue;
+      const l = 3 + 13 * Math.pow(z, 1.2), w = 1.3 + 5 * Math.pow(z, 1.3), g = x * 2 + y * 1.2;
+      if (R() < .45) { const r = R(); LV.push({ k: 0, x: x, y: y, g: g, a0: -PI / 2 + .1 + rr(-.22, .22), l: l * rr(1.3, 2.1), w: w * rr(.3, .5), c: rgb(mx(r < .4 ? pk(GRL) : r < .75 ? pk(GRM) : pk(GOLDP), mdc(x, y), rr(.25, .5))), fx: rr(.8, 1.2), lg: rr(0, .15) }); }
+      else { let fi = 0, best = -1; for (let j = 0; j < 4; j++) { const d = fden(j, x, y) + rr(0, .5); if (d > best) { best = d; fi = j; } }
+        const f = FLW[fi], s = (1.5 + 6.6 * Math.pow(z, 1.3)) * rr(.9, 1.15);
+        LV.push({ k: 1, x: x, y: y, g: g, ls: l * rr(.6, 1.05), s: s, fx: rr(.9, 1.15), lg: rr(.05, .3), na: rr(.06, .12), nw: rr(1.3, 2.4), np: rr(0, 6.283), a1: rr(-PI, PI), c1: cj(pk(f.c), 6), c2: cj(pk(f.d), 6), eye: fi === 0 && s > 3.6, sc: cj(pk(STEMC), 6), d2: [rr(.1, .4), rr(.05, .35), rr(-1, 1)] }); }
+    }
+    LV.sort((a, b) => a.y - b.y);
+
+    /* Where she is at time t: feet, and how she holds herself. null between crossings. */
+    function walker(t) {
+      const tt = t + T0, n = Math.floor(tt / LOOP), p = tt - n * LOOP, o = { al: 1, lean: .03, arm: .1, sway: 0, hop: 0, bob: 0, sh: 0, wet: 0 };
+      if (p < TWALK) { const q = pat(WP, WG, p / TWALK); o.x = q[0]; o.y = q[1]; o.bob = Math.sin(p * 11.5); o.sway = .6 * Math.sin(p * 5.75); }
+      else if (p < TLAND) {
+        let P0, P1, u = -1; o.wet = 1;
+        if (p < A0) { P0 = WP[WP.length - 1]; P1 = ST[0]; u = (p - TWALK) / TON; o.wet = u; }
+        else { const k = Math.min(NS - 1, Math.floor((p - A0) / (PAUSE + STEP))), q = p - aK(k);
+          if (q < PAUSE) { o.x = ST[k].x; o.y = ST[k].y; o.arm = lp(.9, .12, ss(0, .75, q / PAUSE)); o.lean = .03 + .05 * (1 - ss(0, .5, q / PAUSE)); o.sway = .25 * Math.sin(q * 4) * (1 - q / PAUSE); }
+          else { P0 = ST[k]; P1 = k < NS - 1 ? ST[k + 1] : { x: LD[0], y: LD[1] }; u = (q - PAUSE) / STEP; if (k === NS - 1) o.wet = 1 - u; } }
+        if (u >= 0) { const e = ss(0, 1, u), x0 = P0.x === undefined ? P0[0] : P0.x, y0 = P0.y === undefined ? P0[1] : P0.y;
+          o.x = lp(x0, P1.x, e); o.y = lp(y0, P1.y, e); o.hop = Math.sin(PI * u); o.lean = .04 + .08 * Math.sin(PI * u); o.arm = lp(.12, .95, ss(0, .4, u)); o.sway = -Math.sin(PI * u); }
+      } else if (p < TLAND + TTR) { const j = SEQ[((n % 6) + 6) % 6], v = (p - TLAND) / TTR, q = pat(TR[j], TG[j], v), q2 = pat(TR[j], TG[j], v + .02);
+        o.x = q[0]; o.y = q[1]; o.bob = Math.sin(p * 11.5); o.sway = .6 * Math.sin(p * 5.75); o.lean = q2[0] < q[0] ? -.03 : .03; o.al = j === 2 ? 1 - ss(.82, 1, v) : 1 - ss(.4, .96, v); o.sh = ss(0, .3, v); }
+      else return null;
+      o.p = p; return o;
+    }
+    /* The walker, a dozen dabs: white dress, straw hat with a red ribbon, arms out when she needs her balance. */
+    function fig(c, fx, fy, k, o) {
+      const ca = Math.cos(o.lean), sa = Math.sin(o.lean), tn = q => o.sh ? rgb(mx(q, SHD, o.sh * .4)) : rgb(q);
+      const D = (u, v, a, l, w, q, al) => dab(c, fx + (u * ca + v * sa) * k, fy - (v * ca - u * sa) * k, a + o.lean, l * k, Math.max(.5, w * k), tn(q), (al || .96) * o.al, 0);
+      const arm = (u, v, a, q) => D(u + Math.cos(a) * .12, v - Math.sin(a) * .12, a, .25, .055, q);
+      D(.02 + .05 * o.sway, .05, 0, .36, .08, FIG.hem, .9);
+      D(.075, .25, -PI / 2, .47, .17, FIG.skS);
+      D(-.02 + .02 * o.sway, .27, -PI / 2, .52, .29, FIG.sk);
+      D(-.09, .25, -PI / 2, .4, .07, FIG.skF, .8);
+      arm(.085, .715, lp(1.36, .12, o.arm), FIG.armS);
+      D(.05, .62, -PI / 2, .23, .1, FIG.toS);
+      D(0, .625, -PI / 2, .26, .19, FIG.to);
+      D(0, .515, 0, .18, .045, FIG.sash);
+      arm(-.085, .715, lp(1.78, 3, o.arm), FIG.armL);
+      D(0, .795, 0, .085, .08, FIG.hair);
+      D(.05, .838, 0, .2, .035, FIG.brimS);
+      D(0, .852, 0, .31, .07, FIG.brim);
+      D(0, .9, 0, .15, .1, FIG.crown);
+      D(0, .874, 0, .15, .03, FIG.rib);
+    }
+
+    const BC = BG[0], WC = WAT[0], AC = FA[0], FC = FB[0], FBH = Math.min(PH, Math.ceil(216 * DS));
+    function frame(t) {
+      X.setTransform(1, 0, 0, 1, 0, 0); X.globalAlpha = 1; X.globalCompositeOperation = 'source-over';
+      X.drawImage(BC, 0, 0);
+      for (const c of CLOUDS) { const x = ((c.x0 + c.w + CM + c.v * t) % c.span + c.span) % c.span - c.w - CM; X.drawImage(c.o, Math.round((x - CM) * DS), Math.round((c.y0 - CM) * DS)); }
+      for (const b of BAND) { const off = b[4] * (.62 * Math.sin(1.07 * t + b[5] * .31) + .38 * Math.sin(.71 * t - b[5] * .19 + 1.3)); X.drawImage(WC, b[2], b[0], b[3], b[1], b[2] + Math.round(off * DS + b[6]), b[0], b[3], b[1]); }
+      const wk = walker(t), p = wk ? wk.p : -1, kf = wk ? 58 * sc(wk.y) : 0;
+      X.setTransform(DS, 0, 0, DS, 0, 0);
+      /* on the water: leaves, glints, wakes, the ring where she last landed, her broken reflection */
+      for (const lv of LVS) { const x = (lv.x0 + lv.v * t) % 460 - 30, f = Fy(x), y = lp(f, Ny(x), lv.a); if (y > DH + 4) continue; const s = sc(y);
+        dab(X, x, y, .2 + .5 * Math.sin(.8 * t + lv.ph), (2.4 * s + .9) * lv.w, (1.1 * s + .5) * lv.w, lv.c, .9, .1); }
+      for (const g of GL) { const f = Math.sin(g[6] * t + g[7]); if (f <= .02) continue; dab(X, g[0] + g[8] * Math.sin(g[9] * t + g[10]), g[1], .08, g[2], g[3], GC[g[4]], g[5] * f * Math.sqrt(f), 0); }
+      for (const st of ST) for (let i = 0; i < 3; i++) { const ph = (t * .32 + i / 3 + st.seed * .37) % 1, d0 = st.w * (.6 + ph * 1.5), lt = (i - 1) * st.w * (.2 + ph * .35);
+        dab(X, st.x + d0 * st.dx - lt * st.dy, st.y + st.th + st.h * .3 + d0 * st.dy + lt * st.dx * .5, Math.atan2(st.dy, st.dx), st.w * (.45 + ph * .4), st.s * 1.3, '#DCEAF2', Math.sin(PI * ph) * .5, 0); }
+      if (wk) for (let k = 0; k < NS; k++) { const age = (p - aK(k)) / 1.9; if (age <= 0 || age >= 1) continue; const st = ST[k], rx = st.w * (.62 + 1.1 * age), ry = rx * .36, cy = st.y + st.th + st.h * .2;
+        for (let i = 0; i < 10; i++) { const a = -.3 + (PI + .6) * i / 9; dab(X, st.x + Math.cos(a) * rx, cy + Math.sin(a) * ry, Math.atan2(Math.cos(a) * ry, -Math.sin(a) * rx), rx * .45, st.s * 1.1, '#E6EFF4', Math.pow(1 - age, 1.2) * .55, 0); } }
+      if (wk && wk.wet > .02) for (let i = 0; i < 5; i++) { const v = [.14, .28, .42, .6, .74][i];
+        dab(X, wk.x + .7 * Math.sin(1.3 * t + i * 1.7) * (1 + i * .3), wk.y + 5 * sc(wk.y) + v * .55 * kf, .05, kf * [.26, .24, .17, .13, .22][i], kf * .045, i < 2 ? '#E4E2F0' : i < 4 ? '#EEEAF0' : '#DCC88A', .3 * wk.wet * wk.al, 0); }
+      X.setTransform(1, 0, 0, 1, 0, 0); X.globalAlpha = 1; X.drawImage(AC, 0, 0);
+      X.setTransform(DS, 0, 0, DS, 0, 0);
+      for (const d of DP) { const f = .5 + .5 * Math.sin(d[5] * t + d[6]); dab(X, d[0], d[1], d[8], d[2], d[3], d[4], d[7] * f * f, 0); }
+      if (wk) { const fy = wk.y - (wk.hop * .1 + (wk.bob > 0 ? wk.bob * .012 : 0)) * kf;
+        dab(X, wk.x + .2 * kf, wk.y + .01 * kf, .22, .5 * kf, .12 * kf, '#4A5490', .3 * wk.al * (1 - wk.sh), 0);
+        fig(X, wk.x, fy, kf, wk); }
+      X.setTransform(1, 0, 0, 1, 0, 0); X.globalAlpha = 1; X.drawImage(FC, 0, 0, PW, FBH, 0, 0, PW, FBH);
+      X.setTransform(DS, 0, 0, DS, 0, 0);
+      for (const it of LV) {
+        if (it.k === 0) { const L = it.fx * wind(it.g, t - it.lg), a = it.a0 + L, ca = Math.cos(a), sa = Math.sin(a); dab(X, it.x + ca * it.l * .5, it.y + sa * it.l * .5, a, it.l, it.w, it.c, .88, -L * .35); }
+        else { const L = it.fx * wind(it.g, t - it.lg) + it.na * Math.sin(it.nw * t + it.np), ca = Math.sin(L), sa = -Math.cos(L), hx2 = it.x + ca * it.ls, hy2 = it.y + sa * it.ls, s = it.s;
+          dab(X, (it.x + hx2) * .5, (it.y + hy2 + s * .3) * .5, Math.atan2(hy2 - it.y, hx2 - it.x), it.ls, Math.max(.6, s * .14), it.sc, .7, -L * .25);
+          dab(X, hx2, hy2, it.a1 + L, s * 1.2, s * .98, it.c1, .94, .08);
+          if (s > 2.6) dab(X, hx2 + it.d2[0] * s, hy2 + it.d2[1] * s, it.d2[2] + L, s * .7, s * .5, it.c2, .6, 0);
+          if (it.eye) dab(X, hx2 - .05 * s, hy2 - .05 * s, 0, s * .36, s * .32, '#F2C84A', .9, 0); }
+      }
+      X.globalAlpha = 1; X.setTransform(1, 0, 0, 1, 0, 0);
+    }
+    return { frame: frame };
+  }
+
+  window.Vignettes.inverse = {
+    title: 'Stepping Stones',
+    aspect: 4 / 3,
+    create: function (canvas) {
+      let st = build(canvas);
+      return { frame: function (t) { st.frame(t); }, resize: function () { st = build(canvas); } };
+    }
+  };
 })();
