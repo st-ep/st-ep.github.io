@@ -1,0 +1,98 @@
+%-------------------------
+% One-page resume for internship applications - Stepan Tretiakov
+% The full academic CV is cv.tex (on the site as assets/cv/Stepan_Tretiakov_CV.pdf).
+% Build: latexmk -pdf resume.tex
+%-------------------------
+
+\documentclass[11pt,letterpaper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=0.7in]{geometry}
+\usepackage{microtype}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+% Text copied out of the PDF (and read by application systems) keeps ligatures as plain letters
+\input{glyphtounicode}
+\pdfgentounicode=1
+
+\definecolor{headerblue}{RGB}{0,51,102}
+\definecolor{linkblue}{RGB}{0,80,150}
+\definecolor{darkgray}{RGB}{60,60,60}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=linkblue,
+    urlcolor=linkblue,
+    pdfauthor={Stepan Tretiakov},
+    pdftitle={Stepan Tretiakov, Resume}
+}
+
+\titleformat{\section}{\Large\bfseries\color{headerblue}}{}{0em}{}[{\color{headerblue}\titlerule}]
+\titlespacing*{\section}{0pt}{10pt}{5pt}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\pagestyle{empty}
+
+% \edu{institution}{degree}{dates}{one line of detail}
+\newcommand{\edu}[4]{\textbf{#1}, #2 \hfill #3\par{\color{darkgray}#4}\par\vspace{4pt}}
+% publication with a hanging indent
+\newcommand{\pub}[1]{{\hangindent=1.2em\hangafter=1 #1\par}\vspace{3pt}}
+\newcommand{\me}{\textbf{S.~Tretiakov}}
+\newcommand{\sep}{\enspace\textbar\enspace}
+
+\begin{document}
+
+%-------------------------------------------
+\begin{center}
+    {\huge\bfseries\color{headerblue} Stepan Tretiakov}\\[6pt]
+    {\color{darkgray} Robot learning \textbullet{} World models \textbullet{} Deformable-object manipulation \textbullet{} Neural operators}\\[3pt]
+    {\small\color{darkgray}
+    \href{mailto:stepa@berkeley.edu}{stepa@berkeley.edu}\sep
+    \href{https://st-ep.github.io}{st-ep.github.io}\sep
+    \href{https://github.com/st-ep}{github.com/st-ep}\\[1pt]
+    \href{https://scholar.google.com/citations?user=p7JCBQYAAAAJ}{Google~Scholar}\sep
+    \href{https://www.linkedin.com/in/stepan-tretiakov-93202230a/}{linkedin.com/in/stepan-tretiakov-93202230a}}
+\end{center}
+\vspace{-4pt}
+
+%-------------------------------------------
+\section{Education}
+\edu{University of California, Berkeley}{Ph.D.\ in Mechanical Engineering}{2026 -- present}
+    {Advisor: Krishna Kumar. Research: world models for robots that manipulate deformable materials.}
+\edu{The University of Texas at Austin}{M.S.\ in Civil Engineering}{2024 -- 2026}
+    {Advisor: Krishna Kumar. Graduate researcher at Texas Robotics.}
+\edu{Lomonosov Moscow State University}{B.S.\ in Geology with Honours}{2019 -- 2024}
+    {Thesis: deformation and strength properties of sandy soil as parameters of a plasticity model.}
+
+%-------------------------------------------
+\section{Selected Publications}
+\pub{\me, R.~Zhao, C.-H.~Hsiao, X.~Li, A.~Thorpe, H.~Iqbal, S.~Chinchali, U.~Topcu, K.~Kumar. FORM: Robot Manipulation through Direct Material Law Identification. \textit{Submitted to ICRA 2027; CoRL 2026 workshop.} \href{https://arxiv.org/abs/2609.38105}{arXiv:2609.38105}}
+\pub{A.~J.~Thorpe*, \me*, C.-H.~Hsiao, S.~A.~Low, X.~Li, H.~Iqbal, N.~P.~Bhatt, U.~Topcu, K.~Kumar. Physically Viable World Models: A Case for Query-Conditioned Embodied AI. \href{https://arxiv.org/abs/2605.30542}{arXiv:2605.30542}, 2026. *Equal contribution.}
+\pub{D.~Sewell, X.~Li, \me, K.~Kumar, D.~Fridovich-Keil. Neural Operators for Multi-Task Control and Adaptation. \href{https://arxiv.org/abs/2604.03449}{arXiv:2604.03449}, 2026.}
+\pub{A.~J.~Thorpe, \me, D.~Roy Sarkar, K.~Kumar, U.~Topcu. Learning Generalizable Neural Operators for Inverse Problems. \href{https://arxiv.org/abs/2512.18120}{arXiv:2512.18120}, 2025.}
+\pub{\me, X.~Li, K.~Kumar. SetONet: A Set-Based Operator Network for Solving PDEs with Variable-Input Sampling. \href{https://arxiv.org/abs/2505.04738}{arXiv:2505.04738}, 2025.}
+\vspace{2pt}
+\textbf{Talks:} EMI 2026, USNC-TAM 2026, USNCCM 2025 (oral); CoRL 2026 workshop, MaGIC 2025 (poster).\par
+
+%-------------------------------------------
+\section{Skills}
+\textbf{Machine learning:} PyTorch, JAX, CUDA; neural operators (DeepONet, FNO, SetONet), neural ODEs\par\vspace{3pt}
+\textbf{Robotics and simulation:} MPM (NVIDIA Warp), MuJoCo, Genesis, Newton, Gymnasium, BeamNG\par\vspace{3pt}
+\textbf{Programming:} Python, C++, Bash, Git, \LaTeX, Arduino\par
+
+%-------------------------------------------
+\section{Industry Experience}
+\textbf{Gazprom Geotechnology}, Chief Expert, Geology Department \hfill Summer 2023\par
+{\color{darkgray}Geomechanical modelling in Abaqus and laboratory tests of salt mechanics.}\par\vspace{5pt}
+\textbf{Stroiproektizyskaniia}, Geological Technician \hfill 2021\par
+{\color{darkgray}Soil laboratory and field tests; wrote a Python tool that automated shear-test processing.}\par
+
+%-------------------------------------------
+\section{Awards}
+Cockrell School of Engineering and UT Austin Graduate School Fellowship (2024); grant from the Moscow Center for Fundamental and Applied Mathematics (2023); 1st prize, All-Russian Physics Olympiad, regional stage (2019); Candidate Master of Sports in chess.\par
+
+\end{document}
