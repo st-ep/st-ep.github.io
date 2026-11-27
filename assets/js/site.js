@@ -124,7 +124,7 @@
   window.addEventListener('resize', mark);
   mark();
 
-  /* The CV in words. The stylesheet puts it on screen on a phone, where the cliff is too small to read, and without scripts;
+  /* The CV in words. The stylesheet keeps it for screen readers and puts it on screen without scripts;
      here it is also shown if the cliff fails to draw. */
   var cvText = document.querySelector('.cv-text');
 
