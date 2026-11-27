@@ -13,6 +13,7 @@ const LENS=[{cx:470,cy:612,rx:125,ry:13,p:['#EEDDE0','#E2CBD0','#F4E9EA','#D9C2C
 const AR=[
 ['P',420,162,'FORM, 2026','FORM: Robot Manipulation through Direct Material Law Identification. Lead author. arXiv 2609.38105.'],
 ['N',420,118,'Now: world models and robotics','World models and tools that let robots handle soft, unruly things.'],
+['T',420,140,'CoRL workshop, Austin, 2026','Poster: FORM: Identifying Material Laws from Robot Interaction for Deformable Object Manipulation. CoRL 2026 Workshop on Bringing Physics Simulation and World Models Together for Robotic Manipulation, Austin, November 2026.'],
 ['T',380,228,'USNC-TAM, Pasadena, 2026','Oral: Learning Generalizable Neural Operators for Inverse Problems. USNC-TAM26, Pasadena, June 2026.'],
 ['T',520,262,'EMI, Boulder, 2026','Oral: Toward Foundation-Ready Operator Surrogates in Mechanics. EMI 2026, Boulder, June 2026.'],
 ['P',380,302,'Physically Viable World Models, 2026','Physically Viable World Models: A Case for Query-Conditioned Embodied AI. Co-first author. arXiv 2605.30542.'],

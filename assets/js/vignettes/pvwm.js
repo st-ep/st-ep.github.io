@@ -1,8 +1,8 @@
 /* Water and Honey (Physically Viable World Models).
    The sunlit garden table of the FORM study, with two plain tumblers on the linen, both two thirds full: water at the
-   left, a step nearer, honey at the right. Two identical ivory balls appear on their marks, the same distance from each
-   glass, and start rolling at the same instant at the same speed; they strike both glasses together and both glasses
-   tip over onto their sides the same way. Then the outcomes part: the water surges to the lip as the glass goes over,
+   left, a step nearer, honey at the right. Two identical steel balls are rolled in from the left at the same speed,
+   the far one first, so that both strike together; each is heavy enough to send its glass over and pushes on after
+   it, and both glasses tip onto their sides the same way. Then the outcomes part: the water surges to the lip as the glass goes over,
    gushes out, bursts into a fan of droplets on landing and races away as a thin glinting sheet that soaks into the cloth;
    the honey stays pressed against the closed base, slumps slowly into one gentle slope down to the lip, and comes out as
    a thick glossy tongue that folds onto itself in an S and merges into a low lobed pool whose edge keeps creeping.
@@ -57,9 +57,10 @@ const C = {
   /* glass, and the colours it picks up: sky, hedge, violet shade, warm linen */
   gE: sp('A8B8CC 9FB0C8 B4C0D4'), gD: sp('6E86A8 7A8EC0 5E7FA0 6A7AB0'), gW: sp('FFFFFF FFF8EA F4F8FA'),
   gRs: sp('CFE4F4 C2DCF0 DAEAF6 BCD6EE'), gRg: sp('A2BE84 94B476 AEC690 88AA70'), gRg2: sp('6E9A70 7AA27A 628E6A'), gRv: sp('A49ED2 9A94CC B0A8D8 9290C8'), gRw: sp('F8EACC F4E2C2 FBF0D8'),
-  /* the spilt water on the linen: sky and aqua while it runs, a cooler blue violet once it has soaked in */
+  /* the spilt water on the linen: sky and aqua while it runs; once it has soaked in, tints that darken and cool the
+     cloth they are multiplied onto, deeper along the tide line */
   sk: sp('C4DAF0 B4D0EA D0E2F2 C8DEF0'), aq: sp('B4DCE0 C2E4E4 A8D6DC'), wt: sp('B8B4D6 C4BED8 BCB8DA'),
-  stn: sp('A4B2DE 9CACDA ACB8E2 98A8D8 A8B0DC'), stt: sp('8C98CE 8892CA 9098D0')
+  stn: sp('C8C3DA BFBDD6 CEC8DC BBBBD4 C5C7DC'), stt: sp('ACA6C8 A4A0C2 B2AACC')
 };
 
 /* ---------- scene geometry, in a 400 x 300 unit frame (the garden of the FORM study) ---------- */
@@ -77,9 +78,9 @@ function rg(x, y) { if (y >= yC(x)) return 4; if (y >= yT(x)) return 3; if (x > 
    little above, its rim is an ellipse ET as deep as it is wide, its foot EB. Both glasses tip about the right edge of the
    foot until the right wall lies on the cloth, a little under a quarter turn because the glass widens upward. The water
    glass stands a step nearer than the honey glass, so the water can run out across the front of the cloth while the
-   honey pools behind it, and the two read as a pair at nearly the same scale. */
+   honey pools behind it, and the honey's ball has room to roll past behind the water glass. */
 const ET = .24, EB = .3, TI = 2.4;
-const GLS = [{ cx: 82, cy: 257, s: 1.38, wat: 1 }, { cx: 220, cy: 247, s: 1.32, wat: 0 }];
+const GLS = [{ cx: 82, cy: 257, s: 1.38, wat: 1 }, { cx: 224, cy: 240, s: 1.28, wat: 0 }];
 const dOf = (g, sn, cs, u, w) => (u - g.rb) * sn - w * cs;
 /* the interior cut by the half plane d >= c, where d runs "down" for a surface turned by phi; returns [polygon, chord] */
 function clipQ(g, sn, cs, c) { const P = g.Q, out = [], ch = []; for (let i = 0; i < 4; i++) { const a = P[i], b = P[(i + 1) & 3], fa = dOf(g, sn, cs, a[0], a[1]) - c, fz = dOf(g, sn, cs, b[0], b[1]) - c;
@@ -88,25 +89,26 @@ const area = P => { let s = 0; for (let i = 0; i < P.length; i++) { const a = P[
 function level(g, phi, A) { const sn = Math.sin(phi), cs = Math.cos(phi); let lo = 1e9, hi = -1e9; for (const p of g.Q) { const d = dOf(g, sn, cs, p[0], p[1]); lo = Math.min(lo, d); hi = Math.max(hi, d); }
   for (let k = 0; k < 24; k++) { const m = (lo + hi) / 2; if (area(clipQ(g, sn, cs, m)[0]) > A) lo = m; else hi = m; } return (lo + hi) / 2; }
 for (const g of GLS) { const s = g.s; g.rb = 13 * s; g.rt = 15.6 * s; g.h = 54 * s; g.wl = 1.4 * s; g.bt = 4.4 * s; g.rbi = g.rb - g.wl; g.rti = g.rt - g.wl; g.px = g.cx + g.rb; g.py = g.cy;
-  g.vl = g.bt + (g.h - g.bt) * .66; g.rB = 6.6 * s; g.Q = [[-g.rbi, g.bt], [g.rbi, g.bt], [g.rti, g.h], [-g.rti, g.h]]; g.A0 = area(clipQ(g, 0, 1, -g.vl)[0]); g.Ai = area(g.Q); }
+  g.vl = g.bt + (g.h - g.bt) * .66; g.rB = 10.5 * s; g.Q = [[-g.rbi, g.bt], [g.rbi, g.bt], [g.rti, g.h], [-g.rti, g.h]]; g.A0 = area(clipQ(g, 0, 1, -g.vl)[0]); g.Ai = area(g.Q); }
 const toS = (g, th, u, w) => { const c = Math.cos(th), s = Math.sin(th); return [g.px + (u - g.rb) * c + w * s, g.py + (u - g.rb) * s - w * c]; };
-/* The fall: a rigid tumbler pivoting on its foot. The blow carries it just past the point of balance, where it hesitates,
-   then it falls ever faster onto its side and bounces twice, a few degrees. One table serves both glasses, so they fall
-   exactly together. */
+/* The fall: a rigid tumbler pivoting on its foot. The blow carries it well past the point of balance, with barely a
+   pause there, and it falls ever faster onto its side and bounces twice, a few degrees. One table serves both glasses,
+   so they fall exactly together. */
 const TL = Math.atan2(54, 2.6);
-const TIP = (() => { const rb = 13, hc = .36 * 54, a0 = Math.atan2(rb, hc), K = 1500 / (1.35 * Math.hypot(rb, hc)), q = .32, w0 = Math.sqrt(2 * K * (1 - Math.cos(a0)) / (1 - q * q));
+const TIP = (() => { const rb = 13, hc = .36 * 54, a0 = Math.atan2(rb, hc), K = 1500 / (1.35 * Math.hypot(rb, hc)), q = .62, w0 = Math.sqrt(2 * K * (1 - Math.cos(a0)) / (1 - q * q));
   const th = [0], dt = 1 / 2000; let a = 0, w = w0, land = -1;
   for (let i = 1; i <= 3200; i++) { w += K * Math.sin(a - a0) * dt; a += w * dt; if (a >= TL) { a = TL; if (land < 0) land = i * dt; w = Math.abs(w) < .7 ? 0 : -.36 * w; } if (i % 8 === 0) th.push(a); }
   return { th, dt: 8 * dt, land }; })();
 const thAt = ph => { const x = (ph - TI) / TIP.dt; if (x <= 0) return 0; const i = Math.floor(x); if (i >= TIP.th.length - 1) return TL; return lp(TIP.th[i], TIP.th[i + 1], x - i); };
 const TLAND = TI + TIP.land, FADE0 = 10.8;
-/* The balls: identical, resting on their marks the same distance from each glass. At TR both start rolling at the same
-   instant, gather speed together and meet their glasses at TI, then bounce back a little way. */
-const TR = 1.34, BV = 44, BRP = .3, BRB = 9, BRA = 30, BD = BV * (TI - TR - BRP / 2);
+/* The balls: two heavy steel balls rolled in from the left at the same speed VB, the far one first, so that both strike
+   at TI. Neither bounces back: each pushes on behind the wall it struck while its glass goes over, slows, and comes to
+   rest against the upturned foot. */
+const VB = 170, BTAU = .55;
 const ballC = g => g.cx - g.rb - (g.rt - g.rb) * g.rB / g.h - g.rB;
-const ballX = (g, ph) => { const xc = ballC(g);
-  if (ph <= TI) { const u = Math.max(0, ph - TR); return xc - BD + (u < BRP ? BV * u * u / (2 * BRP) : BV * (u - BRP / 2)); }
-  const tau = Math.min(ph - TI, BRB / BRA); return xc - g.s * (BRB * tau - .5 * BRA * tau * tau); };
+const ballX = (g, ph) => { const xc = ballC(g); if (ph <= TI) return xc - VB * (TI - ph);
+  const th = thAt(ph), wall = g.px - (2 * g.rb + (g.rt - g.rb) * g.rB / g.h) * Math.cos(th) + g.rB * Math.sin(th) - g.rB;
+  return Math.min(xc + (g.px - 1.05 * g.rB - .5 - xc) * (1 - Math.exp(-(ph - TI) / BTAU)), wall); };
 /* The water is thrown toward the falling lip as the glass goes over (its surface turns past level), so it reaches the lip
    at about 37 degrees and gushes; when the glass strikes the cloth it surges on out of the mouth, then settles level. */
 const SLK = .48;
@@ -253,9 +255,9 @@ function build(cv) {
     const sil = []; for (let k = 0; k <= 20; k++) { const a = k / 20 * PI; sil.push([rb * Math.cos(a), rb * EB * Math.sin(a)]); }
     for (let k = 0; k <= 28; k++) { const a = PI + k / 28 * PI; sil.push([rt * Math.cos(a), -h + rt * ET * Math.sin(a)]); }
     const aw = Math.atan2(-h, rt - rb);   // the direction of the right wall, upward
-    c.save(); path(c, sil); c.globalAlpha = 1; c.fillStyle = 'rgba(228,240,242,.12)'; c.fill(); c.clip();
+    c.save(); path(c, sil); c.globalAlpha = 1; c.fillStyle = 'rgba(228,240,242,.17)'; c.fill(); c.clip();
     // a glassy sheen of long, thin, upright strokes
-    for (let i = 0; i < 70; i++) { const w = rr(0, h), u = rr(-1, 1) * Rv(g, w); if (!g.wat && w < h * .7 && R() < .8) continue; B(c, u, -w, PI / 2 + rr(-.04, .04), rr(6, 12) * s, rr(1, 1.8) * s, pk(sp('F4F8FA E8F2F6 DCEAF0 FFFBF0 D6EAE6')), rr(.06, .15)); }
+    for (let i = 0; i < 70; i++) { const w = rr(0, h), u = rr(-1, 1) * Rv(g, w); if (!g.wat && w < h * .7 && R() < .5) continue; B(c, u, -w, PI / 2 + rr(-.04, .04), rr(6, 12) * s, rr(1, 1.8) * s, pk(sp('F4F8FA E8F2F6 DCEAF0 FFFBF0 D6EAE6')), rr(.06, .15)); }
     // the far wall, seen through the near one: faint broken cool dabs inside each edge
     for (let i = 0; i < 46; i++) { const w = rr(2 * s, h - 2), r = Rv(g, w), lf = R() < .5; if (vn(w * .2 / s, lf ? 7.7 : 8.8) < .32) continue;
       B(c, lf ? -r + 2.4 * s : r - 2.6 * s, -w, lf ? PI - aw : aw, rr(2, 5) * s, rr(.5, .9) * s, lf ? pk(sp('C2D2DE B8CCDA C6DCCC')) : pk(sp('9EB2CC A6B6D0 A4A0CC')), rr(.18, .34)); }
@@ -277,7 +279,9 @@ function build(cv) {
         const col = f > 0 ? (z < .55 ? '#E2F2F4' : pk(C.gRv)) : z < .6 ? '#FFFFFF' : z < .76 ? '#FFF6DA' : z < .9 ? pk(C.gRs) : pk(C.gRg);
         B(c, f * r + rr(-.3, .3) * s, -w, PI / 2 + rr(-.05, .05), rr(3, 8) * s, wd * s * rr(.7, 1.1) * (.55 + .45 * e), col, a0 * (.35 + .65 * e) * rr(.75, 1), rr(-.04, .04)); }
     }
-    // the foot: thick glass, greenish, bright along its front edge, a cool line where the inside floor meets it
+    // the foot: a thick slab of glass between the floor inside and the cloth, greenish, lighter where the light gathers in it
+    c.globalAlpha = 1; c.fillStyle = g.wat ? 'rgba(202,232,222,.4)' : 'rgba(246,216,150,.38)'; c.beginPath(); c.ellipse(0, -bt, rbi + .5 * s, (rbi + .5 * s) * EB, 0, 0, PI); c.ellipse(0, 0, rb, rb * EB, 0, PI, 0, true); c.closePath(); c.fill();
+    // bright along its front edge, a cool line where the inside floor meets it
     for (let k = 0; k < 22; k++) { const a = rr(.08, .92) * PI, x = rb * .92 * Math.cos(a), y = rb * EB * .92 * Math.sin(a) - bt * rr(.1, .7); B(c, x, y, etan(a, EB) + rr(-.1, .1), rr(2.5, 4) * s, rr(1.4, 2.2) * s, g.wat ? pk(sp('C8E6DC BFDCD4 D4ECE4 B4D4CC B8C8DE')) : pk(sp('F2C66A ECB85A F6D488 E8C890')), .55); }
     for (let k = 0; k < 16; k++) { const a = rr(.05, .95) * PI, z = R(); B(c, rb * .97 * Math.cos(a), rb * EB * .97 * Math.sin(a) - .3 * s, etan(a, EB), rr(1.8, 4.8) * s, rr(.7, 1.4) * s, Math.cos(a) > -.2 ? (z < .6 ? '#FFFFFF' : pk(C.gRs)) : z < .5 ? pk(C.gRv) : pk(sp('E8F4F4 D8ECEC')), rr(.6, .95)); }
     for (let k = 0; k < 12; k++) { const a = rr(.08, .92) * PI; B(c, rbi * Math.cos(a), -bt + rbi * EB * Math.sin(a), etan(a, EB), rr(2, 3.5) * s, rr(.6, 1) * s, pk(sp('7E98AE 8AA0B8 6E88A6 8A86C0')), .45); }
@@ -310,10 +314,10 @@ function build(cv) {
      glowing gold core where the sun passes through, all in soft dabs laid across the glass, and a few slow bubbles */
   function paintHoney(c, g) {
     sd(731); const { h, bt, s } = g, ri = w => g.rbi + (g.rti - g.rbi) * (w - bt) / (h - bt), x0 = -g.rti - 1, y0 = -h - 2, ww = 2 * g.rti + 2, hh = h - bt + 3;
-    const gg = c.createLinearGradient(-g.rti, 0, g.rti, 0); [[0, '#8E401C'], [.1, '#B05C22'], [.26, '#CF832C'], [.46, '#E6A03A'], [.62, '#EEAE40'], [.78, '#D68A2E'], [.92, '#AC5822'], [1, '#88401C']].forEach(q => gg.addColorStop(q[0], q[1]));
+    const gg = c.createLinearGradient(-g.rti, 0, g.rti, 0); [[0, '#7A3416'], [.1, '#A8541E'], [.26, '#CF832C'], [.46, '#E8A43A'], [.62, '#F0B244'], [.78, '#D68A2E'], [.92, '#A44E1E'], [1, '#742F14']].forEach(q => gg.addColorStop(q[0], q[1]));
     c.globalAlpha = 1; c.fillStyle = gg; c.fillRect(x0, y0, ww, hh);
     const gv = c.createLinearGradient(0, -bt, 0, -bt - (h - bt) * .42); gv.addColorStop(0, 'rgba(118,46,20,.55)'); gv.addColorStop(1, 'rgba(118,46,20,0)'); c.fillStyle = gv; c.fillRect(x0, y0, ww, hh);
-    const cy = -bt - (h - bt) * .4, gr = c.createRadialGradient(.18 * g.rti, cy, 0, .18 * g.rti, cy, g.rti * .8); gr.addColorStop(0, 'rgba(255,204,96,.74)'); gr.addColorStop(1, 'rgba(255,200,90,0)'); c.fillStyle = gr; c.fillRect(x0, y0, ww, hh);
+    const cy = -bt - (h - bt) * .4, gr = c.createRadialGradient(.18 * g.rti, cy, 0, .18 * g.rti, cy, g.rti * .8); gr.addColorStop(0, 'rgba(255,208,100,.88)'); gr.addColorStop(1, 'rgba(255,200,90,0)'); c.fillStyle = gr; c.fillRect(x0, y0, ww, hh);
     for (let i = 0; i < 380; i++) { const w = rr(bt, h), r = ri(w), f = rr(-1.04, 1.04), u = f * r, e = Math.abs(f), lo = (w - bt) / (h - bt), core = Math.exp(-sq((f - .18) / .45) - sq((lo - .4) / .32));
       const v = 3.3 - 2.9 * Math.pow(e, 2.2) - 1.4 * (1 - ss(0, .28, lo)) + 1.8 * core + (f < -.3 && f > -.85 ? .5 * ss(.2, .5, lo) : 0);
       B(c, u, -w, rr(-.4, .4) + f * .25, rr(3, 5.5) * s, rr(1.8, 2.8) * s, band(C.hv, v), rr(.3, .5)); }
@@ -345,10 +349,10 @@ function build(cv) {
       const x = x0 + u * rx, y = cy + 1.2 * s + v * ry, near = 1 - ss(0, 1, (x - cx) / (rb * 1.6));
       B(c, x, y, rr(-.06, .06), rr(4.5, 9) * s, rr(1.8, 2.8) * s, near > .5 && R() < .5 ? pk(C.shd) : e > .7 ? pk(C.she) : pk(C.sh), rr(.42, .62) * (1 - ss(.7, 1.05, e) * .55)); }
     // the caustic: a bright tongue of focused light inside the shadow
-    const kx = cx + rb + h * .2, kr = h * (g.wat ? .15 : .18);
-    soft(c, kx, cy + 1.3 * s, kr, 2.4 * s, g.wat ? '255,250,232' : '252,206,116', g.wat ? .6 : .55);
+    const kx = cx + rb + h * .2, kr = h * (g.wat ? .19 : .21);
+    soft(c, kx, cy + 1.3 * s, kr, 2.8 * s, g.wat ? '255,250,232' : '252,206,116', g.wat ? .85 : .8);
     for (let i = 0; i < 16; i++) { const u = rr(-.8, .8), v = rr(-.6, .6), x = kx + u * kr, y = cy + 1.3 * s + v * 1.6 * s, e = 1 - u * u - v * v;
-      B(c, x, y, rr(-.06, .06), rr(3, 5) * s, rr(1, 1.5) * s, g.wat ? pk(sp('FFF8E4 FFFBEA F4FAF6')) : pk(sp('FCDC8A FFE6A0 F8D27A')), .3 * e); }
+      B(c, x, y, rr(-.06, .06), rr(3, 5) * s, rr(1, 1.5) * s, g.wat ? pk(sp('FFF8E4 FFFBEA F4FAF6')) : pk(sp('FCDC8A FFE6A0 F8D27A')), .5 * e); }
     // contact shade under the front of the foot
     for (let k = 0; k < 18; k++) { const a = rr(.1, .9) * PI; B(c, cx + rb * Math.cos(a), cy + rb * EB * Math.sin(a) + .6 * s, a + PI / 2, rr(2.5, 4) * s, rr(1, 1.5) * s, pk(C.shd), .5); }
   }
@@ -360,17 +364,19 @@ function build(cv) {
     else for (let i = 0; i < 12; i++) { const x = g.px + rr(.15, .8) * h, y = cy + 1.4 * s + rr(-.6, .8) * s; B(c, x, y, rr(-.05, .05), rr(3, 5) * s, rr(.9, 1.3) * s, pk(sp('FFF8E4 E6F4F2')), .45); }
     for (let x = g.px - 1; x < g.px + h * .98; x += rr(2.5, 4.5) * s) B(c, x, cy + .2 * s, rr(-.04, .04), rr(3, 6) * s, rr(1, 1.5) * s, pk(C.shd), .6);
   }
-  /* an ivory ball, lit from the upper left, with the cloth's warm light thrown up into its shaded underside */
+  /* a steel ball, polished: it carries the garden on it. The sky above, the dark hedge in a band across its middle, the
+     warm linen thrown up from below, a violet turn at the bottom, and one hard light where the sun strikes it */
   function paintBall(c, r) {
-    // smooth ivory: a soft graded body, then a few broad strokes that follow the form, a warm bounce below, one gloss
-    const gr = c.createRadialGradient(-r * .35, -r * .4, r * .1, 0, 0, r * 1.02); [[0, '#FFF9EA'], [.45, '#F2E8D6'], [.8, '#D6CADA'], [1, '#B8AED2']].forEach(q => gr.addColorStop(q[0], q[1]));
+    const gr = c.createLinearGradient(0, -r, 0, r); [[0, '#E4EEF6'], [.26, '#B4C8E0'], [.4, '#7C92A8'], [.47, '#4E6A66'], [.56, '#43585E'], [.63, '#A8988E'], [.78, '#EBDAB8'], [.92, '#C9B8C4'], [1, '#8A82AC']].forEach(q => gr.addColorStop(q[0], q[1]));
     c.globalAlpha = 1; c.fillStyle = gr; c.beginPath(); c.arc(0, 0, r, 0, TAU); c.fill(); c.save(); c.clip();
-    for (let i = 0; i < r * r * .9; i++) { const q = rr(0, TAU), rd = Math.sqrt(R()), x = Math.cos(q) * rd * r, y = Math.sin(q) * rd * r;
-      const k = (Math.cos(q) * .62 + Math.sin(q) * .78) * rd + rr(-.15, .15), low = Math.sin(q) * rd;
-      const col = low > .5 && Math.cos(q) > -.3 && R() < .6 ? pk(C.iR) : k < -.3 ? pk(C.iH) : k < .1 ? pk(C.iL) : k < .45 ? pk(C.iM) : k < .75 ? pk(C.iS) : pk(C.iD);
-      B(c, x, y, q + PI / 2 + rr(-.2, .2), rr(2.2, 3.6) * r / 6.6, rr(1.4, 2) * r / 6.6, col, .45); }
+    const k = r / 6.6;
+    for (let i = 0; i < r * r * .8; i++) { const q = rr(0, TAU), rd = Math.sqrt(R()), x = Math.cos(q) * rd * r, y = Math.sin(q) * rd * r, v = y / r + rr(-.1, .1) + .12 * sq(x / r);
+      const col = v < -.5 ? pk(sp('F2F6FA E6EEF6 DCE8F2')) : v < -.2 ? pk(C.gRs) : v < -.04 ? pk(sp('8EA2B8 7E94AE 9AAABE')) : v < .2 ? pk(C.gd) : v < .3 ? pk(sp('8E8478 9A8E86 7E7A7E')) : v < .7 ? (R() < .75 ? pk(C.cl) : pk(C.cs)) : pk(C.shd);
+      B(c, x, y, rr(-.12, .12) + .5 * (x / r) * (y / r), rr(2.6, 4.4) * k * .62, rr(1.2, 1.8) * k * .62, col, .5); }
+    /* it turns away into shade on the right and below */
+    const gs = c.createRadialGradient(-r * .3, -r * .35, r * .5, 0, 0, r * 1.02); gs.addColorStop(0, 'rgba(70,70,120,0)'); gs.addColorStop(.75, 'rgba(70,70,120,.12)'); gs.addColorStop(1, 'rgba(60,58,110,.6)'); c.globalAlpha = 1; c.fillStyle = gs; c.fillRect(-r, -r, 2 * r, 2 * r);
     c.restore();
-    B(c, -r * .36, -r * .4, -.6, r * .46, r * .26, '#FFFFFF', .9); B(c, -r * .3, -r * .34, -.6, r * .2, r * .12, '#FFFFFF', .95);
+    B(c, -r * .36, -r * .42, -.6, r * .5, r * .26, '#FFFFFF', .95); B(c, -r * .3, -r * .36, -.6, r * .24, r * .13, '#FFFFFF', 1); B(c, r * .3, r * .5, -.5, r * .36, r * .1, '#FFF2D0', .55);
   }
   function paintBallShadow(c, r) {
     for (let i = 0; i < 26; i++) { const u = rr(-1, 1), v = rr(-1, 1); if (u * u + v * v > 1) continue; B(c, r * .7 + u * r * 1.3, r * .92 + v * r * .3, rr(-.05, .05), rr(2.5, 4.5) * r / 6.6, rr(1.2, 1.8) * r / 6.6, R() < .4 ? pk(C.shd) : pk(C.sh), .55 * (1 - .4 * (u * u + v * v))); }
@@ -410,7 +416,7 @@ function build(cv) {
   const wArea = ph => { if (ph <= TI) return GW.A0; const x = (ph - TI) / TIP.dt, i = Math.floor(x); if (i >= WT.A.length - 1) return WT.A[WT.A.length - 1]; return lp(WT.A[i], WT.A[i + 1], x - i); };
   sd(801);
   const GU = [];   // gush droplets: [birth, x0, y0, vx, vy, land time, colour, width]
-  { const tot = WT.Q.reduce((a, q) => a + q, 0); let acc = 0, k = 0; const N = 46;
+  { const tot = WT.Q.reduce((a, q) => a + q, 0); let acc = 0, k = 0; const N = 60;
     for (let i = 0; i < WT.Q.length && k < N; i++) { acc += WT.Q[i]; while (k < N && acc >= (k + .5) / N * tot) {
       const tb = TI + i * TIP.dt, th = TIP.th[i], th2 = TIP.th[Math.min(TIP.th.length - 1, i + 1)], u = GW.rti - rr(0, .5) * GW.rti;
       const wq = GW.h - rr(0, 1.5), p = toS(GW, th, u, wq), q = toS(GW, th2, u, wq), ax = Math.sin(th), ay = -Math.cos(th), sp0 = rr(50, 120);
@@ -430,17 +436,18 @@ function build(cv) {
   const LOBES = [[-2, 1.2, 9, 3.4], [12, 1.6, 16, 4.6], [32, 2.8, 22, 5.6], [56, 4.6, 20, 5], [80, 6.8, 18, 4.4], [100, 8.8, 11, 3.2], [22, -1.6, 14, 3], [44, 7.6, 16, 3.4], [68, 2, 14, 3.2], [6, 4.8, 9, 2.6]].map(l => [l[0] * ws, l[1] * ws, l[2] * ws, l[3] * ws]);
   const inSheet = (x, y, k) => { let m = -1; for (const [lx, ly, rx, ry] of LOBES) m = Math.max(m, 1 - sq((x - AX - lx) / (rx * k)) - sq((y - AY - ly) / (ry * k))); return m + (vn(x * .18, y * .4) - .5) * .25; };
   const SH = mkb(AX - 18 * ws, AY - 8 * ws, AX + 126 * ws, AY + 18 * ws), ST = mkb(AX - 20 * ws, AY - 9 * ws, AX + 130 * ws, AY + 19 * ws);
-  { const c = SH.c; sd(811); c.globalAlpha = .55; c.fillStyle = '#C6E2EE'; c.fillRect(AX - 18 * ws, AY - 8 * ws, 144 * ws, 26 * ws);
+  { const c = SH.c; sd(811); c.globalAlpha = .2; c.fillStyle = '#D6ECF2'; c.fillRect(AX - 18 * ws, AY - 8 * ws, 144 * ws, 26 * ws);
     for (let i = 0; i < 1500; i++) { const x = rr(AX - 13 * ws, AX + 117 * ws), y = rr(AY - 7 * ws, AY + 16 * ws), m = inSheet(x, y, 1); if (m < 0) continue; const z = R(), edge = m < .15, back = inSheet(x, y + 1.5, 1) > m;
       let col = z < .3 ? pk(C.sk) : z < .56 ? pk(C.aqB) : z < .7 ? pk(C.aq) : z < .82 ? pk(sp('94B2DE 8AA8DA 9CB8E2')) : z < .9 ? pk(C.wt) : '#FFFFFF';
       if (edge) col = back ? (R() < .75 ? '#FFFFFF' : pk(sp('E8F6F4 DDF2F2'))) : pk(sp('9AA2D4 9098CE A2A8D6'));
-      B(c, x, y, rr(-.06, .06), (edge ? rr(2.5, 5) : rr(3.5, 8.5)) * ws, (edge ? rr(.8, 1.3) : z > .9 ? rr(.8, 1.2) : rr(1.3, 2.3)) * ws, col, edge ? rr(.7, .92) : rr(.6, .88)); }
+      B(c, x, y, rr(-.06, .06), (edge ? rr(2.5, 5) : rr(3.5, 8.5)) * ws, (edge ? rr(.8, 1.3) : z > .9 ? rr(.8, 1.2) : rr(1.3, 2.3)) * ws, col, edge ? (back ? rr(.7, .92) : rr(.22, .4)) : z > .9 ? rr(.7, .9) : rr(.28, .5)); }
     maskBy(SH, (x, y) => ss(-.02, .1, inSheet(x, y, 1))); }
-  { const c = ST.c; sd(821); c.globalAlpha = .5; c.fillStyle = '#A8B4DE'; c.fillRect(AX - 20 * ws, AY - 9 * ws, 150 * ws, 28 * ws);
-    /* wet linen: darker, cooler and bluer than the dry cloth and its violet leaf shadows, with a faint tide line where the water stopped */
+  { const c = ST.c; sd(821); c.globalAlpha = 1; c.fillStyle = '#C6C2DA'; c.fillRect(AX - 20 * ws, AY - 9 * ws, 150 * ws, 28 * ws);
+    /* wet linen: this layer is multiplied onto the cloth, so the weave and the leaf shadows stay and only go darker and
+       cooler, with a deeper tide line where the water stopped */
     for (let i = 0; i < 1300; i++) { const x = rr(AX - 15 * ws, AX + 121 * ws), y = rr(AY - 8 * ws, AY + 17 * ws), m = inSheet(x, y, 1.06); if (m < 0) continue;
-      if (m < .08) B(c, x, y, rr(-.06, .06), rr(2.5, 5) * ws, rr(.8, 1.3) * ws, pk(C.stt), .55);
-      else B(c, x, y, rr(-.06, .06), rr(4, 8) * ws, rr(1.8, 3) * ws, pk(C.stn), rr(.42, .62) * (.6 + .4 * ss(0, .3, m))); }
+      if (m < .09) B(c, x, y, rr(-.06, .06), rr(2.5, 5) * ws, rr(.8, 1.3) * ws, pk(C.stt), .32);
+      else B(c, x, y, rr(-.06, .06), rr(4, 8) * ws, rr(1.8, 3) * ws, pk(C.stn), rr(.5, .8)); }
     maskBy(ST, (x, y) => ss(-.03, .06, inSheet(x, y, 1.06))); }
   const WGL = []; sd(831);
   for (let i = 0; i < 600 && WGL.length < 18; i++) { const x = rr(AX, AX + 108 * ws), y = rr(AY - 4 * ws, AY + 13 * ws); if (inSheet(x, y, 1) < .22) continue; WGL.push([x, y, rr(1.6, 3.6) * ws, rr(.35, .9), rr(0, TAU), R() < .7 ? '#FFFFFF' : '#FFF6DA']); }
@@ -461,7 +468,7 @@ function build(cv) {
     // the near rim shows the pool's thickness in sienna; its back catches the sky in one long gold-cream light
     for (let i = 0; i < 100; i++) { const x = rr(PAX, PAX + PL), y = rr(PAY, PAY + 9 * hk), m = pFld(x, y, 0, 0); if (m < .02 || m > .2 || pFld(x, y - 1, 0, 0) < m) continue; B(c, x, y - .4, rr(-.1, .1), rr(2.5, 4.5) * hk, rr(1, 1.5) * hk, pk(C.hR), .55); }
     for (let k = 0; k < 9; k++) { const f = k / 8, x = PAX + lp(17, 40, f) * hk, y = PAY - (.6 + .9 * Math.sin(PI * f)) * hk; B(c, x, y, -.05 + .1 * f, 3.8 * hk, (.6 + 1.1 * Math.sin(PI * f)) * hk, f < .6 ? '#FFF4CC' : '#FCE6A6', .92); }
-    B(c, PAX + 25 * hk, PAY - 1.4 * hk, 0, 2.8 * hk, 1.1 * hk, '#FFFFFF', .75);
+    B(c, PAX + 25 * hk, PAY - 1.4 * hk, 0, 2.8 * hk, 1.1 * hk, '#FFFFFF', .85); B(c, PAX + 14 * hk, PAY - .5 * hk, 0, 2 * hk, .8 * hk, '#FFFFFF', .7); B(c, PAX + 34 * hk, PAY - .9 * hk, 0, 1.7 * hk, .7 * hk, '#FFFDF0', .65);
     maskBy(HPU, (x, y) => { const m = pFld(x, y, 0, 0); return ss(-.04, .12, m) * (.55 + .45 * ss(.05, .35, m)); }); }
   { const c = HPS.c; sd(845);   // its shadow, violet, warmed by the light the honey lets through
     for (let i = 0; i < 300; i++) { const x = rr(PAX, PAX + PL + 8), y = rr(PAY - 7 * hk, PAY + 12 * hk), m = pFld(x, y, 4 * hk, 1.8 * hk); if (m < -.05) continue;
@@ -583,8 +590,9 @@ function build(cv) {
     // the sheet of water racing out over the linen, and the wet patch it leaves as it soaks in
     if (S.sh > 0) {
       const ka = S.soak, sx = S.sh, sy = Math.pow(S.sh, .8), full = S.sh >= 1;
-      if (S.sh > .3) { c.globalAlpha = .95 * ss(W0 + .15, W0 + 2.8, ph) * GA; if (full) blit(c, ST, 0, 0, ox, oy); else scaled(c, ST, AX, AY, sx, sy, ox, oy); }
-      c.globalAlpha = (1 - .82 * ka) * GA; if (full) blit(c, SH, 0, 0, ox, oy); else scaled(c, SH, AX, AY, sx, sy, ox, oy);
+      const cr = 1 + .07 * ss(W0 + 1, W0 + 7.5, ph);   // the wet goes on creeping through the weave after the water has stopped
+      c.globalCompositeOperation = 'multiply'; c.globalAlpha = ss(W0 + .05, W0 + .9, ph) * GA; scaled(c, ST, AX, AY, sx * cr, sy * cr, ox, oy); c.globalCompositeOperation = 'source-over';
+      c.globalAlpha = (1 - .94 * ka) * GA; if (full) blit(c, SH, 0, 0, ox, oy); else scaled(c, SH, AX, AY, sx, sy, ox, oy);
       unit(c, ox, oy); const g0 = ss(W0 + .15, W0 + .6, ph), ga = g0 * (.3 + .7 * (1 - ka));
       WGL.forEach(([x, y, l, f, p, col], i) => { const k = Math.sin(TAU * f * t + p); if (k > .15) D(c, AX + (x - AX) * sx, AY + (y - AY) * sy, 0, l, 1.1 * ws, col, (i < 2 ? Math.max(ga, .8 * g0) : ga) * k * k); });
       if (!full) { const ea = .95 * (1 - ss(.8, 1, S.sh)); for (const [x, y, a] of EG) B(c, AX + (x - AX) * sx, AY + (y - AY) * sy, a + PI / 2, 3.2 * ws, 1.1 * ws, '#FFFFFF', ea); }
@@ -592,7 +600,7 @@ function build(cv) {
     // the shadows of the glasses, upright giving way to fallen, and of the balls
     const k = ss(.3, 1, S.th / TL);
     for (const g of GLS) { if (k < 1) { c.globalAlpha = (1 - k) * GA; blit(c, g.SU, 0, 0, ox, oy); } if (k > 0) { c.globalAlpha = k * GA; blit(c, g.SL, 0, 0, ox, oy); } }
-    c.globalAlpha = GA; GLS.forEach((g, i) => { if (S.bx[i] > -12) blit(c, g.BSh, S.bx[i], g.cy - g.rB, ox, oy); });
+    c.globalAlpha = GA; GLS.forEach((g, i) => { if (S.bx[i] > -2.6 * g.rB) blit(c, g.BSh, S.bx[i], g.cy - g.rB, ox, oy); });
   }
   function drawDap(c, ox, oy, t) {
     c.save(); c.globalCompositeOperation = 'multiply';
@@ -602,9 +610,7 @@ function build(cv) {
     c.restore(); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
   }
   function ball(c, ox, oy, g, x) {
-    if (x < -12 || GA < .003) return; const y = g.cy - g.rB; c.globalAlpha = GA; blit(c, g.BL, x, y, ox, oy);
-    // a faint grain on the ivory turns as it rolls
-    unit(c, ox, oy); const a = (x - g.cx) / g.rB; B(c, x + .5 * g.rB * Math.cos(a), y + .5 * g.rB * Math.sin(a), a + PI / 2, 1.6 * g.s, .9 * g.s, '#CDBFB8', .35);
+    if (x < -g.rB - 2 || GA < .003) return; const y = g.cy - g.rB; c.globalAlpha = GA; blit(c, g.BL, x, y, ox, oy);
   }
   /* the gush: one coherent tongue of water thrown out over the lower lip, as long and thick as the recent outflow, bending
      down under its own weight and laid flat along the cloth as the glass lands */
@@ -613,7 +619,7 @@ function build(cv) {
     if (ph <= TI || ph > TLAND + .22) return;
     const i = Math.min(WT.Q.length - 1, Math.floor((ph - TI) / TIP.dt)); let q = 0; for (let j = Math.max(0, i - 10); j <= i; j++) q = Math.max(q, WT.Q[j]); q = Math.sqrt(q / GQM) * (1 - ss(TLAND + .05, TLAND + .22, ph));
     if (q < .05) return;
-    const th = thAt(ph), ax = Math.sin(th), ay = -Math.cos(th), s = GW.s, p0 = toS(GW, th, GW.rti * .5, GW.h), L = (4 + 11 * q) * s, wd = (2.4 + 4.8 * q) * s, dn = (.45 + .2 * q) * L;
+    const th = thAt(ph), ax = Math.sin(th), ay = -Math.cos(th), s = GW.s, p0 = toS(GW, th, GW.rti * .5, GW.h), L = (5 + 14 * q) * s, wd = (3 + 6 * q) * s, dn = (.45 + .2 * q) * L;
     const x1 = p0[0] + ax * L * .6, y1 = p0[1] + ay * L * .6, x2 = Math.min(p0[0] + ax * L + .3 * dn, p0[0] + 1.6 * L), y2 = Math.min(GW.cy - .4, p0[1] + ay * L + dn);
     for (let k = 0; k <= 6; k++) { const f = k / 6, a = sq(1 - f), b2 = 2 * f * (1 - f), e = f * f, x = a * p0[0] + b2 * x1 + e * x2, y = a * p0[1] + b2 * y1 + e * y2, tx = 2 * (1 - f) * (x1 - p0[0]) + 2 * f * (x2 - x1), ty = 2 * (1 - f) * (y1 - p0[1]) + 2 * f * (y2 - y1), an = Math.atan2(ty, tx), w = wd * (1 - .55 * f), nx = ty > 0 ? ty : -ty, ny = ty > 0 ? -tx : tx, nm = Math.hypot(nx, ny) || 1;
       B(c, x, y, an, L * .32, w, pk2(k, C.aqB), .85); if (k % 2 === 0) B(c, x + nx / nm * w * .25, y + ny / nm * w * .25, an, L * .26, w * .3, '#FFFFFF', .9); }
@@ -657,11 +663,15 @@ function build(cv) {
   }
   function drawOver(c, ox, oy, S, t) {
     const ph = S.ph, th = S.th;
-    if (ph < TI) { c.globalAlpha = GA; blit(c, B0, 0, 0, ox, oy); ball(c, ox, oy, GH, S.bx[1]); ball(c, ox, oy, GW, S.bx[0]); return; }
+    if (ph < TI) { ball(c, ox, oy, GH, S.bx[1]); c.globalAlpha = GA; blit(c, B0, 0, 0, ox, oy); ball(c, ox, oy, GW, S.bx[0]); return; }
     // the honey glass, at the back: what is left inside, the glass, the honey outside, its ball
     const kH = ss(.6, .95, th);   // the honey hands over from its standing look to its lying look while the glass falls
     if (kH < 1) { const ga = GA; GA = ga * (1 - kH); liquid(c, ox, oy, GH, th, 0, GH.A0, 0); GA = ga; }
-    if (kH > 0) honeyIn(c, ox, oy, GH, th, S.hH, kH);
+    if (kH > 0) {   // the wall the honey has slid off keeps a thin film of it
+      const g = GH, rv = g.rbi + (g.rti - g.rbi) * (g.vl - g.bt) / (g.h - g.bt);
+      c.save(); local(c, ox, oy, g, th); c.beginPath(); c.moveTo(-g.rbi, -g.bt); c.lineTo(g.rbi, -g.bt); c.lineTo(rv, -g.vl); c.lineTo(-rv, -g.vl); c.closePath(); c.clip(); c.globalAlpha = .28 * kH * GA;
+      if (th === TL) blit(c, g.LHL, 0, 0, ox, oy); else c.drawImage(g.LH.o, g.LH.ox / KX, g.LH.oy / KY, g.LH.w / KX, g.LH.h / KY); c.restore();
+      honeyIn(c, ox, oy, GH, th, S.hH, kH); }
     glass(c, ox, oy, GH, th);
     honeyOut(c, ox, oy, S, t);
     ball(c, ox, oy, GH, S.bx[1]);

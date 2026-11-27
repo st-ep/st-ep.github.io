@@ -15,6 +15,7 @@
 \usepackage{xcolor}
 \usepackage{tabularx}
 \usepackage{parskip}
+\usepackage{needspace}
 
 % Colors
 \definecolor{headerblue}{RGB}{0,51,102}
@@ -62,7 +63,7 @@
 
 % Hanging indent for publications
 \newcommand{\pubentry}[1]{%
-    \hangindent=1.5em\hangafter=1 #1\par\vspace{2pt}
+    {\interlinepenalty=10000 \hangindent=1.5em\hangafter=1 #1\par}\vspace{2pt}
 }
 
 %===========================================
@@ -123,7 +124,7 @@ Advisor: Prof.\ Krishna Kumar
 \begin{itemize}
     \item Identifies an explicit material law from a single robot interaction with one linear least-squares solve on the weak form of momentum balance, with no differentiation through simulation (2--5\,s, versus 10--25\,min for iterative baselines)
     \item Reuses the identified law, held fixed, to plan new actions and geometries in MPM: elastic rod insertion, golf putting, elastoplastic shaping, and pouring
-    \item On hardware: open-loop shaping of Play-Doh, butter slime, and plasticine (72--78\% footprint IoU) and pouring glycerol to six target volumes (largest mean error 3.8\,mL); submitted to ICRA 2027
+    \item On hardware: open-loop shaping of Play-Doh, butter slime, and plasticine (72--78\% footprint IoU) and pouring glycerol to six target volumes (largest mean error 3.8\,mL); workshop version at CoRL 2026, full paper submitted to ICRA 2027
 \end{itemize}
 
 \projecthead{Physically Viable World Models (co-first author)}
@@ -177,6 +178,14 @@ Advisor: Prof.\ Krishna Kumar
 \pubentry{\textbf{Tretiakov, S.}, Li, X., \& Kumar, K. (2025). SetONet: A Set-Based Operator Network for Solving PDEs with Variable-Input Sampling. \textit{\href{https://arxiv.org/abs/2505.04738}{arXiv:2505.04738}}. Code: \href{https://github.com/st-ep/SetONet}{github.com/st-ep/SetONet}.}
 
 \vspace{2pt}
+\needspace{5\baselineskip}
+\textbf{Workshop Papers}
+\vspace{4pt}
+
+\pubentry{\textbf{Tretiakov, S.}, Zhao, R., Hsiao, C.-H., Li, X., Thorpe, A., Iqbal, H., Chinchali, S., Topcu, U., \& Kumar, K. (2026). FORM: Identifying Material Laws from Robot Interaction for Deformable Object Manipulation. \textit{CoRL 2026 Workshop on Bringing Physics Simulation and World Models Together for Robotic Manipulation}, Austin, TX. Non-archival; workshop version of the FORM preprint above.}
+
+\vspace{2pt}
+\needspace{5\baselineskip}
 \textbf{Published}
 \vspace{4pt}
 
@@ -190,6 +199,8 @@ Advisor: Prof.\ Krishna Kumar
 % PRESENTATIONS
 %-------------------------------------------
 \section{Presentations}
+
+\pubentry{\textbf{Tretiakov, S.}, Zhao, R., Hsiao, C.-H., Li, X., Thorpe, A., Iqbal, H., Chinchali, S., Topcu, U., \& Kumar, K. FORM: Identifying Material Laws from Robot Interaction for Deformable Object Manipulation. Poster presentation at the \textit{CoRL 2026 Workshop on Bringing Physics Simulation and World Models Together for Robotic Manipulation}, Austin, TX, November 12, 2026.}
 
 \pubentry{Thorpe, A.J., \textbf{Tretiakov, S.}, Roy Sarkar, D., Kumar, K., \& Topcu, U. Learning Generalizable Neural Operators for Inverse Problems. Oral presentation at the \textit{20th U.S. National Congress on Theoretical and Applied Mechanics (USNC-TAM26)}, Pasadena, CA, June 21--25, 2026.}
 
