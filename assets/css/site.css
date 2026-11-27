@@ -580,6 +580,11 @@ p { margin: 0 0 1em; }
   .studies { padding: 28px 20px 20px; }
   .sun { width: 80vw; }
 }
+/* the narrowest phones: every frame's plate is set a little closer, so the longest name stays clear of the corner rosettes */
+@media (max-width: 359px) {
+  .frame-a > .plaque { padding: 2px 10px 1px; letter-spacing: .1em; gap: 7px; }
+  .frame-a > .plaque .yr::before { margin-right: 7px; }
+}
 
 .links { display: flex; flex-wrap: wrap; gap: 4px 14px; font-family: var(--mono); font-size: 12.5px; }
 .links a { text-decoration: none; }
@@ -604,17 +609,6 @@ details.more li { margin-bottom: 10px; padding-left: 1.2em; text-indent: -1.2em;
 .talks .where { font-size: 15px; color: var(--muted); font-style: italic; }
 @media (max-width: 560px) { .talks li { grid-template-columns: 1fr; gap: 2px; } }
 
-/* ---------- Projects ---------- */
-
-.projects { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
-@media (max-width: 640px) { .projects { grid-template-columns: 1fr; } }
-.proj { color: inherit; text-decoration: none; background: var(--plaque); border: 1px solid var(--rule); border-radius: 2px; box-shadow: 0 2px 6px -4px rgba(60,40,20,.4); padding: 22px 24px 20px; display: flex; flex-direction: column; gap: 8px; transition: border-color .25s ease; }
-.proj:hover { color: inherit; border-color: var(--gilt); }
-.proj .links { white-space: nowrap; color: var(--link); }
-.proj h3 { font-family: var(--display); font-weight: 400; font-size: 21px; margin: 0; }
-.proj p { font-size: 15.5px; margin: 0; flex: 1; }
-.proj .tag { font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
-
 /* ---------- CV ---------- */
 
 .cv-bar { max-width: 680px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; margin: 0 0 16px; font-family: var(--mono); font-size: 12px; letter-spacing: .02em; color: var(--muted); }
@@ -629,11 +623,6 @@ details.more li { margin-bottom: 10px; padding-left: 1.2em; text-indent: -1.2em;
 .cv-text { max-width: 680px; margin: 28px 0 0; }
 .cv-text h3 { font-family: var(--display); font-weight: 400; font-size: 20px; margin: 22px 0 4px; }
 .cv-text h3 span { font-family: var(--serif); font-size: 15px; color: var(--muted); margin-left: 8px; }
-
-/* ---------- Blog ---------- */
-
-.soon { display: flex; align-items: baseline; gap: 14px; }
-.soon p { font-family: var(--display); font-style: italic; font-size: 26px; margin: 0; color: var(--hi); }
 
 /* ---------- Contact and footer ---------- */
 

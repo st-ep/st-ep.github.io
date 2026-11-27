@@ -25,7 +25,7 @@
 <header class="hero" id="top">
   <div class="hero-stage">
     <div class="hero-paint" id="riviera" role="img" aria-label="A Monet-style Riviera afternoon, gently moving: under an umbrella pine above a shimmering blue bay, a white robot arm on a wooden garden table pours pale white wine into a glass, again and again."></div>
-    <nav class="wall-nav" aria-label="Sections"><a href="#research">Research</a><a href="#publications">Publications</a><a href="#talks">Talks</a><a href="#projects">Projects</a><a href="#cv">CV</a><a href="#contact">Contact</a></nav>
+    <nav class="wall-nav" aria-label="Sections"><a href="#research">Research</a><a href="#publications">Publications</a><a href="#talks">Talks</a><a href="#cv">CV</a><a href="#contact">Contact</a></nav>
     <div class="hero-text" id="about">
       <figure class="portrait-frame">
         <div class="frame-a">
@@ -57,9 +57,7 @@
       <li><a href="#research">Research</a></li>
       <li><a href="#publications">Publications</a></li>
       <li><a href="#talks">Talks</a></li>
-      <li><a href="#projects">Projects</a></li>
       <li><a href="#cv">CV</a></li>
-      <li><a href="#blog">Blog</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </div>
@@ -192,7 +190,7 @@
         <div class="frame-a">
           <span class="rail" aria-hidden="true"><i class="t"></i><i class="r"></i><i class="b"></i><i class="l"></i></span><span class="orn tl" aria-hidden="true"></span><span class="orn tr" aria-hidden="true"></span><span class="orn bl" aria-hidden="true"></span><span class="orn br" aria-hidden="true"></span>
           <div class="sight"><div class="pic"><canvas data-vignette="multitask" aria-hidden="true" style="aspect-ratio:4 / 3"></canvas></div></div>
-          <p class="plaque"><span>Boats, Many Winds</span><span class="yr">2026</span></p>
+          <p class="plaque"><span>One Light, Many Courses</span><span class="yr">2026</span></p>
         </div>
         <div class="wl">
           <h3 id="t-multitask">Neural Operators for <span class="nw">Multi-Task</span> Control and Adaptation</h3>
@@ -213,7 +211,7 @@
           <p class="au">A. J. Thorpe, <b>S. Tretiakov</b>, D. Roy Sarkar, K. Kumar, U. Topcu</p>
           <p class="ve">2025. Preprint</p>
           <p class="ln">Ill-posed inverse maps, learned by separating how functions are represented from how they are inverted.</p>
-          <p class="links"><a href="https://arxiv.org/abs/2512.18120">arXiv</a></p>
+          <p class="links"><a href="https://arxiv.org/abs/2512.18120">arXiv</a><a href="https://github.com/st-ep/ChladniBenchmark">Benchmark</a></p>
         </div>
       </article>
       <article class="work lead" id="pub-setonet" aria-labelledby="t-setonet">
@@ -267,38 +265,6 @@
   </div>
 </section>
 
-<section class="sec sec-wide" id="projects">
-  <div class="sec-in rv">
-    <div class="sec-head"><h2>Projects and code</h2><canvas class="brush" data-p="meadow" aria-hidden="true"></canvas></div>
-    <div class="projects">
-      <a class="proj" href="https://github.com/form-robots/FORM">
-        <span class="tag">Python · MPM · robotics</span>
-        <h3>FORM</h3>
-        <p>Identify a material law from one robot interaction, then plan new actions with it in simulation and on hardware.</p>
-        <span class="links"><span>github.com/form-robots/FORM</span></span>
-      </a>
-      <a class="proj" href="https://pvwm.github.io/">
-        <span class="tag">Position paper · supplementary videos</span>
-        <h3>Physically Viable World Models</h3>
-        <p>Why world models for embodied AI should answer intervention queries, and what that asks of them.</p>
-        <span class="links"><span>pvwm.github.io</span></span>
-      </a>
-      <a class="proj" href="https://github.com/st-ep/SetONet">
-        <span class="tag">PyTorch · operator learning</span>
-        <h3>SetONet</h3>
-        <p>A permutation-invariant operator network for PDEs whose inputs arrive at variable, unordered sensor locations.</p>
-        <span class="links"><span>github.com/st-ep/SetONet</span></span>
-      </a>
-      <a class="proj" href="https://github.com/st-ep/ChladniBenchmark">
-        <span class="tag">Benchmark · inverse problems</span>
-        <h3>Chladni plate benchmark</h3>
-        <p>An inverse problem with many valid answers, for testing operator learning where the inverse map is not unique.</p>
-        <span class="links"><span>github.com/st-ep/ChladniBenchmark</span></span>
-      </a>
-    </div>
-  </div>
-</section>
-
 <section class="sec" id="cv">
   <div class="sec-in rv">
     <div class="sec-head"><h2>CV</h2><canvas class="brush" data-p="wheat" aria-hidden="true"></canvas></div>
@@ -316,7 +282,7 @@
     <details class="more cv-text">
       <summary>Read the CV as text</summary>
       <h3>UC Berkeley <span>Ph.D. Robotics, 2026 to present</span></h3>
-      <p>Advisor: Krishna Kumar. World models for robots that handle soft, unruly matter. FORM (lead author, 2026). Now: real-robot experiments with RGB-D capture and wrist force-torque sensing.</p>
+      <p>Advisor: Krishna Kumar. World models for robots that handle soft, unruly matter. FORM (lead author, 2026). Now: world models and robotics.</p>
       <h3>UT Austin <span>M.S. Engineering, 2024 to 2026</span></h3>
       <p>Advisor: Krishna Kumar. SetONet (lead author, 2025), inverse neural operators (2025), neural operators for multi-task control (2026), Physically Viable World Models (co-first author, 2026). Talks at USNCCM18, MaGIC, EMI and USNC-TAM. Cockrell School of Engineering and UT Austin Graduate School Fellowship, 2024 to 2025.</p>
       <h3>Moscow State University <span>B.S. Geology with Honours, 2019 to 2024</span></h3>
@@ -324,13 +290,6 @@
       <p>Chief Expert, Geology Department, Gazprom Geotechnology, summer 2023: salt mechanics tests, Abaqus models and a geotechnical report for a bischofite site. Geological technician, Kurgan, 2021: soil lab tests, field geology, and a Python tool that automated direct simple-shear test processing.</p>
       <p>Before university: 1st Prize at the regional stage of the All-Russian Physics Olympiad, 2019.</p>
     </details>
-  </div>
-</section>
-
-<section class="sec" id="blog">
-  <div class="sec-in rv">
-    <div class="sec-head"><h2>Blog</h2><canvas class="brush" data-p="sea" aria-hidden="true"></canvas></div>
-    <div class="soon"><p>Coming soon.</p></div>
   </div>
 </section>
 

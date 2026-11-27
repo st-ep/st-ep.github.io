@@ -12,7 +12,7 @@ const LENS=[{cx:470,cy:612,rx:125,ry:13,p:['#EEDDE0','#E2CBD0','#F4E9EA','#D9C2C
 {cx:470,cy:722,rx:120,ry:13,p:['#D9B98A','#CFA874','#E0C39A'],tx:380,ty:740,tag:'Kurgan, 2021: field and lab technician',tip:'Geological technician, Kurgan, 2021. Soil lab tests, field geology, and a Python tool that automated direct simple-shear test processing.'}];
 const AR=[
 ['P',420,162,'FORM, 2026','FORM: Robot Manipulation through Direct Material Law Identification. Lead author. arXiv 2609.38105.'],
-['N',420,118,'Now: real-robot experiments','Hardware experiments with RGB-D capture and wrist force-torque sensing.'],
+['N',420,118,'Now: world models and robotics','World models and tools that let robots handle soft, unruly things.'],
 ['T',380,228,'USNC-TAM, Pasadena, 2026','Oral: Learning Generalizable Neural Operators for Inverse Problems. USNC-TAM26, Pasadena, June 2026.'],
 ['T',520,262,'EMI, Boulder, 2026','Oral: Toward Foundation-Ready Operator Surrogates in Mechanics. EMI 2026, Boulder, June 2026.'],
 ['P',380,302,'Physically Viable World Models, 2026','Physically Viable World Models: A Case for Query-Conditioned Embodied AI. Co-first author. arXiv 2605.30542.'],
