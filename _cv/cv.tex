@@ -1,6 +1,7 @@
 %-------------------------
-% Academic CV - Stepan Tretiakov
-% Public version for st-ep.github.io (no phone, no references)
+% Full academic CV - Stepan Tretiakov (no phone, no references)
+% Not served by the site: since 2026-11-27 the site's "CV (PDF)" links open the one-page resume (resume.tex).
+% Build: latexmk -pdf cv.tex, then keep the PDF beside this file as Stepan_Tretiakov_CV_full.pdf
 %-------------------------
 
 \documentclass[11pt,letterpaper]{article}
@@ -106,7 +107,7 @@ Advisor: Prof.\ Krishna Kumar
 
 \vspace{8pt}
 
-\entryhead{Bachelor of Science in Geology, with Honours (Specialization: Hydrogeology and Engineering Geology)}{June 2024}
+\entryhead{Bachelor of Science in Geology, with Honors (Specialization: Hydrogeology and Engineering Geology)}{June 2024}
 {Lomonosov Moscow State University}{Moscow, Russia}
 Thesis: ``Determining deformation and strength properties of sand soil as parameters for the deformation plasticity theory''\\
 Advisor: Dr.\ Nina B.\ Artamonova
@@ -270,9 +271,12 @@ Advisor: Prof.\ Krishna Kumar
 %-------------------------------------------
 % TECHNICAL SKILLS
 %-------------------------------------------
+\enlargethispage{10pt}% lets the last row stay on page 4 instead of starting a fifth page
 \section{Technical Skills}
-\textbf{Software:} Python, C++, PyTorch, JAX, Git/GitHub, CUDA, Bash, Arduino, \LaTeX \\[3pt]
-\textbf{Simulation:} MuJoCo, Gymnasium, Newton Physics Engine, Genesis, BeamNG, AutoCAD, ArcGIS
+\textbf{Software:} Python, PyTorch, Git/GitHub, Bash, Arduino, \LaTeX \\[3pt]
+\textbf{Simulation:} MuJoCo, Gymnasium, Newton Physics Engine, Genesis, BeamNG, AutoCAD, ArcGIS \\[3pt]
+\textbf{Methods:} MPM simulation, neural surrogate models, control theory, reinforcement learning \\[3pt]
+\textbf{Mathematics:} functional analysis, optimization
 
 %===========================================
 \end{document}

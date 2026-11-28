@@ -7,7 +7,7 @@ let sd=11;const R=()=>{sd|=0;sd=sd+0x6D2B79F5|0;let t=Math.imul(sd^sd>>>15,1|sd)
 const pk=a=>a[Math.floor(R()*a.length)],cl=(v,a,b)=>Math.max(a,Math.min(b,v));
 const B=[{y0:62,y1:198,p:['#F2DDAA','#EBCF94','#F6E6BE','#E2C283','#F0D6A0'],t:'UC Berkeley',s:'Ph.D. Robotics, 2026 to present',st:'World models for robots that handle soft, unruly matter.'},
 {y0:198,y1:470,p:['#E8C9A0','#DDB98C','#EFD5B0','#D6AE80','#E4C298'],t:'UT Austin',s:'M.S. Engineering, 2024 to 2026',st:'Operators learned on point clouds, then the weak form.'},
-{y0:470,y1:SEA+20,p:['#EFE6D2','#E6D9BE','#F3ECDD','#DCCBA8','#E9DCC2'],t:'Moscow State University',s:'B.S. Geology with Honours, 2019 to 2024',st:'Sand, and the moment it yields.'}];
+{y0:470,y1:SEA+20,p:['#EFE6D2','#E6D9BE','#F3ECDD','#DCCBA8','#E9DCC2'],t:'Moscow State University',s:'B.S. Geology with Honors, 2019 to 2024',st:'Sand, and the moment it yields.'}];
 const LENS=[{cx:470,cy:612,rx:125,ry:13,p:['#EEDDE0','#E2CBD0','#F4E9EA','#D9C2C8'],tx:360,ty:590,tag:'Gazprom Geotechnology, 2023: salt mechanics',tip:'Chief Expert, Geology Department, Gazprom Geotechnology, summer 2023. Salt mechanics tests, Abaqus models, bischofite site report.'},
 {cx:470,cy:722,rx:120,ry:13,p:['#D9B98A','#CFA874','#E0C39A'],tx:380,ty:740,tag:'Kurgan, 2021: field and lab technician',tip:'Geological technician, Kurgan, 2021. Soil lab tests, field geology, and a Python tool that automated direct simple-shear test processing.'}];
 const AR=[
