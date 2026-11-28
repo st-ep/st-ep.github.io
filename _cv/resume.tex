@@ -1,118 +1,15 @@
 %-------------------------
 % One-page resume for internship applications - Stepan Tretiakov
 % The site serves this PDF as assets/cv/Stepan_Tretiakov_CV.pdf: copy it there after every build.
+% The design (fonts, colours, macros) lives in resume_preamble.tex; this file holds the words.
 % The full academic CV is cv.tex (Stepan_Tretiakov_CV_full.pdf, kept in this folder, not on the site).
 %
-% Build:  latexmk -lualatex resume.tex     (LuaLaTeX, not pdfLaTeX: the fonts are loaded with fontspec)
-% Fonts:  Source Serif Pro, the text face of st-ep.github.io. It ships with TeX Live.
-%
-% Four rules keep the PDF readable for application systems. Keep them when editing:
-%   1. Real space characters are written into the PDF (tagpdf, activate/spaces). Without them
-%      pdfplumber and pypdf glue the words together, because this font's word space is narrow.
-%   2. No word is ever split across lines (no hyphenation, no break after a hyphen),
-%      which is why the text is set ragged right instead of justified.
-%   3. Letterspacing stays under 0.1 em, or parsers read "E D U C A T I O N".
-%   4. Title lines and author lines are the same size, or pdftotext reads every title first
-%      and every author list after.
+% Build:  latexmk -lualatex resume.tex
 %-------------------------
 
 \DocumentMetadata{lang=en-US,pdfversion=1.7}
-\documentclass[10pt,letterpaper]{article}
-
-\usepackage[letterpaper,hmargin=0.75in,vmargin=0.6in]{geometry}
-\usepackage{fontspec}
-\usepackage[protrusion=true,expansion=false]{microtype}
-\usepackage{xcolor}
-\usepackage{hyperref}
-\usepackage{tagpdf}
-\tagpdfsetup{activate/spaces}
-
-% --- Type ---------------------------------------------------------------------
-\defaultfontfeatures{Ligatures=TeX}
-\setmainfont{SourceSerifPro}[Extension=.otf, UprightFont=*-Regular, ItalicFont=*-RegularIt,
-    BoldFont=*-Semibold, BoldItalicFont=*-SemiboldIt,   % "bold" is the semibold weight
-    Numbers={Proportional,Lining}]
-\newfontfamily\namefont{SourceSerifPro-Light.otf}
-\newcommand{\tnum}{\addfontfeatures{Numbers={Tabular,Lining}}}   % equal-width figures for the date column
-
-% --- Colour: ink, one grey for secondary text, one accent --------------------
-\definecolor{ink}{HTML}{1B1B1B}
-\definecolor{muted}{HTML}{575757}
-\definecolor{accent}{HTML}{2F5D34}   % the link green of st-ep.github.io (navy instead: 1F3A5F)
-\definecolor{hair}{HTML}{8A9A8B}     % rules (with navy: 8794A8)
-
-\hypersetup{
-    colorlinks=true, urlcolor=accent, linkcolor=accent,
-    pdfauthor={Stepan Tretiakov},
-    pdftitle={Stepan Tretiakov, Resume},
-    pdfkeywords={Robotics, World models, Robot learning, Deformable-object manipulation, Physics simulation}
-}
-
-% --- Paragraphs: ragged right, natural word spaces, no one-word last line -----
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{0pt}
-\pagestyle{empty}
-\frenchspacing
-\hyphenpenalty=10000 \exhyphenpenalty=10000 \hbadness=10000
-% \rag must be called again after every change of font size (the word space is fixed in points)
-\newcommand{\rag}{\rightskip=0pt plus 4.5em\relax
-    \spaceskip=\fontdimen2\font minus .06\fontdimen2\font\relax
-    \pretolerance=-1 \tolerance=9999 }
-\newcommand{\nowidow}{\parfillskip=0pt plus .5\hsize\relax}
-\AtBeginDocument{\fontsize{10}{13}\selectfont\color{ink}\rag}
-% Sizes: 29 pt for the name, 10/13 pt for everything, 9 pt for the two quiet bits (links row, footnote)
-\newcommand{\quiet}{\fontsize{9}{12}\selectfont}
-
-% Vertical spacing uses two steps only. Macros end in \vskip (not \vspace) so that \addvspace can
-% replace an entry's trailing gap with the section gap instead of adding to it.
-\newlength{\secgap}\setlength{\secgap}{10pt}       % above every label: sections, Talks, Skills
-\newlength{\itemgap}\setlength{\itemgap}{3pt}       % under a label, and between entries of more than one line
-\newcommand{\dash}{\kern.12em--\kern.12em}         % the dash in a range of years
-\newcommand{\dates}[1]{\mbox{\tnum #1}}
-\newcommand{\me}{{\color{ink}\textbf{S.~Tretiakov}}}
-
-% --- Header: name, research interests, links ----------------------------------
-\newcommand{\isep}{\hskip.5em\textperiodcentered\hskip.5em}                           % between interests
-\newcommand{\lbar}{\hskip.75em{\color{hair}\rule[-.22ex]{.4pt}{1.75ex}}\hskip.75em}   % between links
-% \cvheader{name}{interests}{links}
-\newcommand{\cvheader}[3]{%
-  {\namefont\fontsize{29}{29}\selectfont\spaceskip=0pt\addfontfeatures{LetterSpace=-0.5}\leavevmode\kern-.05em #1\par}
-  \vspace{6.5pt}%
-  {\itshape\color{muted}#2\par}\vspace{2pt}%
-  {\quiet\spaceskip=0pt\color{muted}#3\par}}
-
-% --- Sections: a letterspaced small-caps label, then a hairline to the margin --
-\newcommand{\seclabel}[1]{{\bfseries\scshape\addfontfeatures{LetterSpace=7}\color{accent}\MakeLowercase{#1}}}
-% \cvsection[note at the far right]{Title}
-\newcommand{\cvsection}[2][]{%
-  \par\addvspace{\secgap}%
-  {\seclabel{#2}\hskip.8em{\color{hair}\leaders\hrule height \dimexpr.5ex+.25pt\relax depth \dimexpr-.5ex+.25pt\relax\hfill}%
-  \if\relax\detokenize{#1}\relax\else\hskip.8em{\quiet\color{muted}#1}\fi\par}
-  \nobreak\vskip\itemgap}
-
-% --- Entries ------------------------------------------------------------------
-% \edu{institution}{degree}{years}{one line of detail}
-\newcommand{\edu}[4]{\textbf{#1}, #2\hfill\dates{#3}\par{\color{muted}#4\par}\vskip\itemgap}
-% \role{title}{where}{years}
-\newcommand{\role}[3]{\textbf{#1}, #2\hfill\dates{#3}\par\nobreak\vskip\itemgap}
-% \proj{name}{ (role), or empty}{what it does}   one item under a \role
-\newcommand{\proj}[3]{{\nowidow\leftskip=1.15em \leavevmode
-  \llap{{\color{accent}\fontsize{7}{7}\selectfont\raisebox{.22ex}{\textbullet}}\hskip.62em}\textbf{#1}#2: #3\par}\vskip\itemgap}
-% \pub{authors}{title}{status, or empty}{arXiv number}{year}{extra link, or empty}
-\newcommand{\pub}[6]{%
-  {#2\hfill{\tnum\href{https://arxiv.org/abs/#4}{arXiv:#4}}\hskip1.2em\dates{#5}\par}%
-  {\nowidow\hangindent=1.15em\hangafter=0 \color{muted}#1.
-   \if\relax\detokenize{#3}\relax\else\hfil\break{\color{ink}#3.} \fi
-   \if\relax\detokenize{#6}\relax\else #6\fi\par}%
-  \vskip\itemgap}
-% \job{company}{role: work}{year}   and   \award{what}{year, or empty}: one line each, no gap between them
-\newcommand{\job}[3]{\textbf{#1}, #2\hfill\dates{#3}\par}
-\newcommand{\award}[2]{#1\hfill\dates{#2}\par}
-% \talks{...} and \skills{...}: one line that opens with a small-caps label
-\newcommand{\talks}[1]{\par\addvspace{\secgap}\seclabel{Talks}\hskip.8em #1\par}
-\newcommand{\skills}[1]{\par\addvspace{\secgap}\seclabel{Skills}\hskip.8em #1\par}
-
-% A tie (~) or \mbox keeps two words or a hyphenated compound on one line.
+\input{resume_preamble}
+\hypersetup{pdfkeywords={Robotics, World models, Robot learning, Deformable-object manipulation, Physics simulation}}
 
 \begin{document}
 
