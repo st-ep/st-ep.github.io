@@ -658,10 +658,10 @@ details.more li { margin-bottom: 10px; padding-left: 1.2em; text-indent: -1.2em;
 .no-js .strata-box { display: none; }
 .strata { position: absolute; left: 0; top: 0; width: 680px; height: 812px; transform-origin: 0 0; background: transparent; overflow: hidden; }
 /* on a phone strata.js redraws the cliff tall and narrow, one find to a row, at full size; this keeps its place until the script has run.
-   The numbers are that cliff's own (342 by 1171) and the width is where its column drops under 500px. */
+   The numbers are that cliff's own (342 by 1071) and the width is where its column drops under 500px. */
 @media (max-width: 547px) {
-  .strata-box { max-width: 428px; aspect-ratio: 342 / 1171; }
-  .strata { width: 342px; height: 1171px; }
+  .strata-box { max-width: 428px; aspect-ratio: 342 / 1071; }
+  .strata { width: 342px; height: 1071px; }
 }
 .strata-lab { position: absolute; inset: 0; pointer-events: none; font-family: var(--serif); color: var(--ink); line-height: 1.35; }
 /* the CV in words. Screen readers always get it. It is put on screen only where the painted cliff is missing:

@@ -8,8 +8,6 @@ const pk=a=>a[Math.floor(R()*a.length)],cl=(v,a,b)=>Math.max(a,Math.min(b,v));
 const B=[{y0:62,y1:198,p:['#F2DDAA','#EBCF94','#F6E6BE','#E2C283','#F0D6A0'],t:'UC Berkeley',s:'Ph.D. Robotics, 2026 to present',st:'World models for robots that handle soft, unruly matter.'},
 {y0:198,y1:470,p:['#E8C9A0','#DDB98C','#EFD5B0','#D6AE80','#E4C298'],t:'UT Austin',s:'M.S. Engineering, 2024 to 2026',st:'Operators learned on point clouds, then the weak form.'},
 {y0:470,y1:SEA+20,p:['#EFE6D2','#E6D9BE','#F3ECDD','#DCCBA8','#E9DCC2'],t:'Moscow State University',s:'B.S. Geology with Honors, 2019 to 2024',st:'Sand, and the moment it yields.'}];
-const LENS=[{cx:470,cy:612,rx:125,ry:13,p:['#EEDDE0','#E2CBD0','#F4E9EA','#D9C2C8'],tx:360,ty:590,tag:'Gazprom Geotechnology, 2023: salt mechanics',tip:'Chief Expert, Geology Department, Gazprom Geotechnology, summer 2023. Salt mechanics tests, Abaqus models, bischofite site report.'},
-{cx:470,cy:722,rx:120,ry:13,p:['#D9B98A','#CFA874','#E0C39A'],tx:380,ty:740,tag:'Kurgan, 2021: field and lab technician',tip:'Geological technician, Kurgan, 2021. Soil lab tests, field geology, and a Python tool that automated direct simple-shear test processing.'}];
 const AR=[
 ['P',420,162,'FORM, 2026','FORM: Robot Manipulation through Direct Material Law Identification. Lead author. arXiv 2609.38105.'],
 ['N',420,118,'Now: world models and robotics','World models and tools that let robots handle soft, unruly things.'],
@@ -39,17 +37,16 @@ const AR=[
 ['A',330,776,'Physics Olympiad, 2019','1st Prize, regional stage of the All-Russian Physics Olympiad, 2019.']
 ].map(a=>({k:a[0],x:a[1],y:a[2],tag:a[3],tip:a[4],ph:R()*6.28,r:R()*3}));
 /* Narrow (a phone): the same cliff at full size, redrawn tall. Each layer is its card, then its finds one to a row from the newest down;
-   a find keeps something of its place across the cliff, as far as its name leaves room. The two lenses lie under their names. */
-if(narrow){W=342;X0=40;const lim=[62,198,470,1e9],grp=B.map((b,i)=>AR.filter(a=>a.y>=lim[i]&&a.y<lim[i+1]).map(a=>({a,o:a.y})));LENS.forEach(l=>grp[2].push({l,o:l.cy}));let y=62;
+   a find keeps something of its place across the cliff, as far as its name leaves room. */
+if(narrow){W=342;X0=40;const lim=[62,198,470,1e9],grp=B.map((b,i)=>AR.filter(a=>a.y>=lim[i]&&a.y<lim[i+1]).map(a=>({a,o:a.y})));let y=62;
 B.forEach((b,i)=>{b.y0=y;y+=12+(i===2?75:93)+14;
-for(const q of grp[i].sort((p,r)=>p.o-r.o)){if(q.a){const a=q.a,room=W-6-(X0+33+a.tag.length*6.7+12);a.x=X0+22+Math.max(0,Math.min(room,96))*cl((a.x-90)/430,0,1);a.y=y+12;y+=24;}
-else{const l=q.l;l.tx=X0+16;l.ty=y+11;l.cx=X0+136;l.cy=y+34;l.rx=120;l.ry=11;y+=50;}}
+for(const q of grp[i].sort((p,r)=>p.o-r.o)){const a=q.a,room=W-6-(X0+33+a.tag.length*6.7+12);a.x=X0+22+Math.max(0,Math.min(room,96))*cl((a.x-90)/430,0,1);a.y=y+12;y+=24;}
 y+=8;b.y1=y;});SEA=y;B[2].y1=SEA+20;H=SEA+22;}
 cv.width=W*DP;cv.height=H*DP;wrap.style.width=W+'px';wrap.style.height=H+'px';
 const SHADE=['#B9A9C4','#A99BBB','#C4B6CC','#9E93B4'],FLINT=['#4E5A6E','#5E6A80','#3E4A5E'];
 const off=document.createElement('canvas');off.width=W*DP;off.height=H*DP;const oc=off.getContext('2d');oc.setTransform(DP,0,0,DP,0,0);oc.lineCap='round';
 const S=[];
-for(let i=0,N=Math.round((W-X0)*(SEA+20-62)/11);i<N;i++){const px=X0+R()*(W-X0),py=62+R()*(SEA+20-62);if(py>SEA&&R()>(SEA+20-py)/20)continue;const L=B.find(b=>py>=b.y0&&py<b.y1);let c=pk(L.p);for(const e of LENS){if(((px-e.cx)/e.rx)**2+((py-e.cy)/e.ry)**2<1)c=pk(e.p);}if(R()<.05||(L.y1-py<14&&R()<.3))c=pk(SHADE);S.push({x:px,y:py,a:(R()-.5)*.25,l:8+R()*7,w:3.6,c,k:(H-py)/H+R()*.04});}
+for(let i=0,N=Math.round((W-X0)*(SEA+20-62)/11);i<N;i++){const px=X0+R()*(W-X0),py=62+R()*(SEA+20-62);if(py>SEA&&R()>(SEA+20-py)/20)continue;const L=B.find(b=>py>=b.y0&&py<b.y1);let c=pk(L.p);if(R()<.05||(L.y1-py<14&&R()<.3))c=pk(SHADE);S.push({x:px,y:py,a:(R()-.5)*.25,l:8+R()*7,w:3.6,c,k:(H-py)/H+R()*.04});}
 for(const b of B){for(let y=b.y0+38+R()*10;y<b.y1-20;y+=34+R()*22){for(let px=X0+R()*20;px<W;px+=14+R()*26)if(R()<.7)S.push({x:px,y:y+(R()-.5)*2,a:(R()-.5)*.5,l:3+R()*2.5,w:3,c:pk(['#8E96A6','#9AA0B0','#7E889A']),k:(H-y)/H+R()*.02});}}
 for(const b of [SEA,B[2].y0,B[1].y0]){for(let px=X0+R()*6;px<W;px+=6+R()*9)S.push({x:px,y:b+(R()-.5)*3,a:(R()-.5)*.6,l:4+R()*3,w:4.2,c:pk(FLINT),k:(H-b)/H+.03+R()*.01});}
 for(let i=0,N=Math.round((W-X0)*44/14);i<N;i++)S.push({x:X0+R()*(W-X0),y:4+R()*38,a:(R()-.5)*.6+.1,l:9+R()*6,w:4,c:R()<.25?pk(['#F6F3EA','#EEF0EC']):pk(['#A9C8E4','#B9D4EA','#C9DCEC','#8FB6D9']),k:1.05+R()*.05});
@@ -65,10 +62,9 @@ const yr=(y,s)=>`<div style="position:absolute;left:${X0-40}px;top:${y-7}px;font
 let h=yr(62,'now')+yr(B[1].y0,'2026')+yr(B[2].y0,'2024')+yr(SEA,'2019');
 for(const b of B)h+=`<div style="position:absolute;left:${X0+12}px;top:${b.y0+(narrow?12:14)}px;width:${narrow?W-X0-40:282}px;${pl};padding:6px 9px"><div style="font-family:Fraunces,serif;font-size:17px;line-height:1.2">${b.t}</div><div style="font-size:12.5px;color:#6B5E52;margin-top:2px;white-space:nowrap">${b.s}</div><div style="font-size:13px;font-style:italic;margin-top:3px;line-height:1.4;max-width:250px">${b.st}</div></div>`;
 for(const a of AR)h+=`<div class="tg" style="position:absolute;left:${a.x+11}px;top:${a.y-9}px;font-family:'IBM Plex Mono',monospace;font-size:11px;white-space:nowrap;opacity:0;transition:opacity .6s;${pl}">${a.tag}</div>`;
-for(const e of LENS)h+=`<div class="tg" style="position:absolute;left:${e.tx}px;top:${e.ty-9}px;font-size:12px;font-style:italic;color:#6B5E52;white-space:nowrap;opacity:0;transition:opacity .6s;${pl}">${e.tag}</div>`;
 h+=`<div class="strata-tip" style="position:absolute;display:none;width:300px;background:rgba(251,245,232,0.97);border:0.6px solid #C9B6A2;border-radius:4px;padding:6px 9px;font-size:12px;line-height:1.4"></div>`;
 lab.innerHTML=h;const tip=lab.querySelector('.strata-tip');
-let hov=null;const pick=e=>{const b=cv.getBoundingClientRect(),sc=b.width/W,mx=(e.clientX-b.left)/sc,my=(e.clientY-b.top)/sc;hov=AR.find(a=>Math.hypot(a.x-mx,a.y-my)<11/Math.min(1,sc))||LENS.find(l=>((mx-l.cx)/l.rx)**2+((my-l.cy)/l.ry)**2<1)||null;cv.style.cursor=hov?'pointer':'default';if(hov){const hx=hov.x!==undefined?hov.x:hov.cx,hy=hov.y!==undefined?hov.y:hov.cy;tip.textContent=hov.tip;tip.style.display='block';tip.style.left=cl(hx+14,6,W-322)+'px';tip.style.top=(hy+90>H?hy-70:hy+16)+'px';}else tip.style.display='none';if(still)go();};cv.addEventListener('pointermove',pick);cv.addEventListener('pointerdown',pick);cv.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse'){hov=null;tip.style.display='none';}});
+let hov=null;const pick=e=>{const b=cv.getBoundingClientRect(),sc=b.width/W,mx=(e.clientX-b.left)/sc,my=(e.clientY-b.top)/sc;hov=AR.find(a=>Math.hypot(a.x-mx,a.y-my)<11/Math.min(1,sc))||null;cv.style.cursor=hov?'pointer':'default';if(hov){const hx=hov.x,hy=hov.y;tip.textContent=hov.tip;tip.style.display='block';tip.style.left=cl(hx+14,6,W-322)+'px';tip.style.top=(hy+90>H?hy-70:hy+16)+'px';}else tip.style.display='none';if(still)go();};cv.addEventListener('pointermove',pick);cv.addEventListener('pointerdown',pick);cv.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse'){hov=null;tip.style.display='none';}});
 let k=0,shown=false,t0=null,raf=0,vis=false,acc=0,lastTs=null,dead=false;const T0=narrow?1.2:3;const still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 function wrapTxt(s,mw){x.font='12px "Source Serif 4",Georgia,serif';const w=s.split(' '),L=[];let c='';for(const q of w){const tt=c?c+' '+q:q;if(x.measureText(tt).width>mw&&c){L.push(c);c=q;}else c=tt;}if(c)L.push(c);return L;}
 function frame(ts){raf=0;if(dead)return;if(lastTs!==null)acc+=Math.min(.1,(ts-lastTs)/1000);lastTs=ts;const t=still?6+acc:(window.__QA?6+acc:acc),n=Math.floor(S.length*cl(t/(narrow?1.4:3.2),0,1));while(k<n)ds(oc,S[k++]);
