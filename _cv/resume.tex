@@ -13,6 +13,8 @@
 \usepackage{titlesec}
 \usepackage{xcolor}
 \usepackage{hyperref}
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=1.1em, itemsep=1pt, parsep=0pt, topsep=2pt, partopsep=0pt}
 
 % Text copied out of the PDF (and read by application systems) keeps ligatures as plain letters
 \input{glyphtounicode}
@@ -53,7 +55,7 @@
     {\color{darkgray} Robotics \textbullet{} World models \textbullet{} Robot learning \textbullet{} Deformable-object manipulation \textbullet{} Physics simulation}\\[3pt]
     {\small\color{darkgray}
     \href{mailto:stepa@berkeley.edu}{stepa@berkeley.edu}\sep
-    \href{https://st-ep.github.io}{st-ep.github.io}\sep
+    Website: \href{https://st-ep.github.io}{st-ep.github.io}\sep
     \href{https://github.com/st-ep}{github.com/st-ep}\sep
     \href{https://scholar.google.com/citations?user=p7JCBQYAAAAJ}{Google~Scholar}}
 \end{center}
@@ -61,32 +63,32 @@
 
 %-------------------------------------------
 \section{Education}
-\edu{University of California, Berkeley}{Ph.D.\ in Mechanical Engineering}{2026 -- present}
+\edu{University of California, Berkeley}{Ph.D.\ in Mechanical Engineering (Robotics and Controls)}{2026 -- 2029}
     {Advisor: Krishna Kumar. Research: world models for robots that manipulate deformable materials.}
 \edu{The University of Texas at Austin}{M.S.\ in Engineering}{2024 -- 2026}
-    {Advisor: Krishna Kumar. Graduate researcher at Texas Robotics.}
+    {Advisor: Krishna Kumar. Thesis: Neural Operators for Forward, Inverse, and Multi-Task Control Problems.}
 \edu{Lomonosov Moscow State University}{B.S.\ in Geology with Honours}{2019 -- 2024}
     {Thesis: deformation and strength properties of sandy soil as parameters of a plasticity model.}
 
 %-------------------------------------------
+\section{Research Experience}
+\textbf{Graduate Researcher}, UC Berkeley and Texas Robotics at UT Austin \hfill 2024 -- present\par
+\begin{itemize}
+    \item \textbf{FORM} (lead author): lets a robot identify how an unfamiliar soft material behaves from a single interaction, in seconds instead of minutes, and reuse that physics model to plan shaping and pouring on a real robot.
+    \item \textbf{World models} (co-first author): proposed \mbox{query-conditioned} world models, which build the simplest \mbox{physical} model that answers each question about an action; showed that \mbox{vision-language}, \mbox{video-diffusion} and \mbox{action-conditioned} world models fail such questions when hidden physics varies.
+    \item \textbf{Neural operators}: lead author of SetONet, a PDE surrogate that works with irregular, incomplete or point-cloud sensor data; sole developer of its open-source PyTorch code. Co-developed probabilistic inverse neural operators.
+    \item \textbf{Adaptive control}: sped up Function Encoder neural ODEs about 10$\times$, enabling real-time MPPI control on changing terrain (BeamNG); brought SetONet into meta-reinforcement learning (JAX).
+\end{itemize}
+
+%-------------------------------------------
 \section[Selected Publications]{Selected Publications\hfill{\normalfont\small\color{darkgray}*Equal contribution}}
-\pub{\me, R.~Zhao, C.-H.~Hsiao, X.~Li, A.~Thorpe, H.~Iqbal, S.~Chinchali, U.~Topcu, K.~Kumar. FORM: Robot Manipulation through Direct Material Law Identification. \textit{Submitted to ICRA 2027.} \href{https://arxiv.org/abs/2609.38105}{arXiv:2609.38105}}
+\pub{\me, R.~Zhao, C.-H.~Hsiao, X.~Li, A.~Thorpe, H.~Iqbal, S.~Chinchali, U.~Topcu, K.~Kumar. FORM: Robot Manipulation through Direct Material Law Identification. \textit{Submitted to ICRA 2027; CoRL 2026 workshop.} \href{https://arxiv.org/abs/2609.38105}{arXiv:2609.38105}. Project: \href{https://form-robots.github.io}{form-robots.github.io}}
 \pub{A.~J.~Thorpe*, \me*, C.-H.~Hsiao, S.~A.~Low, X.~Li, H.~Iqbal, N.~P.~Bhatt, U.~Topcu, K.~Kumar. Physically Viable World Models: A Case for Query-Conditioned Embodied AI. \href{https://arxiv.org/abs/2605.30542}{arXiv:2605.30542}, 2026.}
 \pub{D.~Sewell, X.~Li, \me, K.~Kumar, D.~Fridovich-Keil. Neural Operators for Multi-Task Control and Adaptation. \href{https://arxiv.org/abs/2604.03449}{arXiv:2604.03449}, 2026.}
 \pub{A.~J.~Thorpe, \me, D.~Roy Sarkar, K.~Kumar, U.~Topcu. Learning Generalizable Neural Operators for Inverse Problems. \href{https://arxiv.org/abs/2512.18120}{arXiv:2512.18120}, 2025.}
-\pub{\me, X.~Li, K.~Kumar. SetONet: A Set-Based Operator Network for Solving PDEs with Variable-Input Sampling. \href{https://arxiv.org/abs/2505.04738}{arXiv:2505.04738}, 2025.}
-%-------------------------------------------
-\section{Talks}
-\pub{FORM: Identifying Material Laws from Robot Interaction for Deformable Object Manipulation. Poster, \textit{CoRL 2026 workshop}, Austin, TX, Nov.~2026.}
-\pub{Learning Generalizable Neural Operators for Inverse Problems. Oral, \textit{U.S. National Congress on Theoretical and Applied Mechanics (USNC-TAM)}, Pasadena, CA, June 2026.}
-\pub{Toward Foundation-Ready Operator Surrogates in Mechanics: SetONet for Unstructured Functional Inputs. Oral, \textit{Engineering Mechanics Institute Conference (EMI)}, Boulder, CO, June 2026.}
-\pub{SetONet: A Set-Based Operator Network for Solving PDEs with Variable-Input Sampling. Poster, \textit{MaGIC (\mbox{Machine-Ground} Interaction Consortium)}, Madison, WI, Sep.~2025.}
-\pub{Robust Operator Learning via the Basis-to-Basis Framework. Oral, \textit{U.S. National Congress on Computational Mechanics (USNCCM)}, Chicago, IL, July 2025.}
-
-%-------------------------------------------
-\section{Skills}
-\textbf{Programming and ML:} Python, C++, CUDA, PyTorch, JAX, Git\par\vspace{3pt}
-\textbf{Simulation:} MPM in NVIDIA Warp, MuJoCo, Genesis, Newton, Gymnasium, BeamNG\par
+\pub{\me, X.~Li, K.~Kumar. SetONet: A Set-Based Operator Network for Solving PDEs with Variable-Input Sampling. \href{https://arxiv.org/abs/2505.04738}{arXiv:2505.04738}, 2025. Code: \href{https://github.com/st-ep/SetONet}{github.com/st-ep/SetONet}}
+\vspace{1pt}
+\textbf{Talks:} CoRL 2026 workshop poster; orals at USNC-TAM 2026, EMI 2026, USNCCM 2025; MaGIC 2025 poster.\par
 
 %-------------------------------------------
 \section{Industry Experience}
@@ -96,5 +98,9 @@
 %-------------------------------------------
 \section{Awards}
 Cockrell School of Engineering and UT Austin Graduate School Fellowship (2024); grant from the Moscow Center for Fundamental and Applied Mathematics (2023); 1st prize, All-Russian Physics Olympiad, regional stage (2019); Candidate Master of Sports in chess.\par
+
+%-------------------------------------------
+\vspace{6pt}
+\textbf{Skills:} MPM simulation, system identification, optimal control, operator learning; PyTorch, NVIDIA Warp\par
 
 \end{document}
